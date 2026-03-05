@@ -19,12 +19,12 @@
       background:var(--bg);
       color:var(--fg);
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
-      letter-spacing: .2px;
+      letter-spacing:.2px;
     }
     .wrap{
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 28px 18px 40px;
+      max-width:980px;
+      margin:0 auto;
+      padding:28px 18px 40px;
       display:flex;
       flex-direction:column;
       gap:18px;
@@ -39,40 +39,16 @@
       padding-bottom:10px;
       border-bottom:1px solid var(--line);
     }
-    header h1{
-      margin:0;
-      font-size:16px;
-      font-weight:700;
-    }
+    header h1{margin:0;font-size:16px;font-weight:700;}
     .meta{
-      display:flex;
-      gap:14px;
-      align-items:baseline;
-      color:var(--muted);
-      font-size:12px;
-      white-space:nowrap;
+      display:flex;gap:14px;align-items:baseline;
+      color:var(--muted);font-size:12px;white-space:nowrap;
     }
-    .meta b{color:var(--fg); font-weight:700;}
-    .card{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:18px 16px;
-    }
-    .center{
-      text-align:center;
-    }
-    .stationJP{
-      font-size:52px;
-      font-weight:800;
-      line-height:1.08;
-      margin:6px 0 10px;
-    }
-    .stationRoma{
-      font-size:18px;
-      color:var(--muted);
-      margin:0;
-      letter-spacing:.6px;
-    }
+    .meta b{color:var(--fg);font-weight:700;}
+    .card{border:1px solid var(--line);border-radius:14px;padding:18px 16px;}
+    .center{text-align:center;}
+    .stationJP{font-size:52px;font-weight:800;line-height:1.08;margin:6px 0 10px;}
+    .stationRoma{font-size:18px;color:var(--muted);margin:0;letter-spacing:.6px;}
     .progress{
       margin-top:14px;
       font-size:22px;
@@ -84,19 +60,8 @@
     .progress .ok{color:var(--ok)}
     .progress .ng{color:var(--ng)}
     .progress .rest{color:var(--fg)}
-    .hint{
-      margin-top:12px;
-      color:var(--muted);
-      font-size:12px;
-      text-align:center;
-    }
-    .actions{
-      display:flex;
-      gap:10px;
-      justify-content:center;
-      margin-top:10px;
-      flex-wrap:wrap;
-    }
+    .hint{margin-top:12px;color:var(--muted);font-size:12px;text-align:center;}
+    .actions{display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
     button{
       border:1px solid var(--line);
       background:#fff;
@@ -118,31 +83,16 @@
       background:#fff;
     }
 
-    /* Countdown overlay */
     .overlay{
-      position:fixed;
-      inset:0;
+      position:fixed;inset:0;
       background:rgba(255,255,255,.92);
-      display:none;
-      align-items:center;
-      justify-content:center;
+      display:none;align-items:center;justify-content:center;
       z-index:10;
     }
     .overlay.show{display:flex}
-    .count{
-      text-align:center;
-    }
-    .count .big{
-      font-size:84px;
-      font-weight:900;
-      line-height:1;
-      margin:0;
-    }
-    .count .sub{
-      margin:12px 0 0;
-      font-size:12px;
-      color:var(--muted);
-    }
+    .count{text-align:center;}
+    .count .big{font-size:84px;font-weight:900;line-height:1;margin:0;}
+    .count .sub{margin:12px 0 0;font-size:12px;color:var(--muted);}
     footer{
       margin-top:auto;
       padding-top:14px;
@@ -167,7 +117,7 @@
 
     <section class="card center">
       <div class="stationJP" id="jp">東京</div>
-      <p class="stationRoma" id="roma">tokyo</p>
+      <p class="stationRoma" id="roma">toukyou</p>
 
       <div class="progress" id="progress" aria-label="typing progress"></div>
 
@@ -181,9 +131,7 @@
       </div>
     </section>
 
-    <footer>
-      入力欄なし（キーボード入力のみ）
-    </footer>
+    <footer>入力欄なし（キーボード入力のみ）</footer>
   </div>
 
   <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="countdown">
@@ -194,38 +142,38 @@
   </div>
 
   <script>
-    // 山手線（30駅）
+    // 山手線（30駅）: かな読み → ローマ字打ち（複数表記ゆれ対応）
     const STATIONS = [
-      { jp:"東京", roma:["tokyo","toukyou","tookyoo","toukyo"] },
-      { jp:"有楽町", roma:["yurakucho","yuurakucho","yurakutyo","yuurakutyo","yurakutyou","yuurakutyou"] },
-      { jp:"新橋", roma:["shimbashi","shinbashi","sinbasi"] },
-      { jp:"浜松町", roma:["hamamatsucho","hamamatsutyo","hamamatucho","hamamatutyo"] },
-      { jp:"田町", roma:["tamachi"] },
-      { jp:"高輪ゲートウェイ", roma:["takanawa gateway","takanawa-gateway","takanawagateway"] },
-      { jp:"品川", roma:["shinagawa","sinagawa"] },
-      { jp:"大崎", roma:["osaki","oosaki"] },
-      { jp:"五反田", roma:["gotanda"] },
-      { jp:"目黒", roma:["meguro"] },
-      { jp:"恵比寿", roma:["ebisu"] },
-      { jp:"渋谷", roma:["shibuya","sibuya"] },
-      { jp:"原宿", roma:["harajuku"] },
-      { jp:"代々木", roma:["yoyogi","yoyogi"] },
-      { jp:"新宿", roma:["shinjuku","sinzyuku","sinjuku"] },
-      { jp:"新大久保", roma:["shinokubo","shin-ookubo","shinookubo","shinokubo","shinokubo","shinookubo"] },
-      { jp:"高田馬場", roma:["takadanobaba","takadanobaba"] },
-      { jp:"目白", roma:["mejiro"] },
-      { jp:"池袋", roma:["ikebukuro"] },
-      { jp:"大塚", roma:["otsuka","ootsuka"] },
-      { jp:"巣鴨", roma:["sugamo"] },
-      { jp:"駒込", roma:["komagome"] },
-      { jp:"田端", roma:["tabata"] },
-      { jp:"西日暮里", roma:["nishinippori","nishi-nippori"] },
-      { jp:"日暮里", roma:["nippori"] },
-      { jp:"鶯谷", roma:["uguisudani"] },
-      { jp:"上野", roma:["ueno"] },
-      { jp:"御徒町", roma:["okachimachi","okamaty","okatimati","okatyomachi"] },
-      { jp:"秋葉原", roma:["akihabara"] },
-      { jp:"神田", roma:["kanda"] },
+      { jp:"東京",       kana:"とうきょう" },
+      { jp:"有楽町",     kana:"ゆうらくちょう" },
+      { jp:"新橋",       kana:"しんばし" },
+      { jp:"浜松町",     kana:"はままつちょう" },
+      { jp:"田町",       kana:"たまち" },
+      { jp:"高輪ゲートウェイ", kana:"たかなわげーとうぇい" },
+      { jp:"品川",       kana:"しながわ" },
+      { jp:"大崎",       kana:"おおさき" },
+      { jp:"五反田",     kana:"ごたんだ" },
+      { jp:"目黒",       kana:"めぐろ" },
+      { jp:"恵比寿",     kana:"えびす" },
+      { jp:"渋谷",       kana:"しぶや" },
+      { jp:"原宿",       kana:"はらじゅく" },
+      { jp:"代々木",     kana:"よよぎ" },
+      { jp:"新宿",       kana:"しんじゅく" },
+      { jp:"新大久保",   kana:"しんおおくぼ" },
+      { jp:"高田馬場",   kana:"たかだのばば" },
+      { jp:"目白",       kana:"めじろ" },
+      { jp:"池袋",       kana:"いけぶくろ" },
+      { jp:"大塚",       kana:"おおつか" },
+      { jp:"巣鴨",       kana:"すがも" },
+      { jp:"駒込",       kana:"こまごめ" },
+      { jp:"田端",       kana:"たばた" },
+      { jp:"西日暮里",   kana:"にしにっぽり" },
+      { jp:"日暮里",     kana:"にっぽり" },
+      { jp:"鶯谷",       kana:"うぐいすだに" },
+      { jp:"上野",       kana:"うえの" },
+      { jp:"御徒町",     kana:"おかちまち" },
+      { jp:"秋葉原",     kana:"あきはばら" },
+      { jp:"神田",       kana:"かんだ" },
     ];
 
     // ---- State ----
@@ -237,10 +185,10 @@
     let totalTyped = 0;        // 打鍵数（正誤含む）
     let totalMiss = 0;         // ミス数
 
-    let target = "";           // 正規化後の出題文字列（表示用はromaPrimary）
-    let candidates = [];       // 正規化済み候補
+    let displayRoma = "";      // 画面表示用（代表ローマ字）
+    let target = "";           // 表示用の正規化文字列
+    let candidates = [];       // 正規化済み候補（ローマ字入力の表記ゆれ）
     let typed = "";            // 正規化済み入力
-    let lastWasMistake = false;
 
     // ---- DOM ----
     const elJp = document.getElementById("jp");
@@ -257,15 +205,7 @@
     const overlay = document.getElementById("overlay");
     const countText = document.getElementById("countText");
 
-    document.getElementById("btnSkip").addEventListener("click", () => {
-      if (!accepting) {
-        // 開始前でも出題だけ進める
-        nextStation();
-        return;
-      }
-      nextStation();
-    });
-
+    document.getElementById("btnSkip").addEventListener("click", () => nextStation());
     document.getElementById("btnReset").addEventListener("click", resetAll);
 
     // ---- Helpers ----
@@ -278,22 +218,27 @@
     }
 
     function normalizeRoma(s){
-      // 1) lower
-      // 2) remove spaces/hyphens/underscores/apostrophes/dots
-      // 3) convert full-width alnum to half-width
+      // lower + fullwidth->halfwidth + drop separators
       const fwToHw = (ch) => {
         const code = ch.charCodeAt(0);
-        // Full-width 0-9 A-Z a-z
         if (code >= 0xFF10 && code <= 0xFF19) return String.fromCharCode(code - 0xFF10 + 0x30);
         if (code >= 0xFF21 && code <= 0xFF3A) return String.fromCharCode(code - 0xFF21 + 0x41);
         if (code >= 0xFF41 && code <= 0xFF5A) return String.fromCharCode(code - 0xFF41 + 0x61);
         return ch;
       };
       return Array.from(String(s))
-        .map(fwToHw)
-        .join("")
+        .map(fwToHw).join("")
         .toLowerCase()
         .replace(/[\s\-_'.]/g,"");
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
     }
 
     function nowMs(){ return performance.now(); }
@@ -308,7 +253,6 @@
       if (!startedAt) return 0;
       const minutes = (nowMs() - startedAt) / 60000;
       if (minutes <= 0) return 0;
-      // WPM = (characters typed / 5) / minutes
       return Math.max(0, Math.round((totalTyped / 5) / minutes));
     }
 
@@ -320,17 +264,186 @@
       elMiss.textContent = String(totalMiss);
     }
 
+    // ---- Kana -> Romaji (表記ゆれを候補生成) ----
+    // 基本：ヘボン寄り + ゆれ（si/shi, ti/chi, tu/tsu, hu/fu, zi/ji など）を許容
+    const MAP = {
+      "あ":["a"],"い":["i"],"う":["u"],"え":["e"],"お":["o"],
+      "か":["ka"],"き":["ki"],"く":["ku"],"け":["ke"],"こ":["ko"],
+      "さ":["sa"],"し":["shi","si"],"す":["su"],"せ":["se"],"そ":["so"],
+      "た":["ta"],"ち":["chi","ti"],"つ":["tsu","tu"],"て":["te"],"と":["to"],
+      "な":["na"],"に":["ni"],"ぬ":["nu"],"ね":["ne"],"の":["no"],
+      "は":["ha"],"ひ":["hi"],"ふ":["fu","hu"],"へ":["he"],"ほ":["ho"],
+      "ま":["ma"],"み":["mi"],"む":["mu"],"め":["me"],"も":["mo"],
+      "や":["ya"],"ゆ":["yu"],"よ":["yo"],
+      "ら":["ra"],"り":["ri"],"る":["ru"],"れ":["re"],"ろ":["ro"],
+      "わ":["wa"],"を":["wo","o"],
+      "ん":["n","nn","n'"],
+
+      "が":["ga"],"ぎ":["gi"],"ぐ":["gu"],"げ":["ge"],"ご":["go"],
+      "ざ":["za"],"じ":["ji","zi"],"ず":["zu"],"ぜ":["ze"],"ぞ":["zo"],
+      "だ":["da"],"ぢ":["ji","di","zi"],"づ":["zu","du"],"で":["de"],"ど":["do"],
+      "ば":["ba"],"び":["bi"],"ぶ":["bu"],"べ":["be"],"ぼ":["bo"],
+      "ぱ":["pa"],"ぴ":["pi"],"ぷ":["pu"],"ぺ":["pe"],"ぽ":["po"],
+
+      "ぁ":["xa","la"],"ぃ":["xi","li"],"ぅ":["xu","lu"],"ぇ":["xe","le"],"ぉ":["xo","lo"],
+      "ゃ":["xya","lya"],"ゅ":["xyu","lyu"],"ょ":["xyo","lyo"],
+
+      "ゔ":["vu"],"ゔぁ":["va"],"ゔぃ":["vi"],"ゔぇ":["ve"],"ゔぉ":["vo"],"ゔゅ":["vyu"],
+
+      "ー":["-"], // 長音（候補生成側で「母音伸ばし」も追加する）
+    };
+
+    const DIG = {
+      "きゃ":["kya"],"きゅ":["kyu"],"きょ":["kyo"],
+      "ぎゃ":["gya"],"ぎゅ":["gyu"],"ぎょ":["gyo"],
+      "しゃ":["sha","sya"],"しゅ":["shu","syu"],"しょ":["sho","syo"],
+      "じゃ":["ja","jya","zya"],"じゅ":["ju","jyu","zyu"],"じょ":["jo","jyo","zyo"],
+      "ちゃ":["cha","tya"],"ちゅ":["chu","tyu"],"ちょ":["cho","tyo"],
+      "にゃ":["nya"],"にゅ":["nyu"],"にょ":["nyo"],
+      "ひゃ":["hya"],"ひゅ":["hyu"],"ひょ":["hyo"],
+      "びゃ":["bya"],"びゅ":["byu"],"びょ":["byo"],
+      "ぴゃ":["pya"],"ぴゅ":["pyu"],"ぴょ":["pyo"],
+      "みゃ":["mya"],"みゅ":["myu"],"みょ":["myo"],
+      "りゃ":["rya"],"りゅ":["ryu"],"りょ":["ryo"],
+
+      "うぁ":["wa"], // うぁ/うぃ/うぇ/うぉ系（駅名の「うぇ」対策）
+      "うぃ":["wi"],"うぇ":["we"],"うぉ":["wo","o"],
+
+      "てぃ":["ti"],"でぃ":["di"],
+      "とぅ":["tu"],"どぅ":["du"],
+      "ふぁ":["fa"],"ふぃ":["fi"],"ふぇ":["fe"],"ふぉ":["fo"],
+      "しぇ":["she","sye"],
+      "ちぇ":["che","tye"],
+      "じぇ":["je","jye","zye"],
+      "てゅ":["tyu"],"でゅ":["dyu"],
+
+      "くぁ":["kwa","qa"],"くぃ":["kwi","qi"],"くぇ":["kwe","qe"],"くぉ":["kwo","qo"],
+      "ぐぁ":["gwa"],"ぐぃ":["gwi"],"ぐぇ":["gwe"],"ぐぉ":["gwo"],
+    };
+
+    function toHiragana(s){
+      // カタカナ -> ひらがな
+      return String(s).replace(/[\u30A1-\u30F6]/g, ch =>
+        String.fromCharCode(ch.charCodeAt(0) - 0x60)
+      );
+    }
+
+    function lastVowel(str){
+      for (let i=str.length-1;i>=0;i--){
+        const c = str[i];
+        if ("aeiou".includes(c)) return c;
+      }
+      return "";
+    }
+
+    function combine(listA, listB, limit=3000){
+      const out = [];
+      for (const a of listA){
+        for (const b of listB){
+          out.push(a + b);
+          if (out.length >= limit) return out;
+        }
+      }
+      return out;
+    }
+
+    function kanaToRomajiCandidates(kana){
+      // ひらがな前提
+      const s = toHiragana(kana);
+
+      let i = 0;
+      let acc = [""];
+
+      while (i < s.length){
+        const ch = s[i];
+
+        // 小さい「っ」: 次の子音を重ねる（次が母音始まりなら xtu/ltu も許容）
+        if (ch === "っ"){
+          const next2 = s.slice(i+1, i+3);
+          const next1 = s.slice(i+1, i+2);
+
+          // 次の音を仮取りして先頭子音を得る
+          const nextOpts = DIG[next2] || MAP[next1] || [];
+          const doubled = [];
+          for (const opt of nextOpts){
+            const c = opt[0];
+            if (c && /[a-z]/.test(c) && !["a","i","u","e","o","n"].includes(c)){
+              doubled.push(c);
+            }
+          }
+
+          let add = [];
+          if (doubled.length){
+            add = Array.from(new Set(doubled));
+            // accに「子音だけ」を追加して、次ループで通常処理させる
+            acc = combine(acc, add.map(x=>x));
+          }else{
+            // フォールバック: xtu/ltu
+            acc = combine(acc, ["xtu","ltu"]);
+          }
+          i += 1;
+          continue;
+        }
+
+        // 2文字拗音など
+        const dig = s.slice(i, i+2);
+        if (DIG[dig]){
+          acc = combine(acc, DIG[dig]);
+          i += 2;
+          continue;
+        }
+
+        // 長音「ー」: "-" と「母音伸ばし」を許容
+        if (ch === "ー"){
+          const withDash = combine(acc, ["-"]);
+          const withVowel = [];
+          for (const a of acc){
+            const v = lastVowel(a);
+            if (v) withVowel.push(a + v);
+          }
+          acc = Array.from(new Set([...withDash, ...withVowel]));
+          i += 1;
+          continue;
+        }
+
+        // 1文字
+        if (MAP[ch]){
+          // 「ん」の特殊：次が母音/やゆよの場合は n' / nn を推奨だが、n単体も残す（実用優先）
+          acc = combine(acc, MAP[ch]);
+          i += 1;
+          continue;
+        }
+
+        // 記号や未知は無視
+        i += 1;
+      }
+
+      // 後処理：セパレータ類を追加許容（表示はセパレータ無しだが、入力では -/_/space を混ぜてもOKにするため）
+      // → 今回は normalizeRoma で落とすので、候補側はそのままでOK（入力側だけ落とす）。
+      return Array.from(new Set(acc)).filter(x=>x.length);
+    }
+
+    function pickDisplayRoma(cands){
+      // 代表表示は「-」を含まない最短を優先（見た目がローマ字っぽい）
+      const sorted = [...cands].sort((a,b)=>{
+        const aDash = a.includes("-") ? 1 : 0;
+        const bDash = b.includes("-") ? 1 : 0;
+        if (aDash !== bDash) return aDash - bDash;
+        return a.length - b.length;
+      });
+      return sorted[0] || "";
+    }
+
+    // ---- Rendering ----
     function renderProgress(){
       const t = target;
       const p = typed;
 
-      // 共通接頭辞（正しく一致している部分）を求める：候補のどれかに一致している前提で、typedがprefixかどうかを見る
-      // ただしtypedが候補のprefixでない場合は最後入力ミス扱い（赤）
+      const isPrefixSome = candidates.some(c => c.startsWith(p));
+
+      // OK部分（最大一致接頭辞）
       const okLen = (() => {
-        // 候補の中で typed が prefix になっているものがあるなら typed 全部OKとして表示
-        const isPrefixSome = candidates.some(c => c.startsWith(p));
         if (isPrefixSome) return p.length;
-        // prefixでない場合：直前までの prefix を最大化
         let best = 0;
         for (const c of candidates){
           const m = Math.min(c.length, p.length);
@@ -344,56 +457,40 @@
       const ok = t.slice(0, okLen);
       const rest = t.slice(okLen);
 
-      // ミス表示（typedがprefixでないとき、直近の1文字を赤に）
       let ng = "";
-      let okShown = ok;
-      let restShown = rest;
-
-      const isPrefixSome = candidates.some(c => c.startsWith(p));
       if (!isPrefixSome && p.length > 0){
-        // 赤は「okLenの次の1文字」相当（ユーザーが打った分を反映したいので、typed側のその文字）
         ng = p.slice(okLen, okLen + 1);
-        // 残りは target をそのまま（視認優先）
       }
 
       elProg.innerHTML =
-        `<span class="ok">${escapeHtml(okShown)}</span>` +
+        `<span class="ok">${escapeHtml(ok)}</span>` +
         (ng ? `<span class="ng">${escapeHtml(ng)}</span>` : ``) +
-        `<span class="rest">${escapeHtml(restShown)}</span>`;
+        `<span class="rest">${escapeHtml(rest)}</span>`;
 
       updateStats();
-    }
-
-    function escapeHtml(s){
-      return String(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
     }
 
     function setStation(st){
       elJp.textContent = st.jp;
 
-      // 表示は「代表」を1つ（最初の候補）にして、入力は候補全部OKにする
-      const primary = st.roma[0];
-      elRoma.textContent = primary;
+      const rawCands = kanaToRomajiCandidates(st.kana);
+      displayRoma = pickDisplayRoma(rawCands);
 
-      candidates = st.roma.map(normalizeRoma);
+      elRoma.textContent = displayRoma;
 
-      // targetはprimaryを正規化したものを描画に使う（見た目はprimaryそのまま）
-      target = normalizeRoma(primary);
+      // 入力判定用：正規化候補
+      candidates = rawCands.map(normalizeRoma);
+
+      // 表示進捗用：代表表示を正規化したもの
+      target = normalizeRoma(displayRoma);
 
       typed = "";
-      lastWasMistake = false;
       renderProgress();
     }
 
     function nextStation(){
       idx++;
       if (idx >= order.length){
-        // 周回
         idx = 0;
         order = shuffle(order);
       }
@@ -422,57 +519,44 @@
       const seq = ["3","2","1","Go"];
       for (let i=0;i<seq.length;i++){
         countText.textContent = seq[i];
-        // "Go" は少し短く
         await sleep(i === seq.length-1 ? 450 : 650);
       }
       overlay.classList.remove("show");
 
-      // 開始
       accepting = true;
       startedAt = nowMs();
       totalTyped = 0;
       totalMiss = 0;
       typed = "";
-      lastWasMistake = false;
 
       elHint.textContent = "";
       renderProgress();
     }
-
     function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
     // ---- Input handling ----
     function isPrintableKey(e){
       if (e.ctrlKey || e.metaKey || e.altKey) return false;
       if (e.key.length !== 1) return false;
-      // allow basic ascii letters/numbers; others are ignored
+      // a-z 0-9 とセパレータ（スペース/ハイフン等）は許可（正規化で落ちる）
       return /[a-zA-Z0-9\-'\. _]/.test(e.key);
     }
 
     function handleChar(ch){
       const key = normalizeRoma(ch);
       if (!key) return;
-
-      // 1文字だけ追加（正規化で記号が落ちる場合は空になる）
       if (key.length !== 1) return;
 
       typed += key;
       totalTyped += 1;
 
       const isPrefixSome = candidates.some(c => c.startsWith(typed));
-      if (!isPrefixSome){
-        totalMiss += 1;
-        lastWasMistake = true;
-      }else{
-        lastWasMistake = false;
-      }
+      if (!isPrefixSome) totalMiss += 1;
 
-      // 完了判定：typed が候補のどれかと完全一致
-      const matched = candidates.find(c => c === typed);
       renderProgress();
 
-      if (matched){
-        // 次へ（少しだけ間を空ける）
+      // 完了：候補と完全一致
+      if (candidates.some(c => c === typed)){
         accepting = false;
         setTimeout(() => {
           accepting = true;
@@ -484,13 +568,11 @@
     function handleBackspace(){
       if (typed.length === 0) return;
       typed = typed.slice(0, -1);
-      // 打鍵数としてはカウントしない（一般的にBackspaceは別扱い）
-      lastWasMistake = false;
       renderProgress();
     }
 
     window.addEventListener("keydown", (e) => {
-      // 開始前：Enterのみ受付（カウントダウン起動）
+      // 開始前：Enterのみ受付
       if (!accepting){
         if (e.key === "Enter"){
           e.preventDefault();
@@ -501,17 +583,14 @@
 
       // 開始後
       if (e.key === "Enter"){
-        // Enterは無効（誤入力防止）
         e.preventDefault();
         return;
       }
-
       if (e.key === "Backspace"){
         e.preventDefault();
         handleBackspace();
         return;
       }
-
       if (isPrintableKey(e)){
         e.preventDefault();
         handleChar(e.key);
