@@ -1,410 +1,77 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>おとでるタイピング</title>
-  <style>
-    :root { --fg:#111; --muted:#666; --bg:#fff; }
-    html,body{ height:100%; }
-    body{
-      margin:0; background:var(--bg); color:var(--fg);
-      font-family: system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .wrap{ width:min(860px, 92vw); text-align:center; }
-    .top{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; margin-bottom:18px;
-    }
-    .pill{
-      border:1px solid #ddd; border-radius:999px;
-      padding:8px 12px; font-size:14px; color:var(--muted);
-      display:inline-flex; gap:10px; align-items:center;
-    }
-    .btn{
-      border:1px solid #111; background:#111; color:#fff;
-      padding:10px 14px; border-radius:12px; font-size:14px;
-      cursor:pointer; user-select:none;
-    }
-    .btn:active{ transform: translateY(1px); }
-    .btn.secondary{ background:#fff; color:#111; }
-    .big{
-      font-size:96px; line-height:1; font-weight:800;
-      letter-spacing:0.02em;
-      margin:22px 0 8px;
-    }
-    .roman{
-      font-size:44px; letter-spacing:0.08em; font-weight:700;
-      margin:0 0 18px;
-      display:inline-flex; gap:10px; justify-content:center;
-    }
-    .roman span{
-      display:inline-block; min-width:24px;
-      padding:6px 10px; border-radius:14px;
-      border:1px solid #eee;
-    }
-    .roman .now{
-      border-color:#111;
-      background:#111; color:#fff;
-    }
-    .hint{ color:var(--muted); font-size:14px; margin-top:10px; }
-    .stats{
-      margin-top:18px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
-    }
-    .stat{
-      border:1px solid #eee; border-radius:14px;
-      padding:10px 12px; min-width:140px;
-      text-align:left;
-    }
-    .stat .k{ font-size:12px; color:var(--muted); }
-    .stat .v{ font-size:22px; font-weight:800; margin-top:4px; }
-    .overlay{
-      position:fixed; inset:0; background:rgba(255,255,255,.92);
-      display:flex; align-items:center; justify-content:center;
-      padding:22px;
-    }
-    .card{
-      width:min(560px, 92vw);
-      border:1px solid #eee; border-radius:22px;
-      padding:20px 18px; background:#fff;
-      box-shadow: 0 10px 30px rgba(0,0,0,.06);
-      text-align:center;
-    }
-    .card h1{ margin:6px 0 10px; font-size:20px; }
-    .card p{ margin:0 0 14px; color:var(--muted); font-size:14px; line-height:1.6; }
-    .row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
-    .count{
-      font-size:64px; font-weight:900; margin:8px 0;
-    }
-    .small{ font-size:12px; color:var(--muted); margin-top:8px; }
-  </style>
+<meta charset="UTF-8">
+<title>おとタイピング</title>
+<style>
+body{
+font-family:sans-serif;
+text-align:center;
+margin-top:120px;
+font-size:80px;
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div class="pill">
-        <b id="modeLabel">50音</b>
-        <span id="progress">0 / 50</span>
-      </div>
-      <div class="pill">
-        <span>音:</span><b id="soundState">LOCK</b>
-      </div>
-      <div style="display:flex; gap:10px;">
-        <button class="btn secondary" id="toggleMode">行: 全部</button>
-        <button class="btn" id="restart">リスタート</button>
-      </div>
-    </div>
 
-    <div class="big" id="kana">-</div>
-
-    <div class="roman" id="roman"></div>
-
-    <div class="hint" id="hint">Enterでスタート（最初の1回で音を解放）</div>
-
-    <div class="stats">
-      <div class="stat"><div class="k">正解</div><div class="v" id="ok">0</div></div>
-      <div class="stat"><div class="k">ミス</div><div class="v" id="ng">0</div></div>
-      <div class="stat"><div class="k">正確率</div><div class="v" id="acc">100%</div></div>
-    </div>
-  </div>
-
-  <div class="overlay" id="overlay">
-    <div class="card">
-      <h1>おとでるタイピング</h1>
-      <p>最初の操作で音が有効になります。<br>Enter か START を押して開始。</p>
-      <div class="count" id="count">-</div>
-      <div class="row">
-        <button class="btn" id="startBtn">START</button>
-        <button class="btn secondary" id="muteBtn">音なしで開始</button>
-      </div>
-      <div class="small">※ iPhone / Safari は「ユーザー操作がないと音が鳴らない」仕様</div>
-    </div>
-  </div>
+<div id="kana">あ</div>
 
 <script>
-(() => {
-  // ====== DATA ======
-  // 50音（基本）
-  const GOJUON = [
-    ["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],
-    ["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"],
-    ["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"],
-    ["た","ta"],["ち","chi"],["つ","tsu"],["て","te"],["と","to"],
-    ["な","na"],["に","ni"],["ぬ","nu"],["ね","ne"],["の","no"],
-    ["は","ha"],["ひ","hi"],["ふ","fu"],["へ","he"],["ほ","ho"],
-    ["ま","ma"],["み","mi"],["む","mu"],["め","me"],["も","mo"],
-    ["や","ya"],["ゆ","yu"],["よ","yo"],
-    ["ら","ra"],["り","ri"],["る","ru"],["れ","re"],["ろ","ro"],
-    ["わ","wa"],["を","wo"],["ん","n"]
-  ];
 
-  // 行ごと練習（必要なら増やせる）
-  const ROWS = {
-    "あ": GOJUON.slice(0,5),
-    "か": GOJUON.slice(5,10),
-    "さ": GOJUON.slice(10,15),
-    "た": GOJUON.slice(15,20),
-    "な": GOJUON.slice(20,25),
-    "は": GOJUON.slice(25,30),
-    "ま": GOJUON.slice(30,35),
-    "や": GOJUON.slice(35,38),
-    "ら": GOJUON.slice(38,43),
-    "わ": GOJUON.slice(43,46),
-    "ん": [GOJUON[46]]
-  };
+const words = [
+["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],
+["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"],
+["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"]
+]
 
-  // ====== AUDIO (WebAudio: 外部音源なしで確実に鳴る) ======
-  let audioCtx = null;
-  let soundEnabled = true;
+let index=0
+let pos=0
 
-  function ensureAudio() {
-    if (!soundEnabled) return;
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state !== "running") audioCtx.resume();
-    document.getElementById("soundState").textContent = (soundEnabled && audioCtx && audioCtx.state === "running") ? "ON" : "LOCK";
-  }
+let audioCtx=null
 
-  function beep({freq=440, dur=0.08, type="sine", gain=0.06}={}) {
-    if (!soundEnabled) return;
-    ensureAudio();
-    if (!audioCtx || audioCtx.state !== "running") return;
+function beep(f){
+if(!audioCtx){
+audioCtx=new (window.AudioContext||window.webkitAudioContext)()
+}
+const o=audioCtx.createOscillator()
+const g=audioCtx.createGain()
 
-    const t0 = audioCtx.currentTime;
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = type;
-    o.frequency.setValueAtTime(freq, t0);
+o.frequency.value=f
+o.connect(g)
+g.connect(audioCtx.destination)
 
-    g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+g.gain.value=0.1
+o.start()
+o.stop(audioCtx.currentTime+0.1)
+}
 
-    o.connect(g).connect(audioCtx.destination);
-    o.start(t0);
-    o.stop(t0 + dur + 0.02);
-  }
+function next(){
+index++
+if(index>=words.length)index=0
+pos=0
+document.getElementById("kana").textContent=words[index][0]
+}
 
-  function successSound() {
-    // 気持ちいい「カチッ」
-    beep({freq: 660, dur: 0.05, type:"triangle", gain:0.07});
-    setTimeout(()=>beep({freq: 990, dur: 0.06, type:"triangle", gain:0.06}), 55);
-  }
+document.addEventListener("keydown",e=>{
 
-  function missSound() {
-    // 低めの「ブッ」
-    beep({freq: 140, dur: 0.12, type:"square", gain:0.05});
-  }
+let target=words[index][1]
 
-  function fanfare() {
-    // ちょい長めのファンファーレ
-    const seq = [
-      [784, 0], [988, 90], [1175, 180], [1568, 270]
-    ];
-    seq.forEach(([f, d]) => setTimeout(()=>beep({freq:f, dur:0.10, type:"sine", gain:0.06}), d));
-    setTimeout(()=>beep({freq:196, dur:0.18, type:"triangle", gain:0.03}), 40); // 低音土台
-  }
+if(e.key===target[pos]){
+beep(800)
+pos++
 
-  // ====== UI ======
-  const elKana = document.getElementById("kana");
-  const elRoman = document.getElementById("roman");
-  const elHint = document.getElementById("hint");
-  const elOverlay = document.getElementById("overlay");
-  const elCount = document.getElementById("count");
-  const elProgress = document.getElementById("progress");
-  const elModeLabel = document.getElementById("modeLabel");
+if(pos>=target.length){
+next()
+}
 
-  const elOk = document.getElementById("ok");
-  const elNg = document.getElementById("ng");
-  const elAcc = document.getElementById("acc");
+}else{
+beep(200)
+}
 
-  const startBtn = document.getElementById("startBtn");
-  const muteBtn = document.getElementById("muteBtn");
-  const restartBtn = document.getElementById("restart");
-  const toggleModeBtn = document.getElementById("toggleMode");
+})
 
-  // ====== GAME STATE ======
-  let list = [...GOJUON];          // 出題リスト
-  let idx = 0;                    // 何問目
-  let targetRoman = "";           // 今のローマ字
-  let pos = 0;                    // 何文字目
-  let started = false;
-
-  let ok = 0;
-  let ng = 0;
-
-  // mode: "all" or row key
-  const modes = ["all","あ","か","さ","た","な","は","ま","や","ら","わ","ん"];
-  let modeIndex = 0;
-
-  function setMode() {
-    const m = modes[modeIndex];
-    if (m === "all") {
-      list = [...GOJUON];
-      toggleModeBtn.textContent = "行: 全部";
-      elModeLabel.textContent = "50音";
-    } else {
-      list = [...ROWS[m]];
-      toggleModeBtn.textContent = `行: ${m}行`;
-      elModeLabel.textContent = `${m}行`;
-    }
-    resetRun();
-  }
-
-  function resetRun() {
-    idx = 0;
-    ok = 0;
-    ng = 0;
-    updateStats();
-    started = false;
-    elHint.textContent = "Enterでスタート";
-    showOverlay(true);
-    renderQuestion();
-  }
-
-  function showOverlay(show) {
-    elOverlay.style.display = show ? "flex" : "none";
-    elCount.textContent = show ? "-" : "";
-  }
-
-  function updateStats() {
-    elOk.textContent = String(ok);
-    elNg.textContent = String(ng);
-    const total = ok + ng;
-    const acc = total === 0 ? 100 : Math.round((ok / total) * 100);
-    elAcc.textContent = `${acc}%`;
-  }
-
-  function renderQuestion() {
-    const total = list.length;
-    elProgress.textContent = `${Math.min(idx, total)} / ${total}`;
-
-    if (idx >= total) {
-      elKana.textContent = "おわり";
-      elRoman.innerHTML = "";
-      elHint.textContent = "Enterで最初から";
-      fanfare();
-      started = false;
-      return;
-    }
-
-    const [k, r] = list[idx];
-    elKana.textContent = k;
-    targetRoman = r;
-    pos = 0;
-
-    // romaji表示（現在位置をハイライト）
-    elRoman.innerHTML = "";
-    for (let i = 0; i < targetRoman.length; i++) {
-      const sp = document.createElement("span");
-      sp.textContent = targetRoman[i].toUpperCase();
-      if (i === pos) sp.classList.add("now");
-      elRoman.appendChild(sp);
-    }
-  }
-
-  function advanceChar() {
-    // ハイライト移動
-    const spans = elRoman.querySelectorAll("span");
-    spans.forEach(s => s.classList.remove("now"));
-    if (pos < spans.length) spans[pos].classList.add("now");
-  }
-
-  async function countdownAndStart() {
-    // 最初の操作で音解放
-    if (soundEnabled) ensureAudio();
-
-    showOverlay(true);
-    const seq = ["3","2","1","GO"];
-    for (let i=0;i<seq.length;i++){
-      elCount.textContent = seq[i];
-      if (seq[i] === "GO") {
-        beep({freq: 880, dur: 0.08, type:"sine", gain:0.07});
-      } else {
-        beep({freq: 440, dur: 0.06, type:"triangle", gain:0.05});
-      }
-      await new Promise(r=>setTimeout(r, 420));
-    }
-    showOverlay(false);
-    started = true;
-    elHint.textContent = "そのまま打つ";
-    renderQuestion();
-    advanceChar();
-    document.getElementById("soundState").textContent = (soundEnabled && audioCtx && audioCtx.state === "running") ? "ON" : "OFF";
-  }
-
-  function tryStart() {
-    if (started) return;
-    // 終了状態ならリスタート扱い
-    if (idx >= list.length) idx = 0;
-    countdownAndStart();
-  }
-
-  function handleKey(e) {
-    // ESCやCmd系は無視
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
-
-    // 最初のキー操作で音解放（Safari対策）
-    if (soundEnabled) ensureAudio();
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      tryStart();
-      return;
-    }
-
-    if (!started) return;
-    if (idx >= list.length) return;
-
-    const key = e.key.toLowerCase();
-    const expected = targetRoman[pos];
-
-    // 1文字だけの入力を対象
-    if (key.length !== 1) return;
-
-    if (key === expected) {
-      ok++;
-      updateStats();
-      pos++;
-      successSound();
-
-      if (pos >= targetRoman.length) {
-        // 1問クリア
-        idx++;
-        // 行練習は短いので、毎問ちょい良い音
-        if (idx < list.length) {
-          setTimeout(()=>renderQuestion(), 60);
-          setTimeout(()=>advanceChar(), 70);
-        } else {
-          // 終了
-          renderQuestion();
-        }
-      } else {
-        advanceChar();
-      }
-    } else {
-      ng++;
-      updateStats();
-      missSound();
-    }
-  }
-
-  // ====== EVENTS ======
-  document.addEventListener("keydown", handleKey);
-
-  startBtn.addEventListener("click", () => { soundEnabled = true; ensureAudio(); tryStart(); });
-  muteBtn.addEventListener("click", () => { soundEnabled = false; document.getElementById("soundState").textContent = "OFF"; tryStart(); });
-
-  restartBtn.addEventListener("click", () => { resetRun(); });
-
-  toggleModeBtn.addEventListener("click", () => {
-    modeIndex = (modeIndex + 1) % modes.length;
-    setMode();
-  });
-
-  // 初期表示
-  setMode();
-})();
 </script>
+
 </body>
 </html>
