@@ -3,1144 +3,977 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>タイピング練習</title>
+  <title>山手線タイピングゲーム</title>
   <style>
     :root{
       --fg:#111;
       --muted:#666;
-      --subtle:#999;
-      --line:#e9e9e9;
-      --bg:#fff;
-      --bad:#c62828;
-      --good:#0b7a35;
+      --line:#e6e6e6;
+      --accent:#0b57d0;
+      --good:#0a7a2f;
+      --bad:#b3261e;
+      --hi:#fff2b3;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      background:var(--bg);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
       color:var(--fg);
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
-      letter-spacing:.2px;
+      background:#fff;
     }
     .wrap{
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      padding:24px 16px;
-      gap:18px;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 18px 14px 32px;
     }
-    .topbar{
-      width:min(980px, 100%);
+    header{
       display:flex;
-      align-items:center;
-      justify-content:space-between;
       gap:12px;
+      align-items:baseline;
+      justify-content:space-between;
       border-bottom:1px solid var(--line);
       padding-bottom:10px;
+      margin-bottom:14px;
     }
-    .title{
-      font-weight:700;
-      font-size:16px;
-      color:var(--fg);
-    }
-    .controls{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .pill{
-      border:1px solid var(--line);
-      background:#fff;
-      color:var(--fg);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .pill[aria-pressed="true"]{
-      border-color:#bbb;
+    h1{
+      font-size:18px;
+      margin:0;
+      letter-spacing:.02em;
       font-weight:700;
     }
     .hint{
-      font-size:12px;
       color:var(--muted);
+      font-size:12px;
+      margin:0;
       text-align:right;
       line-height:1.4;
     }
 
-    .stage{
-      width:min(980px, 100%);
+    .topbar{
       display:flex;
-      flex-direction:column;
+      flex-wrap:wrap;
+      gap:10px 14px;
       align-items:center;
-      gap:12px;
-      padding-top:6px;
+      justify-content:space-between;
+      margin: 10px 0 14px;
     }
-    .station{
-      text-align:center;
+    .controls{
       display:flex;
-      flex-direction:column;
-      gap:8px;
+      gap:10px;
       align-items:center;
-      width:100%;
+      flex-wrap:wrap;
     }
-    .jp{
-      font-size:44px;
-      font-weight:800;
-      line-height:1.05;
-      text-align:center;
-      word-break:keep-all;
-    }
-    @media (max-width:520px){
-      .jp{font-size:36px}
-    }
-    .roma{
-      font-size:18px;
+    label{
+      font-size:12px;
       color:var(--muted);
-      text-align:center;
-    }
-    .progress{
-      width:100%;
       display:flex;
-      flex-direction:column;
-      align-items:center;
       gap:8px;
-      margin-top:8px;
+      align-items:center;
     }
-    .typedline{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size:18px;
-      text-align:center;
-      line-height:1.5;
-      word-break:break-word;
-      padding:10px 12px;
-      width:min(740px, 100%);
+    select, button{
+      font: inherit;
+      font-size:13px;
+      padding:8px 10px;
       border:1px solid var(--line);
       border-radius:10px;
       background:#fff;
+      color:var(--fg);
     }
-    .typed-ok{color:var(--fg)}
-    .typed-rem{color:var(--subtle)}
-    .typed-bad{
-      color:var(--bad);
-      animation:shake .18s linear 1;
+    button{
+      cursor:pointer;
     }
-    @keyframes shake{
-      0%{transform:translateX(0)}
-      25%{transform:translateX(-4px)}
-      50%{transform:translateX(4px)}
-      75%{transform:translateX(-3px)}
-      100%{transform:translateX(0)}
-    }
-
-    .mini{
-      width:min(740px, 100%);
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      color:var(--muted);
+    button:active{transform:translateY(1px)}
+    .pill{
       font-size:12px;
-    }
-    .mini b{color:var(--fg)}
-    .countdown{
-      font-size:46px;
-      font-weight:900;
-      letter-spacing:1px;
-      height:56px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .bar{
-      width:min(740px, 100%);
-      height:8px;
+      color:var(--muted);
       border:1px solid var(--line);
       border-radius:999px;
-      overflow:hidden;
+      padding:6px 10px;
       background:#fff;
+      white-space:nowrap;
     }
-    .bar > div{
-      height:100%;
-      width:0%;
-      background:#111;
-      transition:width .08s linear;
+
+    .game{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:18px 14px;
+      margin-bottom:14px;
+    }
+    .center{
+      text-align:center;
+    }
+    .station-ja{
+      font-size:34px;
+      margin: 6px 0 6px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+    .station-ro{
+      font-size:18px;
+      margin: 0 0 10px;
+      color:var(--muted);
+      font-weight:600;
+      letter-spacing:.02em;
+    }
+    .typed{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:18px;
+      margin: 4px 0 4px;
+      line-height:1.6;
+      letter-spacing:.02em;
+      word-break:break-all;
+    }
+    .typed .ok{color:var(--good); font-weight:700;}
+    .typed .rest{color:#999}
+    .status{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-top:10px;
+    }
+    .status .box{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:8px 10px;
+      min-width: 120px;
+      text-align:center;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .status .box b{
+      display:block;
+      color:var(--fg);
+      font-size:14px;
+      margin-top:4px;
+    }
+    .countdown{
+      font-size:44px;
+      font-weight:900;
+      letter-spacing:.03em;
+      margin: 8px 0 2px;
+    }
+    .sub{
+      color:var(--muted);
+      font-size:12px;
+      margin:0;
+    }
+
+    .mistypes{
+      margin-top:14px;
+      border-top:1px dashed var(--line);
+      padding-top:12px;
+    }
+    .mistypes h2{
+      font-size:12px;
+      margin:0 0 8px;
+      color:var(--muted);
+      font-weight:700;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+    }
+    .mistypes .log{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:13px;
+      line-height:1.6;
+      white-space:pre-wrap;
+      word-break:break-all;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      min-height:52px;
+    }
+    .mistypes .log .bad{color:var(--bad); font-weight:800}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 860px){
+      .grid{grid-template-columns:1fr}
     }
 
     .panel{
-      width:min(980px, 100%);
-      border-top:1px solid var(--line);
-      padding-top:14px;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:14px;
-    }
-    @media (max-width:860px){
-      .panel{grid-template-columns:1fr}
-    }
-    .card{
       border:1px solid var(--line);
-      border-radius:12px;
-      padding:12px;
-      background:#fff;
+      border-radius:16px;
+      padding:14px;
     }
-    .card h3{
-      margin:0 0 10px 0;
+    .panel h2{
+      margin:0 0 10px;
       font-size:13px;
-      color:var(--muted);
-      font-weight:700;
-      letter-spacing:.4px;
+      font-weight:800;
+      letter-spacing:.03em;
     }
     table{
       width:100%;
       border-collapse:collapse;
       font-size:12px;
     }
-    th,td{
-      padding:7px 6px;
+    th, td{
+      padding:8px 8px;
       border-bottom:1px solid var(--line);
       text-align:left;
       vertical-align:top;
     }
-    th{color:var(--muted); font-weight:700}
-    .right{text-align:right}
-    .good{color:var(--good); font-weight:700}
-    .bad{color:var(--bad); font-weight:700}
-    .muted{color:var(--muted)}
-    .row{
-      display:flex;
+    th{
+      color:var(--muted);
+      font-weight:700;
+      font-size:11px;
+      letter-spacing:.03em;
+    }
+    tr.current{
+      background: var(--hi);
+    }
+    .small{
+      color:var(--muted);
+      font-size:11px;
+    }
+    .resultBox{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
       gap:10px;
-      flex-wrap:wrap;
-      align-items:baseline;
-      justify-content:space-between;
+      margin-top:10px;
     }
-    .big{
-      font-size:20px;
+    @media (max-width: 640px){
+      .resultBox{grid-template-columns:1fr}
+    }
+    .metric{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+    }
+    .metric .k{
+      font-size:11px;
+      color:var(--muted);
+      margin:0;
+    }
+    .metric .v{
+      font-size:18px;
       font-weight:900;
-      letter-spacing:.3px;
+      margin:6px 0 2px;
     }
-    .sub{
-      font-size:12px;
+    .metric .b{
+      font-size:11px;
+      color:var(--muted);
+      margin:0;
+    }
+    canvas{
+      width:100%;
+      height:220px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      display:block;
+    }
+    .muted{
       color:var(--muted);
     }
-    .kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      border:1px solid var(--line);
-      border-bottom-color:#cfcfcf;
-      border-radius:6px;
-      padding:2px 6px;
-      color:var(--fg);
-      background:#fafafa;
-      font-size:12px;
-    }
-    .hidden{display:none !important}
-    canvas{width:100%; height:160px; border:1px solid var(--line); border-radius:12px}
-    /* 直近プレイ（今終わった成績）をランキングで強調 */
-tr.current-run{
-  background:#fff6d6; /* 薄い黄色 */
-}
-tr.current-run td{
-  font-weight:700;
-}
   </style>
 </head>
-
 <body>
   <div class="wrap">
+    <header>
+      <h1>山手線タイピングゲーム</h1>
+      <p class="hint">
+        入力欄なし / キーボードでそのまま入力<br>
+        Enter：開始（3,2,1,Go）
+      </p>
+    </header>
+
     <div class="topbar">
-      <div class="title">タイピング練習</div>
       <div class="controls">
-        <button id="modeOrder" class="pill" aria-pressed="true">順番</button>
-        <button id="modeRandom" class="pill" aria-pressed="false">ランダム</button>
-        <button id="btnReset" class="pill" title="保存データは消しません">リセット</button>
+        <label>
+          モード
+          <select id="mode">
+            <option value="order">順番</option>
+            <option value="random">ランダム</option>
+          </select>
+        </label>
+        <button id="btnStart" type="button">Enterで開始</button>
+        <button id="btnReset" type="button">データ初期化</button>
       </div>
+      <div class="pill" id="bestPill">BEST: -</div>
     </div>
 
-    <div class="stage" id="stagePlay">
-      <div class="hint" id="hintLine">
-        <span class="kbd">Enter</span> で開始（3,2,1,Go）
-        <span class="muted">／</span>
-        途中中断: <span class="kbd">Esc</span>
+    <section class="game">
+      <div class="center" id="idleView">
+        <div class="countdown" style="font-size:28px">Enter を押して開始</div>
+        <p class="sub">山手線30駅 / 1周で結果表示</p>
       </div>
 
-      <div class="countdown" id="countdown"></div>
-
-      <div class="station">
-        <div class="jp" id="jpName">山手線</div>
-        <div class="roma" id="romaName">yamanotesen</div>
+      <div class="center" id="countdownView" style="display:none">
+        <div class="countdown" id="countNum">3</div>
+        <p class="sub">準備</p>
       </div>
 
-      <div class="progress">
-        <div class="bar"><div id="lapBar"></div></div>
-        <div class="typedline" id="typedLine">
-          <span class="typed-ok" id="typedOk"></span><span class="typed-rem" id="typedRem"></span>
+      <div class="center" id="playView" style="display:none">
+        <div class="station-ja" id="stationJa">-</div>
+        <div class="station-ro" id="stationRo">-</div>
+
+        <div class="typed" id="typedLine">
+          <span class="ok"></span><span class="rest"></span>
         </div>
-        <div class="mini" id="miniStats">
-          <div>駅: <b id="idxText">-</b> / 30</div>
-          <div>時間: <b id="timeText">0.00</b>s</div>
-          <div>WPM: <b id="wpmText">0.0</b></div>
-          <div>正確率: <b id="accText">100.0</b>%</div>
-          <div>ミス: <b id="missText">0</b></div>
+
+        <div class="status">
+          <div class="box">進捗<b id="progress">0 / 30</b></div>
+          <div class="box">WPM<b id="liveWpm">0.0</b></div>
+          <div class="box">正確率<b id="liveAcc">100%</b></div>
+          <div class="box">タイム<b id="liveTime">0.0s</b></div>
+        </div>
+
+        <div class="mistypes">
+          <h2>ミスタイプ文字（全部表示）</h2>
+          <div class="log" id="mistypeLog"><span class="muted">まだミスなし</span></div>
         </div>
       </div>
-    </div>
 
-    <div class="stage hidden" id="stageResult">
-      <div class="station">
-        <div class="jp">結果</div>
-        <div class="roma muted">
-          <span class="kbd">Enter</span> でもう一度
+      <div id="resultView" style="display:none">
+        <div class="center">
+          <div class="countdown" style="font-size:26px">結果</div>
+          <p class="sub" id="resultSub">-</p>
         </div>
+
+        <div class="resultBox">
+          <div class="metric">
+            <p class="k">WPM</p>
+            <div class="v" id="resWpm">-</div>
+            <p class="b">BEST: <span id="bestWpm">-</span></p>
+          </div>
+          <div class="metric">
+            <p class="k">正確率</p>
+            <div class="v" id="resAcc">-</div>
+            <p class="b">BEST: <span id="bestAcc">-</span></p>
+          </div>
+          <div class="metric">
+            <p class="k">タイム</p>
+            <div class="v" id="resTime">-</div>
+            <p class="b">BEST: <span id="bestTime">-</span></p>
+          </div>
+        </div>
+
+        <div class="mistypes" style="margin-top:14px">
+          <h2>今回のミスタイプ文字（全部表示）</h2>
+          <div class="log" id="mistypeLogResult"></div>
+        </div>
+
+        <div class="center" style="margin-top:12px">
+          <p class="sub">Enterで次のプレイを開始</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>ランキング TOP10（今回のスコアを色表示）</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>WPM</th>
+              <th>正確率</th>
+              <th>タイム</th>
+              <th>モード</th>
+              <th>日時</th>
+            </tr>
+          </thead>
+          <tbody id="rankBody">
+            <tr><td colspan="6" class="small">まだ記録なし</td></tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="panel">
-        <div class="card">
-          <h3>今回 / BEST</h3>
-          <div class="row">
-            <div>
-              <div class="big" id="resTime">-</div>
-              <div class="sub">合計タイム</div>
-              <div class="sub muted">BEST: <span id="bestTime">-</span></div>
-            </div>
-            <div>
-              <div class="big" id="resWpm">-</div>
-              <div class="sub">WPM</div>
-              <div class="sub muted">BEST: <span id="bestWpm">-</span></div>
-            </div>
-            <div>
-              <div class="big" id="resAcc">-</div>
-              <div class="sub">正確率</div>
-              <div class="sub muted">BEST: <span id="bestAcc">-</span></div>
-            </div>
-            <div>
-              <div class="big" id="resMiss">-</div>
-              <div class="sub">ミス数</div>
-              <div class="sub muted">BEST: <span id="bestMiss">-</span></div>
-            </div>
-          </div>
-          <div style="margin-top:10px" class="sub">
-            ミスタイプ文字（全部）:
-            <span id="mistypeChars" class="muted">-</span>
-          </div>
-        </div>
+        <h2>苦手駅ランキング（ミス率）</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>駅</th>
+              <th>ミス率</th>
+              <th>総ミス</th>
+            </tr>
+          </thead>
+          <tbody id="weakBody">
+            <tr><td colspan="4" class="small">まだ記録なし</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-        <div class="card">
-          <h3>WPM 推移（直近20回）</h3>
-          <canvas id="wpmCanvas" width="900" height="320"></canvas>
-          <div class="sub muted" style="margin-top:8px">
-            モード別に保存（順番 / ランダム）
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>ランキング TOP10（モード別）</h3>
-          <table>
-            <thead>
-              <tr>
-                <th class="right">#</th>
-                <th>日付</th>
-                <th class="right">Time</th>
-                <th class="right">WPM</th>
-                <th class="right">Acc</th>
-                <th class="right">Miss</th>
-              </tr>
-            </thead>
-            <tbody id="rankBody"></tbody>
-          </table>
-        </div>
-
-        <div class="card">
-          <h3>苦手駅ランキング（上位10）</h3>
-          <table>
-            <thead>
-              <tr>
-                <th class="right">#</th>
-                <th>駅</th>
-                <th class="right">Time</th>
-                <th class="right">Miss</th>
-                <th class="right">スコア</th>
-              </tr>
-            </thead>
-            <tbody id="weakBody"></tbody>
-          </table>
-          <div class="sub muted" style="margin-top:8px">
-            スコア = (駅タイム秒) + (ミス×2.5)
-          </div>
+      <div class="panel" style="grid-column: 1 / -1;">
+        <h2>WPM推移（直近20回）</h2>
+        <canvas id="wpmCanvas" width="920" height="260"></canvas>
+        <div class="small" style="margin-top:8px;color:var(--muted)">
+          横軸：回数（古→新） / 縦軸：WPM
         </div>
       </div>
-    </div>
+    </section>
   </div>
 
-<script>
-(() => {
-  // ----------------------------
-  // 山手線30駅（表記 + よみ）
-  // ----------------------------
-  const STATIONS = [
-    { jp:"東京", yomi:"とうきょう" },
-    { jp:"有楽町", yomi:"ゆうらくちょう" },
-    { jp:"新橋", yomi:"しんばし" },
-    { jp:"浜松町", yomi:"はままつちょう" },
-    { jp:"田町", yomi:"たまち" },
-    { jp:"高輪ゲートウェイ", yomi:"たかなわげーとうぇい" },
-    { jp:"品川", yomi:"しながわ" },
-    { jp:"大崎", yomi:"おおさき" },
-    { jp:"五反田", yomi:"ごたんだ" },
-    { jp:"目黒", yomi:"めぐろ" },
-    { jp:"恵比寿", yomi:"えびす" },
-    { jp:"渋谷", yomi:"しぶや" },
-    { jp:"原宿", yomi:"はらじゅく" },
-    { jp:"代々木", yomi:"よよぎ" },
-    { jp:"新宿", yomi:"しんじゅく" },
-    { jp:"新大久保", yomi:"しんおおくぼ" },
-    { jp:"高田馬場", yomi:"たかだのばば" },
-    { jp:"目白", yomi:"めじろ" },
-    { jp:"池袋", yomi:"いけぶくろ" },
-    { jp:"大塚", yomi:"おおつか" },
-    { jp:"巣鴨", yomi:"すがも" },
-    { jp:"駒込", yomi:"こまごめ" },
-    { jp:"田端", yomi:"たばた" },
-    { jp:"西日暮里", yomi:"にしにっぽり" },
-    { jp:"日暮里", yomi:"にっぽり" },
-    { jp:"鶯谷", yomi:"うぐいすだに" },
-    { jp:"上野", yomi:"うえの" },
-    { jp:"御徒町", yomi:"おかちまち" },
-    { jp:"秋葉原", yomi:"あきはばら" },
-    { jp:"神田", yomi:"かんだ" },
-  ];
+  <script>
+    // ====== データ ======
+    const STATIONS = [
+      { ja:"東京", ro:"tokyo" },
+      { ja:"神田", ro:"kanda" },
+      { ja:"秋葉原", ro:"akihabara" },
+      { ja:"御徒町", ro:"okachimachi" },
+      { ja:"上野", ro:"ueno" },
+      { ja:"鶯谷", ro:"uguisudani" },
+      { ja:"日暮里", ro:"nippori" },
+      { ja:"西日暮里", ro:"nishinippori" },
+      { ja:"田端", ro:"tabata" },
+      { ja:"駒込", ro:"komagome" },
+      { ja:"巣鴨", ro:"sugamo" },
+      { ja:"大塚", ro:"otsuka" },
+      { ja:"池袋", ro:"ikebukuro" },
+      { ja:"目白", ro:"mejiro" },
+      { ja:"高田馬場", ro:"takadanobaba" },
+      { ja:"新大久保", ro:"shinokubo" },
+      { ja:"新宿", ro:"shinjuku" },
+      { ja:"代々木", ro:"yoyogi" },
+      { ja:"原宿", ro:"harajuku" },
+      { ja:"渋谷", ro:"shibuya" },
+      { ja:"恵比寿", ro:"ebisu" },
+      { ja:"目黒", ro:"meguro" },
+      { ja:"五反田", ro:"gotanda" },
+      { ja:"大崎", ro:"osaki" },
+      { ja:"品川", ro:"shinagawa" },
+      { ja:"高輪ゲートウェイ", ro:"takanawagateway" },
+      { ja:"田町", ro:"tamachi" },
+      { ja:"浜松町", ro:"hamamatsucho" },
+      { ja:"新橋", ro:"shimbashi" },
+      { ja:"有楽町", ro:"yurakucho" },
+    ];
 
-  // ----------------------------
-  // かな→ローマ字候補（タイピングゲーム方式）
-  // 1) よみ(ひらがな)から候補ローマ字列を複数生成
-  // 2) 入力ごとに prefix で候補を絞る
-  // ----------------------------
-  const MAP = {
-    "あ":["a"], "い":["i"], "う":["u"], "え":["e"], "お":["o"],
-    "か":["ka"], "き":["ki"], "く":["ku"], "け":["ke"], "こ":["ko"],
-    "さ":["sa"], "し":["shi","si"], "す":["su"], "せ":["se"], "そ":["so"],
-    "た":["ta"], "ち":["chi","ti"], "つ":["tsu","tu"], "て":["te"], "と":["to"],
-    "な":["na"], "に":["ni"], "ぬ":["nu"], "ね":["ne"], "の":["no"],
-    "は":["ha"], "ひ":["hi"], "ふ":["fu","hu"], "へ":["he"], "ほ":["ho"],
-    "ま":["ma"], "み":["mi"], "む":["mu"], "め":["me"], "も":["mo"],
-    "や":["ya"], "ゆ":["yu"], "よ":["yo"],
-    "ら":["ra"], "り":["ri"], "る":["ru"], "れ":["re"], "ろ":["ro"],
-    "わ":["wa"], "を":["wo","o"],
-    "ん":["n","nn","n'"],
-
-    "が":["ga"], "ぎ":["gi"], "ぐ":["gu"], "げ":["ge"], "ご":["go"],
-    "ざ":["za"], "じ":["ji","zi"], "ず":["zu"], "ぜ":["ze"], "ぞ":["zo"],
-    "だ":["da"], "ぢ":["ji","di"], "づ":["zu","du"], "で":["de"], "ど":["do"],
-    "ば":["ba"], "び":["bi"], "ぶ":["bu"], "べ":["be"], "ぼ":["bo"],
-    "ぱ":["pa"], "ぴ":["pi"], "ぷ":["pu"], "ぺ":["pe"], "ぽ":["po"],
-
-    "ぁ":["xa","la"], "ぃ":["xi","li"], "ぅ":["xu","lu"], "ぇ":["xe","le"], "ぉ":["xo","lo"],
-    "ゃ":["xya","lya"], "ゅ":["xyu","lyu"], "ょ":["xyo","lyo"],
-    "っ":["xtsu","ltsu","xtu","ltu"],
-
-    "ー":["-"], // 長音（ローマ字入力だと - を許容）
-    "ゔ":["vu"],
-
-    // 記号類（駅名よみに入る可能性が低いが保険）
-    "ゎ":["xwa","lwa"]
-  };
-
-  const DIGRAPHS = {
-    "きゃ":["kya"], "きゅ":["kyu"], "きょ":["kyo"],
-    "ぎゃ":["gya"], "ぎゅ":["gyu"], "ぎょ":["gyo"],
-    "しゃ":["sha","sya"], "しゅ":["shu","syu"], "しょ":["sho","syo"],
-    "じゃ":["ja","jya","zya"], "じゅ":["ju","jyu","zyu"], "じょ":["jo","jyo","zyo"],
-    "ちゃ":["cha","tya"], "ちゅ":["chu","tyu"], "ちょ":["cho","tyo"],
-    "にゃ":["nya"], "にゅ":["nyu"], "にょ":["nyo"],
-    "ひゃ":["hya"], "ひゅ":["hyu"], "ひょ":["hyo"],
-    "びゃ":["bya"], "びゅ":["byu"], "びょ":["byo"],
-    "ぴゃ":["pya"], "ぴゅ":["pyu"], "ぴょ":["pyo"],
-    "みゃ":["mya"], "みゅ":["myu"], "みょ":["myo"],
-    "りゃ":["rya"], "りゅ":["ryu"], "りょ":["ryo"],
-    "ぎぇ":["gye"], "きぇ":["kye"],
-    "しぇ":["she","sye"], "じぇ":["je","jye","zye"],
-    "ちぇ":["che","tye"],
-    "てぃ":["ti"], "でぃ":["di"],
-    "とぅ":["tu"], "どぅ":["du"],
-    "ふぁ":["fa"], "ふぃ":["fi"], "ふぇ":["fe"], "ふぉ":["fo"], "ふゅ":["fyu"],
-    "ゔぁ":["va"], "ゔぃ":["vi"], "ゔぇ":["ve"], "ゔぉ":["vo"], "ゔゅ":["vyu"],
-    "うぁ":["wha"], "うぃ":["wi"], "うぇ":["we"], "うぉ":["who","wo"],
-  };
-
-  function isVowel(ch){ return ch==="a"||ch==="i"||ch==="u"||ch==="e"||ch==="o"; }
-
-  // 促音「っ」: 次のローマ字先頭子音を重ねる候補を生成
-  function withSokuon(nextRoma){
-    const out = [];
-    if (!nextRoma || nextRoma.length === 0) return out;
-    const c = nextRoma[0];
-    if (/[a-z]/.test(c) && !isVowel(c) && c !== "n") out.push(c + nextRoma);
-    // xtsu / ltsu 系は MAP 側でも出す（保険）
-    return out;
-  }
-
-  // memo 付きで候補生成（上限つき）
-  const memo = new Map();
-  function buildCandidates(kana){
-    if (memo.has(kana)) return memo.get(kana);
-
-    // 上限（爆発防止）
-    const LIMIT = 1200;
-
-    const rec = (s) => {
-      if (s.length === 0) return [""];
-
-      const res = [];
-
-      // 2文字（拗音など）
-      if (s.length >= 2){
-        const bi = s.slice(0,2);
-        if (DIGRAPHS[bi]){
-          for (const r1 of DIGRAPHS[bi]){
-            for (const tail of rec(s.slice(2))){
-              res.push(r1 + tail);
-              if (res.length >= LIMIT) return res;
-            }
-          }
-          // DIGRAPH を使った場合でも、単体分解（き + ゃ）も許容
-        }
-      }
-
-      const ch = s[0];
-
-      // 促音の特別処理
-      if (ch === "っ"){
-        // 次が拗音ならそれ優先
-        let nextOptions = [];
-        if (s.length >= 3){
-          const bi = s.slice(1,3);
-          if (DIGRAPHS[bi]) nextOptions = DIGRAPHS[bi];
-        }
-        if (nextOptions.length === 0 && s.length >= 2){
-          const nx = s[1];
-          nextOptions = (MAP[nx] || []);
-        }
-        // 先頭子音重ね
-        for (const nxRoma of nextOptions){
-          for (const doubled of withSokuon(nxRoma)){
-            for (const tail of rec(s.slice(1))){ // 「っ」を消して同じ残りへ（nx の処理は tail 側）
-              // tail は nxRoma から始まるはずなので prefix を置換できない。簡易的に「doubled」を prefix として採用:
-              // tail の先頭 nxRoma と一致する場合に限り置換
-              if (tail.startsWith(nxRoma)){
-                res.push(doubled + tail.slice(nxRoma.length));
-                if (res.length >= LIMIT) return res;
-              }
-            }
-          }
-        }
-        // さらに xtsu/ltsu も許容（通常の MAP で処理）
-      }
-
-      // 通常 1文字
-      const options = MAP[ch] || [];
-      for (const r1 of options){
-        for (const tail of rec(s.slice(1))){
-          // 「ん」の直後が母音/ y の場合の n' は候補側に含めてるので追加処理はしない
-          res.push(r1 + tail);
-          if (res.length >= LIMIT) return res;
-        }
-      }
-
-      return res;
+    const LS_KEYS = {
+      best: "yamanote_best_v1",
+      ranking: "yamanote_ranking_v1",
+      history: "yamanote_history_v1",
+      weak: "yamanote_weak_v1"
     };
 
-    const out = Array.from(new Set(rec(kana))).filter(x => x.length>0);
-    memo.set(kana, out);
-    return out;
-  }
-
-  function bestDisplayRoma(cands){
-    // 画面表示用: 記号/特殊が少ない、短いもの優先
-    const scored = cands.map(s => {
-      const bad = (s.match(/['-]/g)||[]).length;
-      return { s, bad, len:s.length };
-    }).sort((a,b)=> a.bad-b.bad || a.len-b.len || (a.s<b.s?-1:1));
-    return scored[0]?.s || "";
-  }
-
-  // ----------------------------
-  // 状態
-  // ----------------------------
-  const $ = (id) => document.getElementById(id);
-
-  const stagePlay = $("stagePlay");
-  const stageResult = $("stageResult");
-
-  const jpName = $("jpName");
-  const romaName = $("romaName");
-  const typedOk = $("typedOk");
-  const typedRem = $("typedRem");
-  const typedLine = $("typedLine");
-  const countdownEl = $("countdown");
-  const lapBar = $("lapBar");
-
-  const idxText = $("idxText");
-  const timeText = $("timeText");
-  const wpmText = $("wpmText");
-  const accText = $("accText");
-  const missText = $("missText");
-
-  const resTime = $("resTime");
-  const resWpm = $("resWpm");
-  const resAcc = $("resAcc");
-  const resMiss = $("resMiss");
-  const bestTime = $("bestTime");
-  const bestWpm = $("bestWpm");
-  const bestAcc = $("bestAcc");
-  const bestMiss = $("bestMiss");
-  const mistypeChars = $("mistypeChars");
-  const rankBody = $("rankBody");
-  const weakBody = $("weakBody");
-  const wpmCanvas = $("wpmCanvas");
-
-  const modeOrderBtn = $("modeOrder");
-  const modeRandomBtn = $("modeRandom");
-  const btnReset = $("btnReset");
-
-  const MODES = { ORDER:"order", RANDOM:"random" };
-  let mode = MODES.ORDER;
-
-  let run = null; // 実行中のセッション状態
-
-  // ----------------------------
-  // localStorage
-  // ----------------------------
-  const LS = {
-    best: (m)=>`yamanote_best_${m}`,
-    rank: (m)=>`yamanote_rank_${m}`,
-    wpmhist: (m)=>`yamanote_wpmhist_${m}`
-  };
-
-  function loadJSON(key, fallback){
-    try{
-      const v = localStorage.getItem(key);
-      if (!v) return fallback;
-      return JSON.parse(v);
-    }catch{ return fallback; }
-  }
-  function saveJSON(key, obj){
-    localStorage.setItem(key, JSON.stringify(obj));
-  }
-
-  function fmtTime(sec){ return sec.toFixed(2) + "s"; }
-  function fmtWpm(w){ return w.toFixed(1); }
-  function fmtAcc(a){ return a.toFixed(1) + "%"; }
-
-  // ----------------------------
-  // モード切替
-  // ----------------------------
-  function setMode(m){
-    mode = m;
-    modeOrderBtn.setAttribute("aria-pressed", m===MODES.ORDER ? "true":"false");
-    modeRandomBtn.setAttribute("aria-pressed", m===MODES.RANDOM ? "true":"false");
-    if (!run) renderIdle();
-    if (stageResult && !stageResult.classList.contains("hidden")) renderResultPanels(); // モード別表示更新
-  }
-
-  modeOrderBtn.addEventListener("click", ()=> setMode(MODES.ORDER));
-  modeRandomBtn.addEventListener("click", ()=> setMode(MODES.RANDOM));
-
-  btnReset.addEventListener("click", ()=>{
-    if (run) return;
-    renderIdle();
-  });
-
-  // ----------------------------
-  // ゲーム準備
-  // ----------------------------
-  function shuffledStations(){
-    const arr = STATIONS.slice();
-    for (let i=arr.length-1; i>0; i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [arr[i],arr[j]]=[arr[j],arr[i]];
-    }
-    return arr;
-  }
-
-  function newRun(){
-    const list = (mode===MODES.ORDER) ? STATIONS.slice() : shuffledStations();
-    return {
-      mode,
-      list,
-      index:0,
-      started:false,
-      finished:false,
-      countdowning:false,
-      startAt:0,
-      now:0,
-      correct:0,
-      miss:0,
-      mistypes:[], // ミスタイプした文字「全部」
-      // station detail
-      stationStartAt:0,
-      stationTime:0,
-      stationMiss:0,
-      perStation: list.map(s => ({ jp:s.jp, time:0, miss:0, score:0 })),
-      // typing matching
-      yomi:"",
-      candidates:[],
-      typed:""
-    };
-  }
-
-  function renderIdle(){
-    countdownEl.textContent = "";
-    jpName.textContent = "山手線";
-    romaName.textContent = "yamanotesen";
-    typedOk.textContent = "";
-    typedRem.textContent = "Enterで開始";
-    idxText.textContent = "-";
-    timeText.textContent = "0.00";
-    wpmText.textContent = "0.0";
-    accText.textContent = "100.0";
-    missText.textContent = "0";
-    lapBar.style.width = "0%";
-    typedLine.classList.remove("typed-bad");
-  }
-
-  function showPlay(){
-    stagePlay.classList.remove("hidden");
-    stageResult.classList.add("hidden");
-  }
-
-  function showResult(){
-    stagePlay.classList.add("hidden");
-    stageResult.classList.remove("hidden");
-  }
-
-  // ----------------------------
-  // カウントダウン
-  // ----------------------------
-  function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
-  async function startCountdown(){
-    if (!run || run.started || run.countdowning) return;
-    run.countdowning = true;
-    showPlay();
-    countdownEl.textContent = "3";
-    await sleep(650);
-    countdownEl.textContent = "2";
-    await sleep(650);
-    countdownEl.textContent = "1";
-    await sleep(650);
-    countdownEl.textContent = "Go";
-    await sleep(350);
-    countdownEl.textContent = "";
-    run.countdowning = false;
-    beginRun();
-  }
-
-  function beginRun(){
-    run.started = true;
-    run.startAt = performance.now();
-    run.stationStartAt = run.startAt;
-    setStation(0);
-    tick();
-  }
-
-  // ----------------------------
-  // 駅セット
-  // ----------------------------
-  function setStation(i){
-    run.index = i;
-    const st = run.list[i];
-    jpName.textContent = st.jp;
-
-    run.yomi = st.yomi;
-    run.candidates = buildCandidates(run.yomi);
-    const disp = bestDisplayRoma(run.candidates);
-    romaName.textContent = disp;
-
-    run.typed = "";
-    run.stationMiss = 0;
-    run.stationStartAt = performance.now();
-
-    renderTypedLine();
-    renderMini();
-    renderBar();
-  }
-
-  function renderBar(){
-    const pct = (run.index / 30) * 100;
-    lapBar.style.width = pct.toFixed(1) + "%";
-  }
-
-  function renderTypedLine(){
-    // 代表候補から残りを表示（typed は実入力）
-    const cands = run.candidates;
-    const best = bestDisplayRoma(cands) || "";
-    typedOk.textContent = run.typed;
-    // typed が best の prefix じゃない場合でも見た目破綻しないように:
-    typedRem.textContent = best.startsWith(run.typed) ? best.slice(run.typed.length) : "";
-  }
-
-  function calcNow(){
-    if (!run.started) return 0;
-    return (performance.now() - run.startAt) / 1000;
-  }
-
-  function calcWpm(sec){
-    // WPM = (正打鍵/5) / 分
-    const minutes = sec / 60;
-    if (minutes <= 0) return 0;
-    return (run.correct / 5) / minutes;
-  }
-
-  function calcAcc(){
-    const total = run.correct + run.miss;
-    if (total <= 0) return 100;
-    return (run.correct / total) * 100;
-  }
-
-  function renderMini(){
-    const sec = run.started ? calcNow() : 0;
-    timeText.textContent = sec.toFixed(2);
-    const wpm = calcWpm(sec);
-    wpmText.textContent = fmtWpm(wpm);
-    accText.textContent = fmtAcc(calcAcc());
-    missText.textContent = String(run.miss);
-    idxText.textContent = run.started ? String(run.index + 1) : "-";
-  }
-
-  // ----------------------------
-  // 入力処理（入力欄なし）
-  // ----------------------------
-  function normalizeKey(e){
-    // 1文字英数・記号だけ扱う（Enter/Esc は別）
-    if (e.key.length !== 1) return null;
-    const k = e.key.toLowerCase();
-    // ローマ字想定: a-z - ' のみ
-    if (!/[a-z\-']/.test(k)) return null;
-    return k;
-  }
-
-  function handleCorrect(nextTyped){
-    run.typed = nextTyped;
-    run.correct += 1;
-    run.candidates = run.candidates.filter(s => s.startsWith(run.typed));
-    renderTypedLine();
-
-    // 完了判定（候補のいずれかに一致）
-    if (run.candidates.some(s => s === run.typed)){
-      // 駅確定
-      const now = performance.now();
-      const dt = (now - run.stationStartAt) / 1000;
-      const idx = run.index;
-      const miss = run.stationMiss;
-      const score = dt + miss * 2.5;
-      run.perStation[idx] = { jp: run.list[idx].jp, time: dt, miss, score };
-
-      if (idx === 29){
-        finishRun();
-      } else {
-        setStation(idx + 1);
-      }
-    }
-  }
-
-  function handleMiss(ch){
-    run.miss += 1;
-    run.stationMiss += 1;
-    run.mistypes.push(ch);
-
-    // 見た目のフィードバック
-    typedLine.classList.remove("typed-bad");
-    void typedLine.offsetWidth; // reflow
-    typedLine.classList.add("typed-bad");
-
-    renderMini();
-  }
-
-  window.addEventListener("keydown", (e) => {
-    // Enter: 開始 or リスタート
-    if (e.key === "Enter"){
-      e.preventDefault();
-      if (run && run.started && !run.finished) return;
-      if (stageResult && !stageResult.classList.contains("hidden")){
-        startNewGame();
-        startCountdown();
-        return;
-      }
-      if (!run){
-        startNewGame();
-        startCountdown();
-        return;
-      }
-      if (run && !run.started){
-        startCountdown();
-        return;
-      }
-      return;
-    }
-
-    // Esc: 中断（結果は出さず初期へ）
-    if (e.key === "Escape"){
-      if (run && run.started && !run.finished){
-        run = null;
-        renderIdle();
-        showPlay();
-      }
-      return;
-    }
-
-    if (!run || !run.started || run.finished || run.countdowning) return;
-
-    const ch = normalizeKey(e);
-    if (!ch) return;
-
-    e.preventDefault();
-
-    const next = run.typed + ch;
-    const ok = run.candidates.some(s => s.startsWith(next));
-    if (ok) handleCorrect(next);
-    else handleMiss(ch);
-  }, { passive:false });
-
-  // ----------------------------
-  // tick
-  // ----------------------------
-  let rafId = 0;
-  function tick(){
-    if (!run || !run.started || run.finished) return;
-    renderMini();
-    rafId = requestAnimationFrame(tick);
-  }
-
-  // ----------------------------
-  // 終了→結果
-  // ----------------------------
-  function finishRun(){
-    run.finished = true;
-    cancelAnimationFrame(rafId);
-
-    const totalSec = calcNow();
-    const wpm = calcWpm(totalSec);
-    const acc = calcAcc();
-    const miss = run.miss;
-
-    // BEST 更新（項目ごと）
-    const best = loadJSON(LS.best(mode), {
-      time: null, wpm: null, acc: null, miss: null
-    });
-
-    if (best.time === null || totalSec < best.time) best.time = totalSec;
-    if (best.wpm === null || wpm > best.wpm) best.wpm = wpm;
-    if (best.acc === null || acc > best.acc) best.acc = acc;
-    if (best.miss === null || miss < best.miss) best.miss = miss;
-
-    saveJSON(LS.best(mode), best);
-
-    // ランキング TOP10 更新（総合スコア: WPM優先→Acc→Time）
-    // score は比較用（数値が大きいほど良い）
-    const score = (wpm * 1000) + (acc * 10) - (totalSec * 3) - (miss * 20);
-
-    const entry = {
-      date: new Date().toISOString(),
-      time: totalSec,
-      wpm, acc, miss,
-      score
-    };
-
-    const rank = loadJSON(LS.rank(mode), []);
-    rank.push(entry);
-    rank.sort((a,b)=> b.score - a.score);
-    saveJSON(LS.rank(mode), rank.slice(0,10));
-
-    // WPM 履歴（直近20）
-    const hist = loadJSON(LS.wpmhist(mode), []);
-    hist.push({ date: entry.date, wpm });
-    saveJSON(LS.wpmhist(mode), hist.slice(-20));
-
-    // 結果表示
-    resTime.textContent = fmtTime(totalSec);
-    resWpm.textContent = fmtWpm(wpm);
-    resAcc.textContent = fmtAcc(acc);
-    resMiss.textContent = String(miss);
-
-    bestTime.textContent = best.time===null ? "-" : fmtTime(best.time);
-    bestWpm.textContent = best.wpm===null ? "-" : fmtWpm(best.wpm);
-    bestAcc.textContent = best.acc===null ? "-" : fmtAcc(best.acc);
-    bestMiss.textContent = best.miss===null ? "-" : String(best.miss);
-
-    mistypeChars.textContent = (run.mistypes.length ? run.mistypes.join("") : "-");
-
-    showResult();
-    renderResultPanels();
-  }
-
-  function renderResultPanels(){
-    // ランキング
-    const rank = loadJSON(LS.rank(mode), []);
-    rankBody.innerHTML = "";
-    rank.forEach((r, i)=>{
-      const tr = document.createElement("tr");
-      const d = new Date(r.date);
+    function nowJstString(){
+      const d = new Date();
       const yy = d.getFullYear();
       const mm = String(d.getMonth()+1).padStart(2,"0");
       const dd = String(d.getDate()).padStart(2,"0");
       const hh = String(d.getHours()).padStart(2,"0");
       const mi = String(d.getMinutes()).padStart(2,"0");
-      const dateStr = `${yy}-${mm}-${dd} ${hh}:${mi}`;
-      tr.innerHTML = `
-        <td class="right">${i+1}</td>
-        <td>${dateStr}</td>
-        <td class="right">${r.time.toFixed(2)}s</td>
-        <td class="right">${r.wpm.toFixed(1)}</td>
-        <td class="right">${r.acc.toFixed(1)}%</td>
-        <td class="right">${r.miss}</td>
-      `;
-      rankBody.appendChild(tr);
-    });
-    if (rank.length === 0){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="6" class="muted">まだ記録がありません</td>`;
-      rankBody.appendChild(tr);
+      return `${yy}-${mm}-${dd} ${hh}:${mi}`;
     }
 
-    // 苦手駅（今回の run が無い場合は表示できないので、最後の run の perStation を保持）
-    const per = lastPerStation;
-    weakBody.innerHTML = "";
-    if (per && per.length){
-      const sorted = per.slice().sort((a,b)=> b.score - a.score).slice(0,10);
-      sorted.forEach((w,i)=>{
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td class="right">${i+1}</td>
-          <td>${w.jp}</td>
-          <td class="right">${w.time.toFixed(2)}s</td>
-          <td class="right">${w.miss}</td>
-          <td class="right">${w.score.toFixed(2)}</td>
-        `;
-        weakBody.appendChild(tr);
-      });
-    } else {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="5" class="muted">データがありません</td>`;
-      weakBody.appendChild(tr);
+    function loadJSON(key, fallback){
+      try{
+        const v = localStorage.getItem(key);
+        if(!v) return fallback;
+        return JSON.parse(v);
+      }catch(e){
+        return fallback;
+      }
+    }
+    function saveJSON(key, value){
+      localStorage.setItem(key, JSON.stringify(value));
     }
 
-    // WPM グラフ
-    drawWpmGraph();
-  }
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
 
-  let lastPerStation = null;
+    // ====== UI参照 ======
+    const modeSel = document.getElementById("mode");
+    const btnStart = document.getElementById("btnStart");
+    const btnReset = document.getElementById("btnReset");
+    const bestPill = document.getElementById("bestPill");
 
-  function drawWpmGraph(){
+    const idleView = document.getElementById("idleView");
+    const countdownView = document.getElementById("countdownView");
+    const playView = document.getElementById("playView");
+    const resultView = document.getElementById("resultView");
+    const countNum = document.getElementById("countNum");
+
+    const stationJa = document.getElementById("stationJa");
+    const stationRo = document.getElementById("stationRo");
+    const typedLine = document.getElementById("typedLine");
+    const progressEl = document.getElementById("progress");
+    const liveWpmEl = document.getElementById("liveWpm");
+    const liveAccEl = document.getElementById("liveAcc");
+    const liveTimeEl = document.getElementById("liveTime");
+    const mistypeLog = document.getElementById("mistypeLog");
+
+    const resultSub = document.getElementById("resultSub");
+    const resWpm = document.getElementById("resWpm");
+    const resAcc = document.getElementById("resAcc");
+    const resTime = document.getElementById("resTime");
+    const bestWpm = document.getElementById("bestWpm");
+    const bestAcc = document.getElementById("bestAcc");
+    const bestTime = document.getElementById("bestTime");
+    const mistypeLogResult = document.getElementById("mistypeLogResult");
+
+    const rankBody = document.getElementById("rankBody");
+    const weakBody = document.getElementById("weakBody");
+
+    const wpmCanvas = document.getElementById("wpmCanvas");
     const ctx = wpmCanvas.getContext("2d");
-    const W = wpmCanvas.width;
-    const H = wpmCanvas.height;
 
-    // clear
-    ctx.clearRect(0,0,W,H);
+    // ====== ゲーム状態 ======
+    let state = "idle"; // idle | countdown | playing | finished
+    let route = [];
+    let idx = 0;
+    let current = "";
+    let startAt = 0;
 
-    // data
-    const hist = loadJSON(LS.wpmhist(mode), []);
-    const data = hist.slice(-20).map(x=>x.wpm);
-    if (data.length === 0){
-      ctx.fillStyle = "#666";
-      ctx.font = "24px system-ui";
-      ctx.fillText("まだ記録がありません", 24, 64);
-      return;
+    let correctChars = 0;
+    let missCount = 0;
+    let missChars = []; // 全ミスタイプ文字の履歴
+    let missThisStation = 0;
+
+    let tickTimer = null;
+    let countdownTimer = null;
+
+    // ====== 表示更新 ======
+    function showView(which){
+      idleView.style.display = (which==="idle") ? "" : "none";
+      countdownView.style.display = (which==="countdown") ? "" : "none";
+      playView.style.display = (which==="play") ? "" : "none";
+      resultView.style.display = (which==="result") ? "" : "none";
     }
 
-    const max = Math.max(...data, 10);
-    const min = Math.min(...data, 0);
+    function setStation(){
+      const s = route[idx];
+      stationJa.textContent = s.ja;
+      stationRo.textContent = s.ro;
+      current = "";
+      missThisStation = 0;
+      renderTyped();
+      progressEl.textContent = `${idx+1} / ${route.length}`;
+    }
 
-    const pad = 34;
-    const x0 = pad, y0 = H - pad, x1 = W - pad, y1 = pad;
+    function renderTyped(){
+      const target = route[idx].ro;
+      const ok = target.slice(0, current.length);
+      const rest = target.slice(current.length);
+      typedLine.innerHTML = `<span class="ok">${escapeHtml(ok)}</span><span class="rest">${escapeHtml(rest)}</span>`;
+    }
 
-    // axes
-    ctx.strokeStyle = "#e9e9e9";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(x0, y1);
-    ctx.lineTo(x0, y0);
-    ctx.lineTo(x1, y0);
-    ctx.stroke();
+    function renderMistypes(targetEl){
+      if(missChars.length===0){
+        targetEl.innerHTML = `<span class="muted">まだミスなし</span>`;
+        return;
+      }
+      // 1文字ずつ赤で表示（全部表示）
+      targetEl.innerHTML = missChars.map(ch => `<span class="bad">${escapeHtml(ch)}</span>`).join("");
+    }
 
-    // grid + labels (3 lines)
-    ctx.fillStyle = "#666";
-    ctx.font = "18px system-ui";
-    for (let i=0;i<=3;i++){
-      const t = i/3;
-      const y = y0 - (y0-y1)*t;
-      ctx.strokeStyle = "#f1f1f1";
-      ctx.lineWidth = 1;
+    function updateLive(){
+      if(state!=="playing") return;
+      const elapsed = (performance.now() - startAt) / 1000;
+      liveTimeEl.textContent = `${elapsed.toFixed(1)}s`;
+
+      const minutes = elapsed / 60;
+      const wpm = minutes > 0 ? (correctChars/5) / minutes : 0;
+      liveWpmEl.textContent = wpm.toFixed(1);
+
+      const total = correctChars + missCount;
+      const acc = total>0 ? (correctChars/total)*100 : 100;
+      liveAccEl.textContent = `${acc.toFixed(1)}%`;
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // ====== 永続データ（BEST / ranking / history / weak） ======
+    function getBest(){
+      return loadJSON(LS_KEYS.best, { wpm: null, acc: null, time: null });
+    }
+    function setBestIfNeeded(run){
+      const best = getBest();
+      let changed = false;
+
+      if(best.wpm==null || run.wpm > best.wpm){ best.wpm = run.wpm; changed=true; }
+      if(best.acc==null || run.acc > best.acc){ best.acc = run.acc; changed=true; }
+      if(best.time==null || run.time < best.time){ best.time = run.time; changed=true; }
+
+      if(changed) saveJSON(LS_KEYS.best, best);
+      return getBest();
+    }
+
+    function getRanking(){
+      return loadJSON(LS_KEYS.ranking, []);
+    }
+    function saveRanking(runs){
+      saveJSON(LS_KEYS.ranking, runs);
+    }
+    function updateRanking(run){
+      const list = getRanking();
+      list.push(run);
+      list.sort((a,b)=>{
+        // WPM desc → 正確率 desc → タイム asc
+        if(b.wpm !== a.wpm) return b.wpm - a.wpm;
+        if(b.acc !== a.acc) return b.acc - a.acc;
+        return a.time - b.time;
+      });
+      const top10 = list.slice(0,10);
+      saveRanking(top10);
+      return top10;
+    }
+
+    function getHistory(){
+      return loadJSON(LS_KEYS.history, []);
+    }
+    function pushHistory(run){
+      const h = getHistory();
+      h.push(run);
+      const trimmed = h.slice(-50);
+      saveJSON(LS_KEYS.history, trimmed);
+      return trimmed;
+    }
+
+    function getWeak(){
+      // { [stationRo]: { ja, typed, miss } }
+      const w = loadJSON(LS_KEYS.weak, {});
+      // 互換性/欠損補完
+      for(const s of STATIONS){
+        if(!w[s.ro]) w[s.ro] = { ja:s.ja, typed:0, miss:0 };
+        if(!w[s.ro].ja) w[s.ro].ja = s.ja;
+        if(typeof w[s.ro].typed !== "number") w[s.ro].typed = 0;
+        if(typeof w[s.ro].miss !== "number") w[s.ro].miss = 0;
+      }
+      return w;
+    }
+    function saveWeak(w){
+      saveJSON(LS_KEYS.weak, w);
+    }
+
+    function updateWeakForStation(station, typedLen, miss){
+      const w = getWeak();
+      const key = station.ro;
+      if(!w[key]) w[key] = { ja: station.ja, typed:0, miss:0 };
+      w[key].ja = station.ja;
+      w[key].typed += typedLen;
+      w[key].miss += miss;
+      saveWeak(w);
+    }
+
+    // ====== 描画（ランキング / 苦手駅 / WPMグラフ） ======
+    function renderBestPill(){
+      const best = getBest();
+      bestPill.textContent = `BEST: ${best.wpm==null ? "-" : best.wpm.toFixed(1)+" WPM"}`;
+    }
+
+    function renderRanking(currentRunId=null){
+      const list = getRanking();
+      if(list.length===0){
+        rankBody.innerHTML = `<tr><td colspan="6" class="small">まだ記録なし</td></tr>`;
+        return;
+      }
+      rankBody.innerHTML = list.map((r,i)=>{
+        const cls = (currentRunId && r.id===currentRunId) ? "current" : "";
+        const mode = r.mode==="random" ? "ランダム" : "順番";
+        return `
+          <tr class="${cls}">
+            <td>${i+1}</td>
+            <td><b>${r.wpm.toFixed(1)}</b></td>
+            <td>${r.acc.toFixed(1)}%</td>
+            <td>${r.time.toFixed(1)}s</td>
+            <td>${mode}</td>
+            <td class="small">${escapeHtml(r.when)}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderWeak(){
+      const w = getWeak();
+      const arr = Object.keys(w).map(k=>{
+        const it = w[k];
+        const missRate = it.typed>0 ? (it.miss/it.typed) : 0;
+        return { ro:k, ja:it.ja, typed:it.typed, miss:it.miss, rate:missRate };
+      }).filter(x=>x.typed>0);
+
+      if(arr.length===0){
+        weakBody.innerHTML = `<tr><td colspan="4" class="small">まだ記録なし</td></tr>`;
+        return;
+      }
+
+      arr.sort((a,b)=>{
+        if(b.rate!==a.rate) return b.rate-a.rate;
+        return b.miss-a.miss;
+      });
+
+      const top = arr.slice(0,10);
+      weakBody.innerHTML = top.map((x,i)=>`
+        <tr>
+          <td>${i+1}</td>
+          <td><b>${escapeHtml(x.ja)}</b><div class="small">${escapeHtml(x.ro)}</div></td>
+          <td>${(x.rate*100).toFixed(1)}%</td>
+          <td>${x.miss}</td>
+        </tr>
+      `).join("");
+    }
+
+    function drawWpmGraph(){
+      const history = getHistory().slice(-20);
+      const W = wpmCanvas.width;
+      const H = wpmCanvas.height;
+
+      // クリア
+      ctx.clearRect(0,0,W,H);
+
+      // 枠
       ctx.beginPath();
-      ctx.moveTo(x0, y);
-      ctx.lineTo(x1, y);
+      ctx.rect(0,0,W,H);
+      ctx.strokeStyle = "#e6e6e6";
       ctx.stroke();
 
-      const v = (min + (max-min)*t);
-      ctx.fillText(v.toFixed(0), 6, y+6);
-    }
+      if(history.length===0){
+        ctx.fillStyle = "#666";
+        ctx.font = "14px system-ui";
+        ctx.fillText("まだ記録なし", 16, 34);
+        return;
+      }
 
-    // line
-    const n = data.length;
-    const dx = (x1-x0) / Math.max(n-1, 1);
-    const mapY = (v) => {
-      const t = (v - min) / (max - min || 1);
-      return y0 - (y0-y1)*t;
-    };
+      const values = history.map(r=>r.wpm);
+      const max = Math.max(...values, 10);
+      const min = Math.min(...values, 0);
+      const pad = 28;
+      const gx0 = pad, gy0 = pad, gx1 = W-pad, gy1 = H-pad;
 
-    ctx.strokeStyle = "#111";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    for (let i=0;i<n;i++){
-      const x = x0 + dx*i;
-      const y = mapY(data[i]);
-      if (i===0) ctx.moveTo(x,y);
-      else ctx.lineTo(x,y);
-    }
-    ctx.stroke();
+      // グリッド（横3本）
+      ctx.strokeStyle = "#f0f0f0";
+      for(let i=0;i<=3;i++){
+        const y = gy0 + (gy1-gy0)*(i/3);
+        ctx.beginPath();
+        ctx.moveTo(gx0,y);
+        ctx.lineTo(gx1,y);
+        ctx.stroke();
+      }
 
-    // points
-    ctx.fillStyle = "#111";
-    for (let i=0;i<n;i++){
-      const x = x0 + dx*i;
-      const y = mapY(data[i]);
+      // 軸ラベル（maxのみ）
+      ctx.fillStyle = "#666";
+      ctx.font = "12px system-ui";
+      ctx.fillText(`max ${max.toFixed(1)}`, gx0, gy0-10);
+
+      function xAt(i){
+        if(history.length===1) return (gx0+gx1)/2;
+        return gx0 + (gx1-gx0) * (i/(history.length-1));
+      }
+      function yAt(v){
+        const t = (v - min) / (max - min || 1);
+        return gy1 - t*(gy1-gy0);
+      }
+
+      // 線
+      ctx.strokeStyle = "#111";
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(x,y,4,0,Math.PI*2);
-      ctx.fill();
+      history.forEach((r,i)=>{
+        const x = xAt(i);
+        const y = yAt(r.wpm);
+        if(i===0) ctx.moveTo(x,y);
+        else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+
+      // 点
+      ctx.fillStyle = "#111";
+      history.forEach((r,i)=>{
+        const x = xAt(i);
+        const y = yAt(r.wpm);
+        ctx.beginPath();
+        ctx.arc(x,y,3,0,Math.PI*2);
+        ctx.fill();
+      });
     }
 
-    // last label
-    ctx.fillStyle = "#111";
-    ctx.font = "20px system-ui";
-    ctx.fillText(`最新: ${data[n-1].toFixed(1)} WPM`, x0, y1 - 8 < 18 ? 18 : (y1 - 8));
-  }
+    function renderAll(currentRunId=null){
+      renderBestPill();
+      renderRanking(currentRunId);
+      renderWeak();
+      drawWpmGraph();
+    }
 
-  // ----------------------------
-  // 新規開始
-  // ----------------------------
-  function startNewGame(){
-    run = newRun();
-    lastPerStation = null;
-    renderIdle();
-    showPlay();
-  }
+    // ====== ゲーム開始/終了 ======
+    function startCountdown(){
+      if(state==="countdown" || state==="playing") return;
+      state = "countdown";
+      showView("countdown");
 
-  // 結果の苦手駅用に、終了時に保持
-  const _finishRun = finishRun;
-  finishRun = function(){
-    if (run) lastPerStation = run.perStation.slice();
-    _finishRun();
-  };
+      let n = 3;
+      countNum.textContent = String(n);
 
-  // 初期表示
-  renderIdle();
-  showPlay();
+      if(countdownTimer) clearInterval(countdownTimer);
+      countdownTimer = setInterval(()=>{
+        n--;
+        if(n>0){
+          countNum.textContent = String(n);
+        }else if(n===0){
+          countNum.textContent = "Go";
+        }else{
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+          startGame();
+        }
+      }, 700);
+    }
 
-})();
-</script>
+    function startGame(){
+      const mode = modeSel.value;
+      route = (mode==="random") ? shuffle(STATIONS) : STATIONS.slice();
+      idx = 0;
+      correctChars = 0;
+      missCount = 0;
+      missChars = [];
+      missThisStation = 0;
+
+      state = "playing";
+      showView("play");
+
+      setStation();
+      renderMistypes(mistypeLog);
+
+      startAt = performance.now();
+
+      if(tickTimer) clearInterval(tickTimer);
+      tickTimer = setInterval(updateLive, 120);
+      updateLive();
+    }
+
+    function finishGame(){
+      state = "finished";
+      if(tickTimer) clearInterval(tickTimer);
+      tickTimer = null;
+
+      const elapsed = (performance.now() - startAt)/1000;
+      const minutes = elapsed/60;
+      const wpm = minutes>0 ? (correctChars/5)/minutes : 0;
+      const total = correctChars + missCount;
+      const acc = total>0 ? (correctChars/total)*100 : 100;
+
+      const run = {
+        id: Date.now(),
+        when: nowJstString(),
+        mode: modeSel.value,
+        wpm: Number(wpm.toFixed(1)),
+        acc: Number(acc.toFixed(1)),
+        time: Number(elapsed.toFixed(1)),
+      };
+
+      // 保存：BEST / ranking / history
+      const best = setBestIfNeeded(run);
+      const ranking = updateRanking(run);
+      pushHistory(run);
+
+      // 結果表示
+      showView("result");
+      resultSub.textContent = `モード：${run.mode==="random"?"ランダム":"順番"} / 30駅`;
+
+      resWpm.textContent = `${run.wpm.toFixed(1)}`;
+      resAcc.textContent = `${run.acc.toFixed(1)}%`;
+      resTime.textContent = `${run.time.toFixed(1)}s`;
+
+      bestWpm.textContent = best.wpm==null ? "-" : `${best.wpm.toFixed(1)}`;
+      bestAcc.textContent = best.acc==null ? "-" : `${best.acc.toFixed(1)}%`;
+      bestTime.textContent = best.time==null ? "-" : `${best.time.toFixed(1)}s`;
+
+      renderMistypes(mistypeLogResult);
+
+      // ランキングで今回分を色表示
+      renderAll(run.id);
+    }
+
+    function completeStationAndNext(){
+      const s = route[idx];
+      // 苦手駅統計（駅ごとに typed と miss を蓄積）
+      updateWeakForStation(s, s.ro.length, missThisStation);
+
+      idx++;
+      if(idx >= route.length){
+        finishGame();
+        return;
+      }
+      setStation();
+    }
+
+    // ====== キー入力（入力欄なし） ======
+    function isTypeKey(e){
+      if(e.ctrlKey || e.metaKey || e.altKey) return false;
+      const k = e.key;
+      if(k.length !== 1) return false;
+      return /^[a-z\-]$/i.test(k);
+    }
+
+    function onKeyDown(e){
+      if(e.key === "Enter"){
+        e.preventDefault();
+        startCountdown();
+        return;
+      }
+
+      if(state !== "playing") return;
+
+      if(e.key === "Backspace"){
+        // Backspaceで入力は戻せる（ミス履歴は消さない）
+        e.preventDefault();
+        if(current.length>0){
+          current = current.slice(0,-1);
+          renderTyped();
+        }
+        return;
+      }
+
+      if(!isTypeKey(e)) return;
+
+      const ch = e.key.toLowerCase();
+      const target = route[idx].ro;
+      const expected = target[current.length];
+
+      if(ch === expected){
+        current += ch;
+        correctChars++;
+        renderTyped();
+        if(current.length === target.length){
+          completeStationAndNext();
+        }
+      }else{
+        // ミスタイプ文字は全部表示（削除/上書きしない）
+        missCount++;
+        missThisStation++;
+        missChars.push(ch);
+        renderMistypes(mistypeLog);
+      }
+    }
+
+    // ====== 初期化 ======
+    function resetData(){
+      if(!confirm("保存データ（BEST/ランキング/履歴/苦手駅）を初期化します。よろしいですか？")) return;
+      localStorage.removeItem(LS_KEYS.best);
+      localStorage.removeItem(LS_KEYS.ranking);
+      localStorage.removeItem(LS_KEYS.history);
+      localStorage.removeItem(LS_KEYS.weak);
+      renderAll(null);
+      if(state!=="playing"){
+        state="idle";
+        showView("idle");
+      }
+    }
+
+    btnStart.addEventListener("click", startCountdown);
+    btnReset.addEventListener("click", resetData);
+    window.addEventListener("keydown", onKeyDown, { passive:false });
+
+    // ====== 初回描画 ======
+    renderAll(null);
+    showView("idle");
+  </script>
 </body>
 </html>
