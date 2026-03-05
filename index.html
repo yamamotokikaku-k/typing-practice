@@ -236,9 +236,7 @@ function beepAt(freq, durSec, whenSec, gain = 0.03) {
   osc.start(whenSec);
   osc.stop(whenSec + durSec);
 } 
-  
-  // クリックノイズ防止の短いフェード
-  const a = 0.002;
+ 
   g.gain.setValueAtTime(0.00001, whenSec);
   g.gain.exponentialRampToValueAtTime(gain, whenSec + a);
   g.gain.exponentialRampToValueAtTime(0.00001, whenSec + durSec);
