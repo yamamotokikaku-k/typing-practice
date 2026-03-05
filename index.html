@@ -237,16 +237,6 @@ function beepAt(freq, durSec, whenSec, gain = 0.03) {
   osc.stop(whenSec + durSec);
 } 
  
-  g.gain.setValueAtTime(0.00001, whenSec);
-  g.gain.exponentialRampToValueAtTime(gain, whenSec + a);
-  g.gain.exponentialRampToValueAtTime(0.00001, whenSec + durSec);
-
-  osc.connect(g);
-  g.connect(audioCtx.destination);
-
-  osc.start(whenSec);
-  osc.stop(whenSec + durSec + 0.01);
-}  
 
   // ========= Finger map =========
   // LP=左小指 LR=左薬指 LM=左中指 LI=左人差し指 / RP=右小指 RR=右薬指 RM=右中指 RI=右人差し指 / TH=親指
