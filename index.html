@@ -90,9 +90,46 @@
       z-index:10;
     }
     .overlay.show{display:flex}
+    .panel{
+      width:min(520px, calc(100vw - 36px));
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      padding:18px 16px;
+      box-sizing:border-box;
+    }
     .count{text-align:center;}
     .count .big{font-size:84px;font-weight:900;line-height:1;margin:0;}
     .count .sub{margin:12px 0 0;font-size:12px;color:var(--muted);}
+
+    .resultTitle{
+      margin:0 0 10px;
+      font-size:16px;
+      font-weight:800;
+      text-align:center;
+    }
+    .resultGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .resultItem{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 10px;
+      text-align:center;
+    }
+    .resultItem .k{font-size:12px;color:var(--muted);margin:0 0 4px;}
+    .resultItem .v{font-size:20px;font-weight:900;margin:0;}
+    .resultActions{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+
     footer{
       margin-top:auto;
       padding-top:14px;
@@ -109,6 +146,7 @@
       <h1>タイピング練習</h1>
       <div class="meta">
         <span>駅: <b id="statIndex">1</b>/<span id="statTotal">30</span></span>
+        <span>経過: <b id="statTime">0:00</b></span>
         <span>正確率: <b id="statAcc">100</b>%</span>
         <span>WPM: <b id="statWpm">0</b></span>
         <span>ミス: <b id="statMiss">0</b></span>
@@ -134,15 +172,48 @@
     <footer>入力欄なし（キーボード入力のみ）</footer>
   </div>
 
-  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="countdown">
+  <!-- Countdown overlay -->
+  <div class="overlay" id="overlayCountdown" role="dialog" aria-modal="true" aria-label="countdown">
     <div class="count">
       <p class="big" id="countText">3</p>
       <p class="sub">開始前は入力を受け付けません</p>
     </div>
   </div>
 
+  <!-- Result overlay -->
+  <div class="overlay" id="overlayResult" role="dialog" aria-modal="true" aria-label="result">
+    <div class="panel">
+      <p class="resultTitle">結果（山手線一周）</p>
+
+      <div class="resultGrid">
+        <div class="resultItem">
+          <p class="k">タイム</p>
+          <p class="v" id="resTime">0:00</p>
+        </div>
+        <div class="resultItem">
+          <p class="k">正確率</p>
+          <p class="v" id="resAcc">100%</p>
+        </div>
+        <div class="resultItem">
+          <p class="k">WPM</p>
+          <p class="v" id="resWpm">0</p>
+        </div>
+        <div class="resultItem">
+          <p class="k">ミス</p>
+          <p class="v" id="resMiss">0</p>
+        </div>
+      </div>
+
+      <div class="resultActions">
+        <button id="btnRestart" type="button">もう一周</button>
+        <button id="btnClose" type="button">閉じる</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // 山手線（30駅）: かな読み → ローマ字打ち（複数表記ゆれ対応）
+    // 山手線（30駅）: かな読み → ローマ字打ち
+    // ※「一周」扱いにするため、順番は固定（この配列順）
     const STATIONS = [
       { jp:"東京",       kana:"とうきょう" },
       { jp:"有楽町",     kana:"ゆうらくちょう" },
@@ -177,18 +248,20 @@
     ];
 
     // ---- State ----
-    let order = [];
     let idx = 0;
 
     let accepting = false;     // 入力受付中
-    let startedAt = null;      // 計測開始（Goの瞬間）
+    let startedAt = null;      // Goの瞬間
+    let finishedAt = null;     // 終了時刻
     let totalTyped = 0;        // 打鍵数（正誤含む）
     let totalMiss = 0;         // ミス数
 
-    let displayRoma = "";      // 画面表示用（代表ローマ字）
-    let target = "";           // 表示用の正規化文字列
-    let candidates = [];       // 正規化済み候補（ローマ字入力の表記ゆれ）
+    let displayRoma = "";      // 表示用（代表ローマ字）
+    let target = "";           // 表示進捗用（正規化）
+    let candidates = [];       // 入力判定用（正規化済み候補）
     let typed = "";            // 正規化済み入力
+
+    let tickTimer = null;      // 経過表示更新
 
     // ---- DOM ----
     const elJp = document.getElementById("jp");
@@ -198,27 +271,38 @@
 
     const elIdx = document.getElementById("statIndex");
     const elTotal = document.getElementById("statTotal");
+    const elTime = document.getElementById("statTime");
     const elAcc = document.getElementById("statAcc");
     const elWpm = document.getElementById("statWpm");
     const elMiss = document.getElementById("statMiss");
 
-    const overlay = document.getElementById("overlay");
+    const overlayCountdown = document.getElementById("overlayCountdown");
     const countText = document.getElementById("countText");
 
-    document.getElementById("btnSkip").addEventListener("click", () => nextStation());
+    const overlayResult = document.getElementById("overlayResult");
+    const resTime = document.getElementById("resTime");
+    const resAcc = document.getElementById("resAcc");
+    const resWpm = document.getElementById("resWpm");
+    const resMiss = document.getElementById("resMiss");
+
+    document.getElementById("btnSkip").addEventListener("click", () => {
+      if (!accepting) { nextStation(); return; }
+      nextStation();
+    });
     document.getElementById("btnReset").addEventListener("click", resetAll);
 
-    // ---- Helpers ----
-    function shuffle(a){
-      for (let i=a.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [a[i],a[j]]=[a[j],a[i]];
-      }
-      return a;
-    }
+    document.getElementById("btnRestart").addEventListener("click", () => {
+      overlayResult.classList.remove("show");
+      resetAll();
+      // すぐ開始したいなら次行を有効化
+      // startCountdown();
+    });
+    document.getElementById("btnClose").addEventListener("click", () => {
+      overlayResult.classList.remove("show");
+    });
 
+    // ---- Helpers ----
     function normalizeRoma(s){
-      // lower + fullwidth->halfwidth + drop separators
       const fwToHw = (ch) => {
         const code = ch.charCodeAt(0);
         if (code >= 0xFF10 && code <= 0xFF19) return String.fromCharCode(code - 0xFF10 + 0x30);
@@ -243,6 +327,20 @@
 
     function nowMs(){ return performance.now(); }
 
+    function formatMs(ms){
+      ms = Math.max(0, Math.round(ms));
+      const totalSec = Math.floor(ms / 1000);
+      const m = Math.floor(totalSec / 60);
+      const s = totalSec % 60;
+      return `${m}:${String(s).padStart(2,"0")}`;
+    }
+
+    function elapsedMs(){
+      if (!startedAt) return 0;
+      const end = finishedAt ?? nowMs();
+      return end - startedAt;
+    }
+
     function calcAcc(){
       if (totalTyped === 0) return 100;
       const ok = totalTyped - totalMiss;
@@ -251,21 +349,29 @@
 
     function calcWpm(){
       if (!startedAt) return 0;
-      const minutes = (nowMs() - startedAt) / 60000;
+      const minutes = elapsedMs() / 60000;
       if (minutes <= 0) return 0;
       return Math.max(0, Math.round((totalTyped / 5) / minutes));
     }
 
     function updateStats(){
-      elIdx.textContent = String(Math.min(idx+1, order.length));
-      elTotal.textContent = String(order.length);
+      elIdx.textContent = String(Math.min(idx+1, STATIONS.length));
+      elTotal.textContent = String(STATIONS.length);
+      elTime.textContent = formatMs(elapsedMs());
       elAcc.textContent = String(calcAcc());
       elWpm.textContent = String(calcWpm());
       elMiss.textContent = String(totalMiss);
     }
 
-    // ---- Kana -> Romaji (表記ゆれを候補生成) ----
-    // 基本：ヘボン寄り + ゆれ（si/shi, ti/chi, tu/tsu, hu/fu, zi/ji など）を許容
+    function startTick(){
+      stopTick();
+      tickTimer = setInterval(updateStats, 200);
+    }
+    function stopTick(){
+      if (tickTimer){ clearInterval(tickTimer); tickTimer = null; }
+    }
+
+    // ---- Kana -> Romaji candidates ----
     const MAP = {
       "あ":["a"],"い":["i"],"う":["u"],"え":["e"],"お":["o"],
       "か":["ka"],"き":["ki"],"く":["ku"],"け":["ke"],"こ":["ko"],
@@ -278,21 +384,16 @@
       "ら":["ra"],"り":["ri"],"る":["ru"],"れ":["re"],"ろ":["ro"],
       "わ":["wa"],"を":["wo","o"],
       "ん":["n","nn","n'"],
-
       "が":["ga"],"ぎ":["gi"],"ぐ":["gu"],"げ":["ge"],"ご":["go"],
       "ざ":["za"],"じ":["ji","zi"],"ず":["zu"],"ぜ":["ze"],"ぞ":["zo"],
       "だ":["da"],"ぢ":["ji","di","zi"],"づ":["zu","du"],"で":["de"],"ど":["do"],
       "ば":["ba"],"び":["bi"],"ぶ":["bu"],"べ":["be"],"ぼ":["bo"],
       "ぱ":["pa"],"ぴ":["pi"],"ぷ":["pu"],"ぺ":["pe"],"ぽ":["po"],
-
       "ぁ":["xa","la"],"ぃ":["xi","li"],"ぅ":["xu","lu"],"ぇ":["xe","le"],"ぉ":["xo","lo"],
       "ゃ":["xya","lya"],"ゅ":["xyu","lyu"],"ょ":["xyo","lyo"],
-
-      "ゔ":["vu"],"ゔぁ":["va"],"ゔぃ":["vi"],"ゔぇ":["ve"],"ゔぉ":["vo"],"ゔゅ":["vyu"],
-
-      "ー":["-"], // 長音（候補生成側で「母音伸ばし」も追加する）
+      "ゔ":["vu"],
+      "ー":["-"],
     };
-
     const DIG = {
       "きゃ":["kya"],"きゅ":["kyu"],"きょ":["kyo"],
       "ぎゃ":["gya"],"ぎゅ":["gyu"],"ぎょ":["gyo"],
@@ -305,29 +406,20 @@
       "ぴゃ":["pya"],"ぴゅ":["pyu"],"ぴょ":["pyo"],
       "みゃ":["mya"],"みゅ":["myu"],"みょ":["myo"],
       "りゃ":["rya"],"りゅ":["ryu"],"りょ":["ryo"],
-
-      "うぁ":["wa"], // うぁ/うぃ/うぇ/うぉ系（駅名の「うぇ」対策）
       "うぃ":["wi"],"うぇ":["we"],"うぉ":["wo","o"],
-
       "てぃ":["ti"],"でぃ":["di"],
       "とぅ":["tu"],"どぅ":["du"],
       "ふぁ":["fa"],"ふぃ":["fi"],"ふぇ":["fe"],"ふぉ":["fo"],
       "しぇ":["she","sye"],
       "ちぇ":["che","tye"],
       "じぇ":["je","jye","zye"],
-      "てゅ":["tyu"],"でゅ":["dyu"],
-
-      "くぁ":["kwa","qa"],"くぃ":["kwi","qi"],"くぇ":["kwe","qe"],"くぉ":["kwo","qo"],
-      "ぐぁ":["gwa"],"ぐぃ":["gwi"],"ぐぇ":["gwe"],"ぐぉ":["gwo"],
     };
 
     function toHiragana(s){
-      // カタカナ -> ひらがな
       return String(s).replace(/[\u30A1-\u30F6]/g, ch =>
         String.fromCharCode(ch.charCodeAt(0) - 0x60)
       );
     }
-
     function lastVowel(str){
       for (let i=str.length-1;i>=0;i--){
         const c = str[i];
@@ -335,7 +427,6 @@
       }
       return "";
     }
-
     function combine(listA, listB, limit=3000){
       const out = [];
       for (const a of listA){
@@ -346,23 +437,17 @@
       }
       return out;
     }
-
     function kanaToRomajiCandidates(kana){
-      // ひらがな前提
       const s = toHiragana(kana);
-
       let i = 0;
       let acc = [""];
 
       while (i < s.length){
         const ch = s[i];
 
-        // 小さい「っ」: 次の子音を重ねる（次が母音始まりなら xtu/ltu も許容）
         if (ch === "っ"){
           const next2 = s.slice(i+1, i+3);
           const next1 = s.slice(i+1, i+2);
-
-          // 次の音を仮取りして先頭子音を得る
           const nextOpts = DIG[next2] || MAP[next1] || [];
           const doubled = [];
           for (const opt of nextOpts){
@@ -371,21 +456,15 @@
               doubled.push(c);
             }
           }
-
-          let add = [];
           if (doubled.length){
-            add = Array.from(new Set(doubled));
-            // accに「子音だけ」を追加して、次ループで通常処理させる
-            acc = combine(acc, add.map(x=>x));
+            acc = combine(acc, Array.from(new Set(doubled)));
           }else{
-            // フォールバック: xtu/ltu
             acc = combine(acc, ["xtu","ltu"]);
           }
           i += 1;
           continue;
         }
 
-        // 2文字拗音など
         const dig = s.slice(i, i+2);
         if (DIG[dig]){
           acc = combine(acc, DIG[dig]);
@@ -393,7 +472,6 @@
           continue;
         }
 
-        // 長音「ー」: "-" と「母音伸ばし」を許容
         if (ch === "ー"){
           const withDash = combine(acc, ["-"]);
           const withVowel = [];
@@ -406,25 +484,18 @@
           continue;
         }
 
-        // 1文字
         if (MAP[ch]){
-          // 「ん」の特殊：次が母音/やゆよの場合は n' / nn を推奨だが、n単体も残す（実用優先）
           acc = combine(acc, MAP[ch]);
           i += 1;
           continue;
         }
 
-        // 記号や未知は無視
         i += 1;
       }
-
-      // 後処理：セパレータ類を追加許容（表示はセパレータ無しだが、入力では -/_/space を混ぜてもOKにするため）
-      // → 今回は normalizeRoma で落とすので、候補側はそのままでOK（入力側だけ落とす）。
       return Array.from(new Set(acc)).filter(x=>x.length);
     }
 
     function pickDisplayRoma(cands){
-      // 代表表示は「-」を含まない最短を優先（見た目がローマ字っぽい）
       const sorted = [...cands].sort((a,b)=>{
         const aDash = a.includes("-") ? 1 : 0;
         const bDash = b.includes("-") ? 1 : 0;
@@ -434,14 +505,12 @@
       return sorted[0] || "";
     }
 
-    // ---- Rendering ----
+    // ---- Rendering / Station ----
     function renderProgress(){
       const t = target;
       const p = typed;
 
       const isPrefixSome = candidates.some(c => c.startsWith(p));
-
-      // OK部分（最大一致接頭辞）
       const okLen = (() => {
         if (isPrefixSome) return p.length;
         let best = 0;
@@ -475,59 +544,86 @@
 
       const rawCands = kanaToRomajiCandidates(st.kana);
       displayRoma = pickDisplayRoma(rawCands);
-
       elRoma.textContent = displayRoma;
 
-      // 入力判定用：正規化候補
       candidates = rawCands.map(normalizeRoma);
-
-      // 表示進捗用：代表表示を正規化したもの
       target = normalizeRoma(displayRoma);
 
       typed = "";
       renderProgress();
     }
 
+    function finishLap(){
+      accepting = false;
+      finishedAt = nowMs();
+      stopTick();
+      updateStats();
+
+      resTime.textContent = formatMs(elapsedMs());
+      resAcc.textContent = `${calcAcc()}%`;
+      resWpm.textContent = String(calcWpm());
+      resMiss.textContent = String(totalMiss);
+
+      overlayResult.classList.add("show");
+      elHint.innerHTML = `<span class="kbd">Enter</span> で開始`;
+    }
+
     function nextStation(){
+      // 既に終了しているなら進めない
+      if (finishedAt) return;
+
       idx++;
-      if (idx >= order.length){
-        idx = 0;
-        order = shuffle(order);
+
+      if (idx >= STATIONS.length){
+        // 一周完了
+        finishLap();
+        return;
       }
-      setStation(order[idx]);
+
+      setStation(STATIONS[idx]);
       updateStats();
     }
 
     function resetAll(){
-      order = shuffle([...STATIONS]);
       idx = 0;
-
       accepting = false;
       startedAt = null;
+      finishedAt = null;
       totalTyped = 0;
       totalMiss = 0;
+      typed = "";
 
-      setStation(order[idx]);
+      overlayResult.classList.remove("show");
+      stopTick();
+
+      setStation(STATIONS[idx]);
       elHint.innerHTML = `<span class="kbd">Enter</span> で開始`;
       updateStats();
     }
 
     // ---- Countdown ----
     async function startCountdown(){
+      if (finishedAt) return; // 終了後はリスタートで
       accepting = false;
-      overlay.classList.add("show");
+
+      overlayCountdown.classList.add("show");
       const seq = ["3","2","1","Go"];
       for (let i=0;i<seq.length;i++){
         countText.textContent = seq[i];
         await sleep(i === seq.length-1 ? 450 : 650);
       }
-      overlay.classList.remove("show");
+      overlayCountdown.classList.remove("show");
 
       accepting = true;
-      startedAt = nowMs();
-      totalTyped = 0;
-      totalMiss = 0;
-      typed = "";
+
+      // 初回スタート時のみ計測開始（途中駅でEnterを押しても無視する設計）
+      if (!startedAt){
+        startedAt = nowMs();
+        startTick();
+        totalTyped = 0;
+        totalMiss = 0;
+        typed = "";
+      }
 
       elHint.textContent = "";
       renderProgress();
@@ -538,7 +634,6 @@
     function isPrintableKey(e){
       if (e.ctrlKey || e.metaKey || e.altKey) return false;
       if (e.key.length !== 1) return false;
-      // a-z 0-9 とセパレータ（スペース/ハイフン等）は許可（正規化で落ちる）
       return /[a-zA-Z0-9\-'\. _]/.test(e.key);
     }
 
@@ -559,8 +654,11 @@
       if (candidates.some(c => c === typed)){
         accepting = false;
         setTimeout(() => {
-          accepting = true;
-          nextStation();
+          // 終了してなければ次へ
+          if (!finishedAt){
+            accepting = true;
+            nextStation();
+          }
         }, 180);
       }
     }
@@ -572,9 +670,18 @@
     }
 
     window.addEventListener("keydown", (e) => {
-      // 開始前：Enterのみ受付
-      if (!accepting){
+      // 結果表示中は Enter で閉じる（誤爆防止で入力は無効）
+      if (overlayResult.classList.contains("show")){
         if (e.key === "Enter"){
+          e.preventDefault();
+          overlayResult.classList.remove("show");
+        }
+        return;
+      }
+
+      // 開始前（未スタート）: Enterのみ受付
+      if (!accepting){
+        if (e.key === "Enter" && !startedAt){
           e.preventDefault();
           startCountdown();
         }
