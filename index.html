@@ -3,71 +3,181 @@
 <head>
 <meta charset="UTF-8">
 <title>おとタイピング</title>
+
 <style>
 body{
 font-family:sans-serif;
 text-align:center;
-margin-top:120px;
-font-size:90px;
+margin-top:80px;
+background:white;
 }
+
+#kana{
+font-size:120px;
+margin-bottom:20px;
+}
+
+#roman{
+font-size:50px;
+margin-bottom:30px;
+}
+
 button{
-font-size:30px;
-margin-top:40px;
+font-size:20px;
+margin:5px;
+padding:10px 20px;
+}
+
+#msg{
+font-size:20px;
+color:#666;
+margin-top:20px;
 }
 </style>
-</head>
 
+</head>
 <body>
 
-<div id="kana">START</div>
-<button onclick="start()">START</button>
+<div id="kana">Enterで開始</div>
+<div id="roman"></div>
+
+<div>
+<button onclick="setMode('all')">全部</button>
+<button onclick="setMode('a')">あ行</button>
+<button onclick="setMode('ka')">か行</button>
+<button onclick="setMode('sa')">さ行</button>
+</div>
+
+<div id="msg"></div>
 
 <audio id="ok" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
 <audio id="ng" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 
 <script>
 
-const words=[
-["あ","a"],
-["い","i"],
-["う","u"],
-["え","e"],
-["お","o"],
-["か","ka"],
-["き","ki"],
-["く","ku"],
-["け","ke"],
-["こ","ko"]
+const allWords=[
+["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],
+["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"],
+["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"],
+["た","ta"],["ち","chi"],["つ","tsu"],["て","te"],["と","to"],
+["な","na"],["に","ni"],["ぬ","nu"],["ね","ne"],["の","no"],
+["は","ha"],["ひ","hi"],["ふ","fu"],["へ","he"],["ほ","ho"],
+["ま","ma"],["み","mi"],["む","mu"],["め","me"],["も","mo"],
+["や","ya"],["ゆ","yu"],["よ","yo"],
+["ら","ra"],["り","ri"],["る","ru"],["れ","re"],["ろ","ro"],
+["わ","wa"],["を","wo"],["ん","n"]
 ]
 
+const rows={
+a:allWords.slice(0,5),
+ka:allWords.slice(5,10),
+sa:allWords.slice(10,15)
+}
+
+let words=[...allWords]
 let index=0
 let pos=0
 let started=false
 
+let combo=0
+
+function setMode(mode){
+
+if(mode==="all")words=[...allWords]
+else words=[...rows[mode]]
+
+reset()
+
+}
+
+function reset(){
+
+index=0
+pos=0
+combo=0
+started=false
+
+document.getElementById("kana").textContent="Enterで開始"
+document.getElementById("roman").textContent=""
+document.getElementById("msg").textContent=""
+
+}
+
 function start(){
+
 started=true
-document.getElementById("kana").textContent=words[index][0]
+show()
+
+}
+
+function show(){
+
+let w=words[index]
+
+document.getElementById("kana").textContent=w[0]
+document.getElementById("roman").textContent=w[1]
+
 }
 
 function next(){
+
 index++
-if(index>=words.length)index=0
+
+if(index>=words.length){
+
+document.getElementById("kana").textContent="おわり"
+document.getElementById("roman").textContent=""
+document.getElementById("msg").textContent="クリア！"
+
+started=false
+return
+
+}
+
 pos=0
-document.getElementById("kana").textContent=words[index][0]
+show()
+
+}
+
+function okSound(){
+
+let a=document.getElementById("ok")
+a.currentTime=0
+a.play()
+
+}
+
+function ngSound(){
+
+let a=document.getElementById("ng")
+a.currentTime=0
+a.play()
+
 }
 
 document.addEventListener("keydown",e=>{
 
-if(!started)return
+if(!started){
+
+if(e.key==="Enter")start()
+return
+
+}
 
 let target=words[index][1]
 
 if(e.key===target[pos]){
 
-document.getElementById("ok").currentTime=0
-document.getElementById("ok").play()
+okSound()
 
 pos++
+combo++
+
+if(combo%10===0){
+
+document.getElementById("msg").textContent="🔥 "+combo+" コンボ"
+
+}
 
 if(pos>=target.length){
 next()
@@ -75,8 +185,10 @@ next()
 
 }else{
 
-document.getElementById("ng").currentTime=0
-document.getElementById("ng").play()
+ngSound()
+combo=0
+
+document.getElementById("msg").textContent="ミス: "+e.key
 
 }
 
