@@ -3,76 +3,215 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Typing Practice (US)</title>
+  <title>Typing Practice</title>
   <style>
     :root{
-      --bg:#0b0b0f; --panel:#141421; --text:#f2f2f7; --muted:#a6a6b3; --line:#2a2a3a;
-      --key:#1b1b2a; --keyText:#e8e8f3; --hit:#ffffff;
+      --bg:#ffffff;
+      --panel:#f6f7fb;
+      --panel2:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --line:#d7dbe6;
 
-      --thumb:#2b3a55;
-      --index:#294b3f;
-      --middle:#3d3b29;
-      --ring:#4a2f2f;
-      --pinky:#4a2f44;
+      --key:#ffffff;
+      --keyText:#0f172a;
+      --hit:#111827;
+
+      --thumb:#dbeafe;
+      --index:#dcfce7;
+      --middle:#fef9c3;
+      --ring:#ffe4e6;
+      --pinky:#f3e8ff;
     }
     *{ box-sizing:border-box; }
-    body{ margin:0; background:var(--bg); color:var(--text);
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
     }
-    header{ padding:16px 16px 8px; border-bottom:1px solid var(--line); }
+    header{
+      padding:16px 16px 10px;
+      border-bottom:1px solid var(--line);
+      background:var(--panel2);
+      position:sticky; top:0; z-index:10;
+    }
     h1{ margin:0; font-size:18px; }
     .hint{ color:var(--muted); font-size:12px; margin-top:6px; }
-    main{ display:grid; gap:12px; padding:12px; max-width:980px; margin:0 auto; }
-    .panel{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; }
+    main{
+      display:grid;
+      gap:12px;
+      padding:12px;
+      max-width:980px;
+      margin:0 auto;
+    }
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px;
+    }
     .label{ color:var(--muted); font-size:12px; margin-bottom:8px; }
     textarea{
-      width:100%; min-height:96px; border-radius:10px; border:1px solid var(--line);
-      background:#0f0f18; color:var(--text); padding:10px; font-size:18px; line-height:1.4;
-      outline:none; resize:vertical;
+      width:100%;
+      min-height:96px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:var(--panel2);
+      color:var(--text);
+      padding:10px;
+      font-size:18px;
+      line-height:1.4;
+      outline:none;
+      resize:vertical;
     }
-    .row{ display:flex; gap:8px; margin-top:10px; }
-    button{
-      appearance:none; border:1px solid var(--line); background:#0f0f18; color:var(--text);
-      padding:10px 12px; border-radius:10px; font-size:14px;
+    .row{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; align-items:center; }
+    button, select{
+      appearance:none;
+      border:1px solid var(--line);
+      background:var(--panel2);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:14px;
     }
-    .meta{ margin-top:10px; display:flex; gap:12px; color:var(--muted); font-size:12px; }
-
-    .kbd{ width:100%; overflow:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px; touch-action:manipulation; }
+    button{ cursor:pointer; }
+    .meta{
+      margin-top:10px;
+      display:flex;
+      gap:12px;
+      color:var(--muted);
+      font-size:12px;
+      flex-wrap:wrap;
+    }
+    .kbd{
+      width:100%;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+      padding-bottom:6px;
+      touch-action:manipulation;
+      background:var(--panel2);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+    }
     .kbd svg{ width:860px; height:auto; display:block; }
-
     .key{ fill:var(--key); stroke:var(--line); stroke-width:1; }
-    .keyText{ fill:var(--keyText); font-size:12px; text-anchor:middle; dominant-baseline:middle; pointer-events:none; user-select:none; }
-
-    .finger-L_THUMB,.finger-R_THUMB{ fill: color-mix(in srgb, var(--thumb) 70%, var(--key)); }
-    .finger-L_INDEX,.finger-R_INDEX{ fill: color-mix(in srgb, var(--index) 70%, var(--key)); }
-    .finger-L_MIDDLE,.finger-R_MIDDLE{ fill: color-mix(in srgb, var(--middle) 70%, var(--key)); }
-    .finger-L_RING,.finger-R_RING{ fill: color-mix(in srgb, var(--ring) 70%, var(--key)); }
-    .finger-L_PINKY,.finger-R_PINKY{ fill: color-mix(in srgb, var(--pinky) 70%, var(--key)); }
-
-    .hit{
-      stroke:var(--hit); stroke-width:2.2;
-      filter: drop-shadow(0 0 6px rgba(255,255,255,0.35));
+    .keyText{
+      fill:var(--keyText);
+      font-size:12px;
+      text-anchor:middle;
+      dominant-baseline:middle;
+      pointer-events:none;
+      user-select:none;
     }
-
+    .finger-L_THUMB,.finger-R_THUMB{ fill: color-mix(in srgb, var(--thumb) 75%, var(--key)); }
+    .finger-L_INDEX,.finger-R_INDEX{ fill: color-mix(in srgb, var(--index) 75%, var(--key)); }
+    .finger-L_MIDDLE,.finger-R_MIDDLE{ fill: color-mix(in srgb, var(--middle) 75%, var(--key)); }
+    .finger-L_RING,.finger-R_RING{ fill: color-mix(in srgb, var(--ring) 75%, var(--key)); }
+    .finger-L_PINKY,.finger-R_PINKY{ fill: color-mix(in srgb, var(--pinky) 75%, var(--key)); }
+    .hit{
+      stroke:var(--hit);
+      stroke-width:2.4;
+      filter: drop-shadow(0 0 6px rgba(17,24,39,0.20));
+    }
     .links .q{ color:var(--muted); font-size:12px; margin-bottom:8px; }
     ul{ list-style:none; padding:0; margin:0; display:grid; gap:8px; }
     a{
-      color:var(--text); text-decoration:none; border:1px solid var(--line);
-      background:#0f0f18; padding:10px; border-radius:10px; display:block;
+      color:var(--text);
+      text-decoration:none;
+      border:1px solid var(--line);
+      background:var(--panel2);
+      padding:10px;
+      border-radius:10px;
+      display:block;
     }
     a span{ color:var(--muted); font-size:12px; display:block; margin-top:2px; }
-    .note{ margin-top:10px; color:var(--muted); font-size:12px; line-height:1.5; }
+
+    .prompt{
+      border:1px solid var(--line);
+      background:var(--panel2);
+      border-radius:12px;
+      padding:12px;
+    }
+    .promptTitle{ color:var(--muted); font-size:12px; margin-bottom:6px; }
+    .promptWord{ font-size:26px; letter-spacing:0.2px; }
+    .promptRoma{ color:var(--muted); font-size:12px; margin-top:6px; }
+
+    .scoreGrid{
+      display:grid;
+      gap:10px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .card{
+      border:1px solid var(--line);
+      background:var(--panel2);
+      border-radius:12px;
+      padding:12px;
+    }
+    .cardTitle{ color:var(--muted); font-size:12px; margin-bottom:6px; }
+    .cardValue{ font-size:20px; }
+
+    .badge{
+      display:inline-block;
+      border:1px solid var(--line);
+      background:var(--panel2);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Typing Practice (US)</h1>
+    <h1>Typing Practice</h1>
     <div id="deviceHint" class="hint"></div>
   </header>
 
   <main>
     <section class="panel">
-      <div class="label">入力</div>
+      <div class="label">Mode</div>
+      <div class="row">
+        <select id="modeSelect">
+          <option value="free">Free（自由入力）</option>
+          <option value="yamanote_inner">山手線：内回り（駅名→ローマ字）</option>
+          <option value="yamanote_outer">山手線：外回り（駅名→ローマ字）</option>
+        </select>
+        <button id="restartBtn" type="button" title="山手線モードを最初から">Restart</button>
+        <span id="progressBadge" class="badge">Free</span>
+      </div>
+
+      <div id="trainingBox" class="prompt" style="display:none; margin-top:10px;">
+        <div class="promptTitle" id="promptTitle">出題</div>
+        <div class="promptWord" id="promptWord">-</div>
+        <div class="promptRoma" id="promptRoma">-</div>
+      </div>
+
+      <div id="scoreBox" style="display:none; margin-top:10px;">
+        <div class="scoreGrid">
+          <div class="card">
+            <div class="cardTitle">タイム</div>
+            <div class="cardValue" id="timeNow">-</div>
+          </div>
+          <div class="card">
+            <div class="cardTitle">ミスタイプ数</div>
+            <div class="cardValue" id="mistypeNow">-</div>
+          </div>
+          <div class="card">
+            <div class="cardTitle">BEST タイム</div>
+            <div class="cardValue" id="bestTime">-</div>
+          </div>
+          <div class="card">
+            <div class="cardTitle">BEST ミスタイプ数</div>
+            <div class="cardValue" id="bestMistype">-</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="label">入力（ローマ字・変換なし）</div>
       <textarea id="typed" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="ここにタイプ（iPhone OK）"></textarea>
       <div class="row">
         <button id="clearBtn" type="button">Clear</button>
@@ -85,18 +224,14 @@
     </section>
 
     <section class="panel">
-      <div class="label">US Keyboard（指の担当が分かる）</div>
+      <div class="label">US Keyboard（指の担当）</div>
       <div id="keyboard" class="kbd"></div>
     </section>
 
     <section class="panel links">
-      <div class="label">リンク候補（最後の単語）</div>
+      <div class="label">リンク候補</div>
       <div class="q">Query: <span id="queryText">-</span></div>
       <ul id="linkList"></ul>
-      <div class="note">
-        名産品→店の公式リンクを「確定で出す」には、後で辞書（JSON）方式で強化するのが安全。
-        まずはWikipedia/辞書/地図/検索を常に提示するMVPにしてある。
-      </div>
     </section>
   </main>
 
@@ -107,15 +242,57 @@
   const keyboardHost = $("#keyboard");
   const lastKeyEl = $("#lastKey");
   const lastCharEl = $("#lastChar");
+
   const queryTextEl = $("#queryText");
   const linkListEl = $("#linkList");
+
   const deviceHintEl = $("#deviceHint");
 
   const clearBtn = $("#clearBtn");
   const copyBtn = $("#copyBtn");
 
+  const modeSelect = $("#modeSelect");
+  const restartBtn = $("#restartBtn");
+  const progressBadge = $("#progressBadge");
+
+  const trainingBox = $("#trainingBox");
+  const promptTitle = $("#promptTitle");
+  const promptWord = $("#promptWord");
+  const promptRoma = $("#promptRoma");
+
+  const scoreBox = $("#scoreBox");
+  const timeNowEl = $("#timeNow");
+  const mistypeNowEl = $("#mistypeNow");
+  const bestTimeEl = $("#bestTime");
+  const bestMistypeEl = $("#bestMistype");
+
   let prevValue = "";
 
+  // --- Roma normalization (allow variations) ---
+  // Strategy: normalize both target and input into a canonical form
+  // Canonical choices:
+  //  shi->si, chi->ti, tsu->tu, fu->hu, ji->zi
+  //  sha/shu/sho -> sya/syu/syo
+  //  cha/chu/cho -> tya/tyu/tyo
+  //  ja/ju/jo -> zya/zyu/zyo
+  function normalizeRoma(s){
+    return (s || "")
+      .toLowerCase()
+      .replace(/[^a-z]/g, "")
+      // 3 letters -> 2 letters (do these first)
+      .replace(/shi/g, "si")
+      .replace(/chi/g, "ti")
+      .replace(/tsu/g, "tu")
+      // yoon (3 letters) -> canonical
+      .replace(/sha/g, "sya").replace(/shu/g, "syu").replace(/sho/g, "syo")
+      .replace(/cha/g, "tya").replace(/chu/g, "tyu").replace(/cho/g, "tyo")
+      .replace(/ja/g,  "zya").replace(/ju/g,  "zyu").replace(/jo/g,  "zyo")
+      // 2 letters variations
+      .replace(/fu/g, "hu")
+      .replace(/ji/g, "zi");
+  }
+
+  // --- Finger map (US minimal) ---
   const fingerMap = {
     "SPACE":"THUMBS",
     "ENTER":"R_PINKY","BACKSPACE":"R_PINKY",
@@ -139,6 +316,83 @@
     "SEMICOLON":"R_PINKY","QUOTE":"R_PINKY",
     "COMMA":"R_MIDDLE","DOT":"R_RING","SLASH":"R_PINKY",
     "BACKTICK":"L_PINKY"
+  };
+
+  // --- Yamanote data (30 stations) ---
+  // roma can be a string OR an array of strings (extra flexibility)
+  const yamanote_inner = [
+    {jp:"東京", roma:"tokyo"},
+    {jp:"有楽町", roma:["yurakucho","yurakutyo"]},
+    {jp:"新橋", roma:["shimbashi","simbasi"]},
+    {jp:"浜松町", roma:["hamamatsucho","hamamatsutyo"]},
+    {jp:"田町", roma:"tamachi"},
+    {jp:"高輪ゲートウェイ", roma:["takanawagateway","takanawa gateway"]},
+    {jp:"品川", roma:"shinagawa"},
+    {jp:"大崎", roma:"osaki"},
+    {jp:"五反田", roma:"gotanda"},
+    {jp:"目黒", roma:"meguro"},
+    {jp:"恵比寿", roma:"ebisu"},
+    {jp:"渋谷", roma:"shibuya"},
+    {jp:"原宿", roma:["harajuku","harazyuku"]},
+    {jp:"代々木", roma:"yoyogi"},
+    {jp:"新宿", roma:["shinjuku","sinzyuku","sinjuku"]},
+    {jp:"新大久保", roma:["shinokubo","sinokubo"]},
+    {jp:"高田馬場", roma:"takadanobaba"},
+    {jp:"目白", roma:"mejiro"},
+    {jp:"池袋", roma:["ikebukuro","ikebukuro"]},
+    {jp:"大塚", roma:["otsuka","ootsuka"]},
+    {jp:"巣鴨", roma:["sugamo","sugamo"]},
+    {jp:"駒込", roma:["komagome","komagome"]},
+    {jp:"田端", roma:["tabata","tabata"]},
+    {jp:"西日暮里", roma:["nishinippori","nisinippori"]},
+    {jp:"日暮里", roma:["nippori","nippori"]},
+    {jp:"鶯谷", roma:["uguisudani","uguisudani"]},
+    {jp:"上野", roma:["ueno","ueno"]},
+    {jp:"御徒町", roma:["okachimachi","okatimati"]},
+    {jp:"秋葉原", roma:["akihabara","akihabara"]},
+    {jp:"神田", roma:["kanda","kanda"]}
+  ];
+
+  const yamanote_outer = [
+    {jp:"東京", roma:"tokyo"},
+    {jp:"神田", roma:["kanda","kanda"]},
+    {jp:"秋葉原", roma:["akihabara","akihabara"]},
+    {jp:"御徒町", roma:["okachimachi","okatimati"]},
+    {jp:"上野", roma:["ueno","ueno"]},
+    {jp:"鶯谷", roma:["uguisudani","uguisudani"]},
+    {jp:"日暮里", roma:["nippori","nippori"]},
+    {jp:"西日暮里", roma:["nishinippori","nisinippori"]},
+    {jp:"田端", roma:["tabata","tabata"]},
+    {jp:"駒込", roma:["komagome","komagome"]},
+    {jp:"巣鴨", roma:["sugamo","sugamo"]},
+    {jp:"大塚", roma:["otsuka","ootsuka"]},
+    {jp:"池袋", roma:["ikebukuro","ikebukuro"]},
+    {jp:"目白", roma:"mejiro"},
+    {jp:"高田馬場", roma:"takadanobaba"},
+    {jp:"新大久保", roma:["shinokubo","sinokubo"]},
+    {jp:"新宿", roma:["shinjuku","sinzyuku","sinjuku"]},
+    {jp:"代々木", roma:"yoyogi"},
+    {jp:"原宿", roma:["harajuku","harazyuku"]},
+    {jp:"渋谷", roma:"shibuya"},
+    {jp:"恵比寿", roma:"ebisu"},
+    {jp:"目黒", roma:"meguro"},
+    {jp:"五反田", roma:"gotanda"},
+    {jp:"大崎", roma:"osaki"},
+    {jp:"品川", roma:"shinagawa"},
+    {jp:"高輪ゲートウェイ", roma:["takanawagateway","takanawa gateway"]},
+    {jp:"田町", roma:"tamachi"},
+    {jp:"浜松町", roma:["hamamatsucho","hamamatsutyo"]},
+    {jp:"新橋", roma:["shimbashi","simbasi"]},
+    {jp:"有楽町", roma:["yurakucho","yurakutyo"]}
+  ];
+
+  const state = {
+    mode: "free",
+    idx: 0,
+    started: false,
+    startMs: 0,
+    finishMs: 0,
+    mistype: 0
   };
 
   function escapeHtml(s){
@@ -249,12 +503,12 @@
   function extractQuery(text){
     const t=text.trim();
     if(!t) return "";
-    const parts=t.split(/\\s+/);
+    const parts=t.split(/\s+/);
     return parts[parts.length-1] || "";
   }
 
   function buildLinks(q){
-    const s=q.trim();
+    const s=(q||"").trim();
     queryTextEl.textContent = s || "-";
     linkListEl.innerHTML = "";
     if(!s) return;
@@ -264,9 +518,9 @@
       {title:"Wikipedia（検索）", url:`https://ja.wikipedia.org/wiki/Special:Search?search=${enc}`, note:"地名・一般語の入口"},
       {title:"辞書（Weblio）", url:`https://www.weblio.jp/content/${enc}`, note:"一般語の意味"},
       {title:"地図（Google Maps）", url:`https://www.google.com/maps/search/?api=1&query=${enc}`, note:"地名っぽいとき"},
-      {title:"公式サイトっぽいもの（検索）", url:`https://www.google.com/search?q=${enc}%20%E5%85%AC%E5%BC%8F`, note:"自治体/団体/店の公式探し"},
-      {title:"通販/販売店っぽいもの（検索）", url:`https://www.google.com/search?q=${enc}%20%E9%80%9A%E8%B2%A9%20%E8%B2%A9%E5%A3%B2%E5%BA%97`, note:"名産品の暫定"}
+      {title:"公式っぽいもの（検索）", url:`https://www.google.com/search?q=${enc}%20%E5%85%AC%E5%BC%8F`, note:"公式サイト探し"}
     ];
+
     for(const it of items){
       const li=document.createElement("li");
       li.innerHTML = `<a href="${it.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(it.title)}<span>${escapeHtml(it.note)}</span></a>`;
@@ -274,14 +528,203 @@
     }
   }
 
+  function bestKey(modeKey){ return `best_${modeKey}`; }
+
+  function loadBest(modeKey){
+    try{
+      const raw = localStorage.getItem(bestKey(modeKey));
+      if(!raw) return null;
+      return JSON.parse(raw);
+    }catch{ return null; }
+  }
+
+  function formatTime(ms){
+    return (ms/1000).toFixed(1) + " sec";
+  }
+
+  function renderBest(modeKey){
+    const b = loadBest(modeKey);
+    if(!b){
+      bestTimeEl.textContent = "-";
+      bestMistypeEl.textContent = "-";
+      return;
+    }
+    bestTimeEl.textContent = formatTime(b.timeMs);
+    bestMistypeEl.textContent = String(b.mistype);
+  }
+
+  function isNewRecord(newRec, oldRec){
+    if(!oldRec) return true;
+    if(newRec.timeMs < oldRec.timeMs) return true;
+    if(newRec.timeMs > oldRec.timeMs) return false;
+    return newRec.mistype < oldRec.mistype;
+  }
+
+  function saveBestIfNeeded(modeKey, timeMs, mistype){
+    const newRec = { timeMs, mistype };
+    const oldRec = loadBest(modeKey);
+    if(isNewRecord(newRec, oldRec)){
+      localStorage.setItem(bestKey(modeKey), JSON.stringify(newRec));
+    }
+    renderBest(modeKey);
+  }
+
+  function datasetForMode(mode){
+    if(mode === "yamanote_inner") return yamanote_inner;
+    if(mode === "yamanote_outer") return yamanote_outer;
+    return null;
+  }
+
+  function showTrainingUI(on){
+    trainingBox.style.display = on ? "block" : "none";
+    scoreBox.style.display = on ? "block" : "none";
+  }
+
+  function resetRun(){
+    state.idx = 0;
+    state.started = false;
+    state.startMs = 0;
+    state.finishMs = 0;
+    state.mistype = 0;
+    typedEl.value = "";
+    prevValue = "";
+    timeNowEl.textContent = "-";
+    mistypeNowEl.textContent = "0";
+  }
+
+  function currentTargetList(){
+    const data = datasetForMode(state.mode);
+    if(!data) return [];
+    if(state.idx >= data.length) return [];
+    const r = data[state.idx].roma;
+    return Array.isArray(r) ? r : [r];
+  }
+
+  function updatePrompt(){
+    const data = datasetForMode(state.mode);
+    if(!data) return;
+
+    const total = data.length;
+    if(state.idx >= total){
+      promptTitle.textContent = "FINISH";
+      promptWord.textContent = "完了";
+      promptRoma.textContent = "";
+      progressBadge.textContent = `Finish · ${total}/${total}`;
+      return;
+    }
+
+    const cur = data[state.idx];
+    promptTitle.textContent = `山手線 ${state.mode === "yamanote_inner" ? "内回り" : "外回り"} · ${state.idx+1}/${total}`;
+    promptWord.textContent = cur.jp;
+
+    const targets = currentTargetList().map(t => normalizeRoma(t));
+    promptRoma.textContent = `type: ${targets[0]}（揺れOK）`;
+
+    progressBadge.textContent = `${state.idx+1}/${total}`;
+    buildLinks(cur.jp);
+  }
+
+  function startIfNeeded(){
+    if(state.started) return;
+    state.started = true;
+    state.startMs = performance.now();
+  }
+
+  function finishIfNeeded(){
+    const data = datasetForMode(state.mode);
+    if(!data) return;
+    if(state.idx < data.length) return;
+
+    if(!state.finishMs){
+      state.finishMs = performance.now();
+      const elapsed = Math.max(0, state.finishMs - state.startMs);
+      timeNowEl.textContent = formatTime(elapsed);
+      mistypeNowEl.textContent = String(state.mistype);
+      saveBestIfNeeded(state.mode, elapsed, state.mistype);
+    }
+  }
+
+  function updateScoreLive(){
+    if(!state.started || state.finishMs) return;
+    const now = performance.now();
+    timeNowEl.textContent = formatTime(now - state.startMs);
+    mistypeNowEl.textContent = String(state.mistype);
+  }
+
+  // Mistype logic for variation mode:
+  // Count 1 mistype when the current normalized input is not a prefix of ANY valid target.
+  function scoreAddedChars(added){
+    if(!added) return;
+
+    const targets = currentTargetList().map(t => normalizeRoma(t));
+    if(targets.length === 0) return;
+
+    const curNorm = normalizeRoma(typedEl.value);
+
+    const isPrefix = targets.some(t => t.startsWith(curNorm));
+    if(!isPrefix){
+      state.mistype += 1;
+    }
+  }
+
+  function tryAdvance(){
+    const targets = currentTargetList().map(t => normalizeRoma(t));
+    if(targets.length === 0) return;
+
+    const curNorm = normalizeRoma(typedEl.value);
+
+    const ok = targets.some(t => t === curNorm);
+    if(ok){
+      state.idx += 1;
+      typedEl.value = "";
+      prevValue = "";
+      updatePrompt();
+
+      if(state.idx >= datasetForMode(state.mode).length){
+        finishIfNeeded();
+      }
+    }
+  }
+
   function init(){
     const hasTouch = ("ontouchstart" in window) || navigator.maxTouchPoints>0;
     deviceHintEl.textContent = hasTouch
-      ? "iPhone: 入力差分でキーを推定してハイライト（予測変換でズレることあり）"
-      : "PC: keydownで正確にキーをハイライト";
+      ? "iPhone: 予測変換OFF推奨（ローマ字・揺れOK）"
+      : "PC: ローマ字・揺れOK";
 
     renderKeyboard();
-    typedEl.focus();
+    buildLinks("");
+
+    modeSelect.addEventListener("change", ()=>{
+      state.mode = modeSelect.value;
+
+      if(state.mode === "free"){
+        showTrainingUI(false);
+        progressBadge.textContent = "Free";
+        resetRun();
+        buildLinks(extractQuery(typedEl.value));
+      }else{
+        showTrainingUI(true);
+        resetRun();
+        updatePrompt();
+        renderBest(state.mode);
+      }
+
+      typedEl.focus();
+    });
+
+    restartBtn.addEventListener("click", ()=>{
+      if(state.mode === "free"){
+        typedEl.value = "";
+        prevValue = "";
+        buildLinks("");
+      }else{
+        resetRun();
+        updatePrompt();
+        renderBest(state.mode);
+      }
+      typedEl.focus();
+    });
 
     window.addEventListener("keydown",(e)=>{
       const id=keyEventToKeyId(e);
@@ -293,25 +736,39 @@
 
     typedEl.addEventListener("input",()=>{
       const next=typedEl.value;
-      const d=delta(prevValue,next);
-      const ch = d ? d.slice(-1) : "";
-      if(d){
-        const keyId=charToKeyId(ch);
+      const added = delta(prevValue, next);
+      const lastChar = added ? added.slice(-1) : "";
+
+      if(added){
+        const keyId=charToKeyId(lastChar);
         highlight(keyId);
-        setLast(keyId||"(n/a)", ch);
+        setLast(keyId||"(n/a)", lastChar);
       }else{
         highlight("");
         setLast("(edit)","");
       }
-      prevValue=next;
 
-      buildLinks(extractQuery(next));
+      if(state.mode !== "free"){
+        if(next.length > 0) startIfNeeded();
+        scoreAddedChars(added);
+        updateScoreLive();
+        tryAdvance();
+      }else{
+        buildLinks(extractQuery(next));
+      }
+
+      prevValue = next;
     });
 
     clearBtn.addEventListener("click",()=>{
       typedEl.value=""; prevValue="";
       highlight(""); setLast("","");
-      buildLinks("");
+
+      if(state.mode === "free"){
+        buildLinks("");
+      }else{
+        updateScoreLive();
+      }
       typedEl.focus();
     });
 
@@ -319,6 +776,10 @@
       try{ await navigator.clipboard.writeText(typedEl.value); }catch{}
       typedEl.focus();
     });
+
+    state.mode = "free";
+    showTrainingUI(false);
+    progressBadge.textContent = "Free";
   }
 
   init();
