@@ -175,27 +175,71 @@
 <script>
 (() => {
   // ========= Sound (WebAudio) =========
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  let actx = null;
-  let soundOn = true;
-  function beep(freq, ms, gain=0.03){
-    if (!soundOn) return;
-    try{
-      if (!actx) actx = new AudioCtx();
-      const o = actx.createOscillator();
-      const g = actx.createGain();
-      o.type = "square";
-      o.frequency.value = freq;
-      g.gain.value = gain;
-      o.connect(g); g.connect(actx.destination);
-      o.start();
-      setTimeout(()=>o.stop(), ms);
-    }catch(e){}
-  }
-  function fanfare(){
-    beep(880, 90); setTimeout(()=>beep(988, 90), 120); setTimeout(()=>beep(1175, 130), 240);
-  }
+let soundOn = true;
 
+const AC = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AC();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+}
+
+function beep(freq, ms, gain = 0.03) {
+  if (!soundOn) return;
+  ensureAudio();
+  beepAt(freq, ms / 1000, audioCtx.currentTime, gain);
+}
+
+function fanfare() {
+  if (!soundOn) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+
+  beepAt(880,  0.09, t + 0.00, 0.035);
+  beepAt(988,  0.09, t + 0.12, 0.035);
+  beepAt(1175, 0.13, t + 0.24, 0.035);
+}
+
+function beepAt(freq, durSec, whenSec, gain = 0.03) {
+  if (!soundOn) return;
+  ensureAudio();
+
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, whenSec);
+
+  // クリックノイズ防止の短いフェード
+  const a = 0.002;
+  g.gain.setValueAtTime(0.00001, whenSec);
+  g.gain.exponentialRampToValueAtTime(gain, whenSec + a);
+  g.gain.exponentialRampToValueAtTime(0.00001, whenSec + durSec);
+
+  osc.connect(g);
+  g.connect(audioCtx.destination);
+
+  osc.start(whenSec);
+  osc.stop(whenSec + durSec + 0.01);
+}
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, whenSec);
+
+  const a = 0.002;
+  g.gain.setValueAtTime(0.00001, whenSec);
+  g.gain.exponentialRampToValueAtTime(gain, whenSec + a);
+  g.gain.exponentialRampToValueAtTime(0.00001, whenSec + durSec);
+
+  osc.connect(g);
+  g.connect(audioCtx.destination);
+
+  osc.start(whenSec);
+  osc.stop(whenSec + durSec + 0.01);
+}  
   // ========= Finger map =========
   // LP=左小指 LR=左薬指 LM=左中指 LI=左人差し指 / RP=右小指 RR=右薬指 RM=右中指 RI=右人差し指 / TH=親指
   const fingerJP = {
