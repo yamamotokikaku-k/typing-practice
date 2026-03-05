@@ -1,119 +1,88 @@
-<!doctype html>
-<html lang="ja">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
 <title>おとタイピング</title>
 <style>
-  body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#111}
-  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px}
-  #kana{font-size:92px;font-weight:900;line-height:1}
-  #msg{font-size:16px;color:#666}
-  #overlay{
-    position:fixed;inset:0;background:rgba(255,255,255,.96);
-    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px
-  }
-  #unlock{
-    font-size:18px;padding:14px 18px;border-radius:14px;border:1px solid #111;background:#111;color:#fff;
-  }
-  #test{
-    font-size:14px;padding:10px 14px;border-radius:14px;border:1px solid #111;background:#fff;color:#111;
-  }
+body{
+font-family:sans-serif;
+text-align:center;
+margin-top:120px;
+font-size:90px;
+}
+button{
+font-size:30px;
+margin-top:40px;
+}
 </style>
 </head>
-<body>
-  <div class="wrap">
-    <div id="kana">-</div>
-    <div id="msg">上の「音をON」押してからタイピング</div>
-  </div>
 
-  <div id="overlay">
-    <button id="unlock">音をON（ここを押す）</button>
-    <button id="test">テスト音</button>
-    <div style="font-size:12px;color:#666">※ Safariは最初にボタンを押さないと音が出ません</div>
-  </div>
+<body>
+
+<div id="kana">START</div>
+<button onclick="start()">START</button>
+
+<audio id="ok" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+<audio id="ng" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 
 <script>
-(() => {
-  const words = [
-    ["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],
-    ["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"]
-  ];
 
-  let index = 0;
-  let pos = 0;
-  let started = false;
+const words=[
+["あ","a"],
+["い","i"],
+["う","u"],
+["え","e"],
+["お","o"],
+["か","ka"],
+["き","ki"],
+["く","ku"],
+["け","ke"],
+["こ","ko"]
+]
 
-  let audioCtx = null;
-  let unlocked = false;
+let index=0
+let pos=0
+let started=false
 
-  const kanaEl = document.getElementById("kana");
-  const overlay = document.getElementById("overlay");
-  const unlockBtn = document.getElementById("unlock");
-  const testBtn = document.getElementById("test");
+function start(){
+started=true
+document.getElementById("kana").textContent=words[index][0]
+}
 
-  function setKana() {
-    kanaEl.textContent = words[index][0];
-  }
+function next(){
+index++
+if(index>=words.length)index=0
+pos=0
+document.getElementById("kana").textContent=words[index][0]
+}
 
-  function next() {
-    index = (index + 1) % words.length;
-    pos = 0;
-    setKana();
-  }
+document.addEventListener("keydown",e=>{
 
-  function beep(freq, dur=0.10, gain=0.20, type="sine") {
-    if (!unlocked || !audioCtx || audioCtx.state !== "running") return;
-    const t0 = audioCtx.currentTime;
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = type;
-    o.frequency.setValueAtTime(freq, t0);
-    g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    o.connect(g).connect(audioCtx.destination);
-    o.start(t0);
-    o.stop(t0 + dur + 0.02);
-  }
+if(!started)return
 
-  async function unlockAudio() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    try { await audioCtx.resume(); } catch(e) {}
-    unlocked = (audioCtx.state === "running");
-    if (unlocked) {
-      // 解除できた瞬間に必ず1回鳴らす（ここが重要）
-      beep(880, 0.08, 0.18, "triangle");
-      started = true;
-      overlay.style.display = "none";
-      setKana();
-    }
-  }
+let target=words[index][1]
 
-  // iPhone/Safari対策で click だけでなく pointerdown も使う
-  unlockBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); unlockAudio(); });
-  unlockBtn.addEventListener("click", (e) => { e.preventDefault(); unlockAudio(); });
+if(e.key===target[pos]){
 
-  testBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); if (unlocked) beep(660, 0.10, 0.18, "triangle"); });
-  testBtn.addEventListener("click", (e) => { e.preventDefault(); if (unlocked) beep(660, 0.10, 0.18, "triangle"); });
+document.getElementById("ok").currentTime=0
+document.getElementById("ok").play()
 
-  document.addEventListener("keydown", (e) => {
-    if (!started) return;
+pos++
 
-    const target = words[index][1];
-    const key = (e.key || "").toLowerCase();
+if(pos>=target.length){
+next()
+}
 
-    if (key.length !== 1) return;
+}else{
 
-    if (key === target[pos]) {
-      beep(900, 0.06, 0.16, "triangle"); // 正解
-      pos++;
-      if (pos >= target.length) next();
-    } else {
-      beep(180, 0.12, 0.14, "square"); // ミス
-    }
-  });
-})();
+document.getElementById("ng").currentTime=0
+document.getElementById("ng").play()
+
+}
+
+})
+
 </script>
+
 </body>
 </html>
