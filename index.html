@@ -10,30 +10,31 @@ text-align:center;
 margin-top:120px;
 font-size:80px;
 }
+#start{
+font-size:30px;
+margin-top:40px;
+}
 </style>
 </head>
 
 <body>
 
-<div id="kana">あ</div>
+<div id="kana">START</div>
+<button id="start">クリックして開始</button>
 
 <script>
 
-const words = [
+const words=[
 ["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],
-["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"],
-["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"]
+["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"]
 ]
 
 let index=0
 let pos=0
-
-let audioCtx=null
+let started=false
+let audioCtx
 
 function beep(f){
-if(!audioCtx){
-audioCtx=new (window.AudioContext||window.webkitAudioContext)()
-}
 const o=audioCtx.createOscillator()
 const g=audioCtx.createGain()
 
@@ -53,7 +54,15 @@ pos=0
 document.getElementById("kana").textContent=words[index][0]
 }
 
+document.getElementById("start").onclick=()=>{
+audioCtx=new (window.AudioContext||window.webkitAudioContext)()
+started=true
+document.getElementById("kana").textContent=words[index][0]
+}
+
 document.addEventListener("keydown",e=>{
+
+if(!started)return
 
 let target=words[index][1]
 
