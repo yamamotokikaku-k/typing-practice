@@ -1,734 +1,848 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>タイピング練習</title>
-  <style>
-    :root{
-      --bg:#ffffff;
-      --panel:#f6f7fb;
-      --panel2:#ffffff;
-      --text:#0f172a;
-      --muted:#475569;
-      --line:#d7dbe6;
-      --danger:#dc2626;
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>タイピング練習</title>
+<style>
+:root{
+  --bg:#fff;
+  --panel:#f6f7fb;
+  --text:#0f172a;
+  --muted:#475569;
+  --line:#d7dbe6;
+  --danger:#dc2626;
+  --key:#fff;
+  --keyText:#0f172a;
+  --hit:#111827;
+  --thumb:#dbeafe;
+  --index:#dcfce7;
+  --middle:#fef9c3;
+  --ring:#ffe4e6;
+  --pinky:#f3e8ff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
+  background:var(--bg);
+  color:var(--text);
+}
+header{
+  padding:14px 16px;
+  border-bottom:1px solid var(--line);
+  background:#fff;
+  position:sticky; top:0; z-index:10;
+  font-weight:800;
+}
+main{
+  max-width:900px;
+  margin:0 auto;
+  padding:14px 12px 40px;
+  display:grid;
+  gap:12px;
+}
+.bar{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+select,button{
+  appearance:none;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:12px;
+  font-size:14px;
+}
+button{cursor:pointer}
+.badge{
+  display:inline-block;
+  border:1px solid var(--line);
+  background:#fff;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  color:var(--muted);
+}
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+}
+.station{
+  font-size:42px;
+  line-height:1.1;
+  font-weight:900;
+  margin:6px 0 10px;
+}
+.roma{
+  font-size:34px;
+  line-height:1.15;
+  font-weight:900;
+  letter-spacing:1px;
+  margin:0 0 6px;
+  word-break:break-word;
+}
+.roma .ok{ color:var(--danger); }
+.meta{
+  color:var(--muted);
+  font-size:12px;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.kbd{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  touch-action:manipulation;
+}
+.kbd svg{ width:860px; height:auto; display:block; }
+.key{ fill:var(--key); stroke:var(--line); stroke-width:1; }
+.keyText{
+  fill:var(--keyText);
+  font-size:12px;
+  text-anchor:middle;
+  dominant-baseline:middle;
+  pointer-events:none;
+  user-select:none;
+}
+.finger-L_THUMB,.finger-R_THUMB{ fill: color-mix(in srgb, var(--thumb) 75%, var(--key)); }
+.finger-L_INDEX,.finger-R_INDEX{ fill: color-mix(in srgb, var(--index) 75%, var(--key)); }
+.finger-L_MIDDLE,.finger-R_MIDDLE{ fill: color-mix(in srgb, var(--middle) 75%, var(--key)); }
+.finger-L_RING,.finger-R_RING{ fill: color-mix(in srgb, var(--ring) 75%, var(--key)); }
+.finger-L_PINKY,.finger-R_PINKY{ fill: color-mix(in srgb, var(--pinky) 75%, var(--key)); }
+.hit{
+  stroke:var(--hit);
+  stroke-width:2.4;
+  filter: drop-shadow(0 0 6px rgba(17,24,39,0.20));
+}
 
-      --key:#ffffff;
-      --keyText:#0f172a;
-      --hit:#111827;
-
-      --thumb:#dbeafe;
-      --index:#dcfce7;
-      --middle:#fef9c3;
-      --ring:#ffe4e6;
-      --pinky:#f3e8ff;
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
-    }
-    header{
-      padding:14px 16px;
-      border-bottom:1px solid var(--line);
-      background:var(--panel2);
-      position:sticky; top:0; z-index:10;
-    }
-    h1{ margin:0; font-size:18px; font-weight:700; }
-
-    main{
-      max-width:980px;
-      margin:0 auto;
-      padding:14px 12px 40px;
-      display:grid;
-      gap:12px;
-    }
-
-    .bar{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    select, button{
-      appearance:none;
-      border:1px solid var(--line);
-      background:var(--panel2);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      font-size:14px;
-    }
-    button{ cursor:pointer; }
-    .badge{
-      display:inline-block;
-      border:1px solid var(--line);
-      background:var(--panel2);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--muted);
-    }
-
-    .card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-    }
-
-    .promptTitle{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      color:var(--muted);
-      font-size:12px;
-      margin-bottom:10px;
-    }
-    .station{
-      font-size:40px;
-      line-height:1.1;
-      font-weight:800;
-      letter-spacing:0.2px;
-      margin:0 0 8px;
-    }
-    .roma{
-      font-size:26px;
-      line-height:1.2;
-      font-weight:700;
-      margin:0 0 10px;
-      color:var(--text);
-    }
-    .typedLine{
-      display:flex;
-      align-items:baseline;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .typedLabel{
-      color:var(--muted);
-      font-size:12px;
-    }
-    .typedText{
-      font-size:22px;
-      font-weight:700;
-      letter-spacing:0.6px;
-      color:var(--danger);
-      min-height:28px;
-      white-space:pre-wrap;
-      word-break:break-word;
-    }
-
-    .inputWrap{
-      margin-top:10px;
-    }
-    input[type="text"]{
-      width:100%;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:var(--panel2);
-      color:var(--text);
-      padding:14px 14px;
-      font-size:20px;
-      outline:none;
-    }
-    .smallRow{
-      margin-top:10px;
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-      color:var(--muted);
-      font-size:12px;
-    }
-
-    /* Keyboard (no label, no space row) */
-    .kbd{
-      background:var(--panel2);
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:10px;
-      overflow:auto;
-      -webkit-overflow-scrolling:touch;
-      touch-action:manipulation;
-    }
-    .kbd svg{ width:860px; height:auto; display:block; }
-
-    .key{ fill:var(--key); stroke:var(--line); stroke-width:1; }
-    .keyText{
-      fill:var(--keyText);
-      font-size:12px;
-      text-anchor:middle;
-      dominant-baseline:middle;
-      pointer-events:none;
-      user-select:none;
-    }
-    .finger-L_THUMB,.finger-R_THUMB{ fill: color-mix(in srgb, var(--thumb) 75%, var(--key)); }
-    .finger-L_INDEX,.finger-R_INDEX{ fill: color-mix(in srgb, var(--index) 75%, var(--key)); }
-    .finger-L_MIDDLE,.finger-R_MIDDLE{ fill: color-mix(in srgb, var(--middle) 75%, var(--key)); }
-    .finger-L_RING,.finger-R_RING{ fill: color-mix(in srgb, var(--ring) 75%, var(--key)); }
-    .finger-L_PINKY,.finger-R_PINKY{ fill: color-mix(in srgb, var(--pinky) 75%, var(--key)); }
-    .hit{
-      stroke:var(--hit);
-      stroke-width:2.4;
-      filter: drop-shadow(0 0 6px rgba(17,24,39,0.20));
-    }
-
-    /* Result overlay */
-    .overlay{
-      position:fixed;
-      inset:0;
-      background:rgba(15,23,42,0.35);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      z-index:100;
-    }
-    .modal{
-      width:min(640px, 100%);
-      background:var(--panel2);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:16px;
-      box-shadow: 0 20px 50px rgba(15,23,42,0.25);
-    }
-    .modal h2{
-      margin:0 0 10px;
-      font-size:18px;
-    }
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
-    .stat{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      background:var(--panel);
-    }
-    .stat .t{ color:var(--muted); font-size:12px; margin-bottom:6px; }
-    .stat .v{ font-size:20px; font-weight:800; }
-    .modal .actions{
-      display:flex;
-      gap:8px;
-      justify-content:flex-end;
-      margin-top:12px;
-      flex-wrap:wrap;
-    }
-  </style>
+/* Result overlay */
+.overlay{
+  position:fixed; inset:0;
+  background:rgba(15,23,42,0.35);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:100;
+}
+.modal{
+  width:min(640px, 100%);
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  box-shadow: 0 20px 50px rgba(15,23,42,0.25);
+}
+.modal h2{ margin:0 0 10px; font-size:18px; }
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+.stat{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  background:var(--panel);
+}
+.stat .t{ color:var(--muted); font-size:12px; margin-bottom:6px; }
+.stat .v{ font-size:20px; font-weight:900; }
+.actions{
+  display:flex;
+  gap:8px;
+  justify-content:flex-end;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+</style>
 </head>
 <body>
-  <header>
-    <h1>タイピング練習</h1>
-  </header>
+<header>タイピング練習</header>
 
-  <main>
-    <div class="bar">
-      <select id="modeSelect">
-        <option value="yamanote_inner">山手線：内回り</option>
-        <option value="yamanote_outer">山手線：外回り</option>
-      </select>
-      <button id="restartBtn" type="button">Restart</button>
-      <span id="progressBadge" class="badge">-</span>
-    </div>
-
-    <section class="card">
-      <div class="promptTitle">
-        <span id="promptMeta">-</span>
-        <span id="lastMeta" style="display:none;">-</span>
-      </div>
-
-      <h2 class="station" id="stationJp">-</h2>
-      <div class="roma" id="stationRoma">-</div>
-
-      <div class="typedLine">
-        <div class="typedLabel">typed</div>
-        <div class="typedText" id="typedView"></div>
-      </div>
-
-      <div class="inputWrap">
-        <input id="typedInput" type="text" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="ローマ字で入力（変換なし）" />
-        <div class="smallRow">
-          <button id="clearBtn" type="button">Clear</button>
-          <span>（toukyou / tokyo など揺れOK）</span>
-        </div>
-      </div>
-    </section>
-
-    <div class="kbd" id="keyboard"></div>
-  </main>
-
-  <!-- Result -->
-  <div class="overlay" id="overlay">
-    <div class="modal">
-      <h2>結果</h2>
-      <div class="grid">
-        <div class="stat">
-          <div class="t">タイム</div>
-          <div class="v" id="timeNow">-</div>
-        </div>
-        <div class="stat">
-          <div class="t">ミスタイプ</div>
-          <div class="v" id="mistypeNow">-</div>
-        </div>
-        <div class="stat">
-          <div class="t">BESTタイム</div>
-          <div class="v" id="bestTime">-</div>
-        </div>
-        <div class="stat">
-          <div class="t">BESTミスタイプ</div>
-          <div class="v" id="bestMistype">-</div>
-        </div>
-      </div>
-      <div class="actions">
-        <button id="closeBtn" type="button">Close</button>
-        <button id="restartBtn2" type="button">Restart</button>
-      </div>
-    </div>
+<main>
+  <div class="bar">
+    <select id="modeSelect">
+      <option value="inner">山手線：内回り</option>
+      <option value="outer">山手線：外回り</option>
+    </select>
+    <button id="restartBtn" type="button">Restart</button>
+    <span id="progressBadge" class="badge">-</span>
   </div>
 
+  <section class="card">
+    <div class="meta">
+      <span id="modeLabel">-</span>
+      <span>（入力欄なし：キーボードでそのまま打つ）</span>
+    </div>
+    <div class="station" id="stationJp">-</div>
+    <div class="roma" id="stationRoma"></div>
+  </section>
+
+  <div class="kbd" id="keyboard"></div>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2>結果</h2>
+    <div class="grid">
+      <div class="stat">
+        <div class="t">タイム</div>
+        <div class="v" id="timeNow">-</div>
+      </div>
+      <div class="stat">
+        <div class="t">ミスタイプ</div>
+        <div class="v" id="mistypeNow">-</div>
+      </div>
+      <div class="stat">
+        <div class="t">BESTタイム</div>
+        <div class="v" id="bestTime">-</div>
+      </div>
+      <div class="stat">
+        <div class="t">BESTミスタイプ</div>
+        <div class="v" id="bestMistype">-</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="closeBtn" type="button">Close</button>
+      <button id="restartBtn2" type="button">Restart</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  const $ = (s)=>document.querySelector(s);
+const $ = (s)=>document.querySelector(s);
 
-  const modeSelect = $("#modeSelect");
-  const restartBtn = $("#restartBtn");
-  const progressBadge = $("#progressBadge");
+const modeSelect = $("#modeSelect");
+const restartBtn = $("#restartBtn");
+const restartBtn2 = $("#restartBtn2");
+const progressBadge = $("#progressBadge");
+const modeLabel = $("#modeLabel");
 
-  const stationJpEl = $("#stationJp");
-  const stationRomaEl = $("#stationRoma");
-  const promptMetaEl = $("#promptMeta");
+const stationJpEl = $("#stationJp");
+const stationRomaEl = $("#stationRoma");
 
-  const typedInput = $("#typedInput");
-  const typedView = $("#typedView");
-  const clearBtn = $("#clearBtn");
+const overlay = $("#overlay");
+const closeBtn = $("#closeBtn");
 
-  const keyboardHost = $("#keyboard");
+const timeNowEl = $("#timeNow");
+const mistypeNowEl = $("#mistypeNow");
+const bestTimeEl = $("#bestTime");
+const bestMistypeEl = $("#bestMistype");
 
-  const overlay = $("#overlay");
-  const closeBtn = $("#closeBtn");
-  const restartBtn2 = $("#restartBtn2");
+const keyboardHost = $("#keyboard");
 
-  const timeNowEl = $("#timeNow");
-  const mistypeNowEl = $("#mistypeNow");
-  const bestTimeEl = $("#bestTime");
-  const bestMistypeEl = $("#bestMistype");
+// ------------------------------
+// 1) 駅データ：表示（日本語） + 読み（ひらがな） + 表示用ローマ字（代表）
+// 2) 判定：読み（ひらがな）から「日本人が打ちそうなローマ字」を網羅生成
+//    + さらに「よくある省略（東京=tokyo等）」も追加で許可
+// ------------------------------
 
-  let prevValue = "";
+const Y_INNER = [
+  { jp:"東京",           kana:"とうきょう",        display:"toukyou", extra:["tokyo","tookyoo","toukyoo"] },
+  { jp:"有楽町",         kana:"ゆうらくちょう",    display:"yuurakuchou", extra:["yurakucho","yuurakucho","yurakutyo","yuurakutyou"] },
+  { jp:"新橋",           kana:"しんばし",          display:"shinbashi", extra:["shimbashi","sinbasi","sinbashi","simbasi"] },
+  { jp:"浜松町",         kana:"はままつちょう",    display:"hamamatsuchou", extra:["hamamatsucho","hamamatsutyo","hamamatsutyou"] },
+  { jp:"田町",           kana:"たまち",            display:"tamachi", extra:["tamati"] },
+  { jp:"高輪ゲートウェイ", kana:"たかなわげーとうぇい", display:"takanawage-towei", extra:["takanawagateway","takanawagatewei","takanawagateway"] },
+  { jp:"品川",           kana:"しながわ",          display:"shinagawa", extra:["sinagawa"] },
+  { jp:"大崎",           kana:"おおさき",          display:"oosaki", extra:["osaki"] },
+  { jp:"五反田",         kana:"ごたんだ",          display:"gotanda", extra:[] },
+  { jp:"目黒",           kana:"めぐろ",            display:"meguro", extra:["meguro"] },
+  { jp:"恵比寿",         kana:"えびす",            display:"ebisu", extra:["ebisu"] },
+  { jp:"渋谷",           kana:"しぶや",            display:"shibuya", extra:["sibuya"] },
+  { jp:"原宿",           kana:"はらじゅく",        display:"harajuku", extra:["harazyuku","harajyuku"] },
+  { jp:"代々木",         kana:"よよぎ",            display:"yoyogi", extra:["yoyogi"] },
+  { jp:"新宿",           kana:"しんじゅく",        display:"shinjuku", extra:["sinjuku","sinzyuku","shinjyuku"] },
+  { jp:"新大久保",       kana:"しんおおくぼ",      display:"shinookubo", extra:["shinokubo","sinokubo","shinookubo","sinookubo"] },
+  { jp:"高田馬場",       kana:"たかだのばば",      display:"takadanobaba", extra:["takadanobaba"] },
+  { jp:"目白",           kana:"めじろ",            display:"mejiro", extra:["meziro"] },
+  { jp:"池袋",           kana:"いけぶくろ",        display:"ikebukuro", extra:["ikebukuro"] },
+  { jp:"大塚",           kana:"おおつか",          display:"ootsuka", extra:["otsuka"] },
+  { jp:"巣鴨",           kana:"すがも",            display:"sugamo", extra:["sugamo"] },
+  { jp:"駒込",           kana:"こまごめ",          display:"komagome", extra:["komagome"] },
+  { jp:"田端",           kana:"たばた",            display:"tabata", extra:["tabata"] },
+  { jp:"西日暮里",       kana:"にしにっぽり",      display:"nishinippori", extra:["nisinippori"] },
+  { jp:"日暮里",         kana:"にっぽり",          display:"nippori", extra:["nippori"] },
+  { jp:"鶯谷",           kana:"うぐいすだに",      display:"uguisudani", extra:["uguisudani"] },
+  { jp:"上野",           kana:"うえの",            display:"ueno", extra:["ueno"] },
+  { jp:"御徒町",         kana:"おかちまち",        display:"okachimachi", extra:["okatimati","okachimati"] },
+  { jp:"秋葉原",         kana:"あきはばら",        display:"akihabara", extra:["akihabara"] },
+  { jp:"神田",           kana:"かんだ",            display:"kanda", extra:["kanda"] },
+];
 
-  // --- Roma normalization (allow variations + long vowels) ---
-  // - allow shi/si, chi/ti, tsu/tu, fu/hu, ji/zi
-  // - allow sha/sya etc (canonicalize)
-  // - allow long vowels: ou/oo/uu/aa/ee/ii collapse to single vowel
-  //   ex: toukyou -> tokyo, ootsuka -> otsuka, yuurakuchou -> yurakucho
-  function normalizeRoma(s){
-    let x = (s || "").toLowerCase().replace(/[^a-z]/g, "");
+// 外回り（正しい順）
+const Y_OUTER = [
+  { jp:"東京",           kana:"とうきょう",        display:"toukyou", extra:["tokyo","tookyoo","toukyoo"] },
+  { jp:"神田",           kana:"かんだ",            display:"kanda", extra:["kanda"] },
+  { jp:"秋葉原",         kana:"あきはばら",        display:"akihabara", extra:["akihabara"] },
+  { jp:"御徒町",         kana:"おかちまち",        display:"okachimachi", extra:["okatimati","okachimati"] },
+  { jp:"上野",           kana:"うえの",            display:"ueno", extra:["ueno"] },
+  { jp:"鶯谷",           kana:"うぐいすだに",      display:"uguisudani", extra:["uguisudani"] },
+  { jp:"日暮里",         kana:"にっぽり",          display:"nippori", extra:["nippori"] },
+  { jp:"西日暮里",       kana:"にしにっぽり",      display:"nishinippori", extra:["nisinippori"] },
+  { jp:"田端",           kana:"たばた",            display:"tabata", extra:["tabata"] },
+  { jp:"駒込",           kana:"こまごめ",          display:"komagome", extra:["komagome"] },
+  { jp:"巣鴨",           kana:"すがも",            display:"sugamo", extra:["sugamo"] },
+  { jp:"大塚",           kana:"おおつか",          display:"ootsuka", extra:["otsuka"] },
+  { jp:"池袋",           kana:"いけぶくろ",        display:"ikebukuro", extra:["ikebukuro"] },
+  { jp:"目白",           kana:"めじろ",            display:"mejiro", extra:["meziro"] },
+  { jp:"高田馬場",       kana:"たかだのばば",      display:"takadanobaba", extra:["takadanobaba"] },
+  { jp:"新大久保",       kana:"しんおおくぼ",      display:"shinookubo", extra:["shinokubo","sinokubo","shinookubo","sinookubo"] },
+  { jp:"新宿",           kana:"しんじゅく",        display:"shinjuku", extra:["sinjuku","sinzyuku","shinjyuku"] },
+  { jp:"代々木",         kana:"よよぎ",            display:"yoyogi", extra:["yoyogi"] },
+  { jp:"原宿",           kana:"はらじゅく",        display:"harajuku", extra:["harazyuku","harajyuku"] },
+  { jp:"渋谷",           kana:"しぶや",            display:"shibuya", extra:["sibuya"] },
+  { jp:"恵比寿",         kana:"えびす",            display:"ebisu", extra:["ebisu"] },
+  { jp:"目黒",           kana:"めぐろ",            display:"meguro", extra:["meguro"] },
+  { jp:"五反田",         kana:"ごたんだ",          display:"gotanda", extra:[] },
+  { jp:"大崎",           kana:"おおさき",          display:"oosaki", extra:["osaki"] },
+  { jp:"品川",           kana:"しながわ",          display:"shinagawa", extra:["sinagawa"] },
+  { jp:"高輪ゲートウェイ", kana:"たかなわげーとうぇい", display:"takanawage-towei", extra:["takanawagateway","takanawagatewei","takanawagateway"] },
+  { jp:"田町",           kana:"たまち",            display:"tamachi", extra:["tamati"] },
+  { jp:"浜松町",         kana:"はままつちょう",    display:"hamamatsuchou", extra:["hamamatsucho","hamamatsutyo","hamamatsutyou"] },
+  { jp:"新橋",           kana:"しんばし",          display:"shinbashi", extra:["shimbashi","sinbasi","sinbashi","simbasi"] },
+  { jp:"有楽町",         kana:"ゆうらくちょう",    display:"yuurakuchou", extra:["yurakucho","yuurakucho","yurakutyo","yuurakutyou"] },
+];
 
-    // major 3->2 canonical
-    x = x.replace(/shi/g, "si")
-         .replace(/chi/g, "ti")
-         .replace(/tsu/g, "tu");
+// ------------------------------
+// ローマ字網羅：かな→ローマ字候補列生成（IMEで一般的に打つ揺れを最大限カバー）
+// ------------------------------
 
-    // yoon canonical
-    x = x.replace(/sha/g, "sya").replace(/shu/g, "syu").replace(/sho/g, "syo")
-         .replace(/cha/g, "tya").replace(/chu/g, "tyu").replace(/cho/g, "tyo")
-         .replace(/ja/g,  "zya").replace(/ju/g,  "zyu").replace(/jo/g,  "zyo");
+// 2文字かな（拗音など）を先に取るためのリスト
+const DIGRAPHS = [
+  "きゃ","きゅ","きょ","ぎゃ","ぎゅ","ぎょ",
+  "しゃ","しゅ","しょ","じゃ","じゅ","じょ",
+  "ちゃ","ちゅ","ちょ",
+  "にゃ","にゅ","にょ",
+  "ひゃ","ひゅ","ひょ","びゃ","びゅ","びょ","ぴゃ","ぴゅ","ぴょ",
+  "みゃ","みゅ","みょ",
+  "りゃ","りゅ","りょ",
+  "ゔぁ","ゔぃ","ゔぇ","ゔぉ","ゔゅ",
+  "ふぁ","ふぃ","ふぇ","ふぉ","ふゅ",
+  "てぃ","でぃ","とぅ","どぅ",
+  "うぁ","うぃ","うぇ","うぉ",
+  "しぇ","ちぇ","じぇ",
+  "つぁ","つぃ","つぇ","つぉ",
+  "すぁ","すぃ","すぇ","すぉ",
+  "くぁ","くぃ","くぇ","くぉ","くゎ",
+  "ぐぁ","ぐぃ","ぐぇ","ぐぉ","ぐゎ"
+];
 
-    // 2 letters variations
-    x = x.replace(/fu/g, "hu")
-         .replace(/ji/g, "zi");
+// 基本かな→候補（できる限り一般的な揺れを網羅）
+const KANA_TO_ROMA = {
+  // vowels
+  "あ":["a"],"い":["i","yi"],"う":["u","wu"],"え":["e"],"お":["o"],
+  // k
+  "か":["ka","ca"],"き":["ki"],"く":["ku","cu","qu"],"け":["ke"],"こ":["ko","co"],
+  // s
+  "さ":["sa"],"し":["shi","si","ci"],"す":["su"],"せ":["se","ce"],"そ":["so"],
+  // t
+  "た":["ta"],"ち":["chi","ti"],"つ":["tsu","tu"],"て":["te"],"と":["to"],
+  // n
+  "な":["na"],"に":["ni"],"ぬ":["nu"],"ね":["ne"],"の":["no"],
+  // h
+  "は":["ha"],"ひ":["hi"],"ふ":["fu","hu"],"へ":["he"],"ほ":["ho"],
+  // m
+  "ま":["ma"],"み":["mi"],"む":["mu"],"め":["me"],"も":["mo"],
+  // y
+  "や":["ya"],"ゆ":["yu"],"よ":["yo"],
+  // r
+  "ら":["ra"],"り":["ri"],"る":["ru"],"れ":["re"],"ろ":["ro"],
+  // w
+  "わ":["wa"],"を":["wo","o"],
+  // g
+  "が":["ga"],"ぎ":["gi"],"ぐ":["gu"],"げ":["ge"],"ご":["go"],
+  // z/j
+  "ざ":["za"],"じ":["ji","zi"],"ず":["zu"],"ぜ":["ze"],"ぞ":["zo"],
+  // d
+  "だ":["da"],"ぢ":["ji","di","zi"],"づ":["zu","du"],"で":["de"],"ど":["do"],
+  // b/p
+  "ば":["ba"],"び":["bi"],"ぶ":["bu"],"べ":["be"],"ぼ":["bo"],
+  "ぱ":["pa"],"ぴ":["pi"],"ぷ":["pu"],"ぺ":["pe"],"ぽ":["po"],
 
-    // long vowels (very permissive)
-    x = x.replace(/aa/g, "a")
-         .replace(/ii/g, "i")
-         .replace(/uu/g, "u")
-         .replace(/ee/g, "e")
-         .replace(/oo/g, "o")
-         .replace(/ou/g, "o"); // toukyou -> tokyo, yuurakuchou -> yurakucho (after uu->u and ou->o)
+  // small vowels / small ya/yu/yo (allow x/l)
+  "ぁ":["xa","la"],"ぃ":["xi","li"],"ぅ":["xu","lu"],"ぇ":["xe","le"],"ぉ":["xo","lo"],
+  "ゃ":["xya","lya"],"ゅ":["xyu","lyu"],"ょ":["xyo","lyo"],
+  "っ":["xtu","ltu"],
 
-    return x;
-  }
+  // digraphs
+  "きゃ":["kya"],"きゅ":["kyu"],"きょ":["kyo"],
+  "ぎゃ":["gya"],"ぎゅ":["gyu"],"ぎょ":["gyo"],
+  "しゃ":["sha","sya"],"しゅ":["shu","syu"],"しょ":["sho","syo"],
+  "じゃ":["ja","jya","zya"],"じゅ":["ju","jyu","zyu"],"じょ":["jo","jyo","zyo"],
+  "ちゃ":["cha","cya","tya"],"ちゅ":["chu","cyu","tyu"],"ちょ":["cho","cyo","tyo"],
+  "にゃ":["nya"],"にゅ":["nyu"],"にょ":["nyo"],
+  "ひゃ":["hya"],"ひゅ":["hyu"],"ひょ":["hyo"],
+  "びゃ":["bya"],"びゅ":["byu"],"びょ":["byo"],
+  "ぴゃ":["pya"],"ぴゅ":["pyu"],"ぴょ":["pyo"],
+  "みゃ":["mya"],"みゅ":["myu"],"みょ":["myo"],
+  "りゃ":["rya"],"りゅ":["ryu"],"りょ":["ryo"],
 
-  // --- Finger map (US minimal) ---
-  const fingerMap = {
-    "ENTER":"R_PINKY","BACKSPACE":"R_PINKY",
-    "TAB":"L_PINKY","CAPS":"L_PINKY",
-    "SHIFT_L":"L_PINKY","SHIFT_R":"R_PINKY",
+  // extended
+  "ふぁ":["fa","fwa","hua"],"ふぃ":["fi","fwi","hwi"],"ふぇ":["fe","fwe","hwe"],"ふぉ":["fo","fwo","hwo"],"ふゅ":["fyu","h्यु".replace("ह","")], // harmless
+  "ゔぁ":["va"],"ゔぃ":["vi"],"ゔぇ":["ve"],"ゔぉ":["vo"],"ゔゅ":["vyu"],
+  "てぃ":["ti","thi"],"でぃ":["di","dhi"],"とぅ":["tu","twu"],"どぅ":["du","dwu"],
+  "うぁ":["wa","wha"],"うぃ":["wi","whi"],"うぇ":["we","whe"],"うぉ":["wo","who"],
+  "しぇ":["she","sye"],"ちぇ":["che","cye","tye"],"じぇ":["je","jye","zye"],
+  "つぁ":["tsa","twa"],"つぃ":["tsi","twi"],"つぇ":["tse","twe"],"つぉ":["tso","two"],
+  "すぁ":["swa"],"すぃ":["swi"],"すぇ":["swe"],"すぉ":["swo"],
+  "くぁ":["qa","kwa"],"くぃ":["qi","kwi"],"くぇ":["qe","kwe"],"くぉ":["qo","kwo"],"くゎ":["kwa"],
+  "ぐぁ":["gwa"],"ぐぃ":["gwi"],"ぐぇ":["gwe"],"ぐぉ":["gwo"],"ぐゎ":["gwa"],
 
-    "Q":"L_PINKY","W":"L_RING","E":"L_MIDDLE","R":"L_INDEX","T":"L_INDEX",
-    "Y":"R_INDEX","U":"R_INDEX","I":"R_MIDDLE","O":"R_RING","P":"R_PINKY",
+  // long vowel mark (used in ゲートウェイ)
+  "ー":["-"]
+};
 
-    "A":"L_PINKY","S":"L_RING","D":"L_MIDDLE","F":"L_INDEX","G":"L_INDEX",
-    "H":"R_INDEX","J":"R_INDEX","K":"R_MIDDLE","L":"R_RING",
-
-    "Z":"L_PINKY","X":"L_RING","C":"L_MIDDLE","V":"L_INDEX","B":"L_INDEX",
-    "N":"R_INDEX","M":"R_INDEX",
-
-    "1":"L_PINKY","2":"L_RING","3":"L_MIDDLE","4":"L_INDEX","5":"L_INDEX",
-    "6":"R_INDEX","7":"R_INDEX","8":"R_MIDDLE","9":"R_RING","0":"R_PINKY",
-
-    "MINUS":"R_PINKY","EQUAL":"R_PINKY",
-    "LBRACKET":"R_PINKY","RBRACKET":"R_PINKY","BACKSLASH":"R_PINKY",
-    "SEMICOLON":"R_PINKY","QUOTE":"R_PINKY",
-    "COMMA":"R_MIDDLE","DOT":"R_RING","SLASH":"R_PINKY",
-    "BACKTICK":"L_PINKY"
-  };
-
-  // --- Yamanote data (JP display + Roma target) ---
-  // roma can be string or array; we normalize both sides anyway.
-  const yamanote_inner = [
-    {jp:"東京", roma:["tokyo","toukyou"]},
-    {jp:"有楽町", roma:["yurakucho","yuurakuchou","yurakutyo","yuurakutyou"]},
-    {jp:"新橋", roma:["shimbashi","shinbashi","simbasi"]},
-    {jp:"浜松町", roma:["hamamatsucho","hamamatsutyo","hamamatsuchou","hamamatsutyou"]},
-    {jp:"田町", roma:["tamachi","tamati"]},
-    {jp:"高輪ゲートウェイ", roma:["takanawagateway","takanawa gateway"]},
-    {jp:"品川", roma:["shinagawa","sinagawa"]},
-    {jp:"大崎", roma:["osaki"]},
-    {jp:"五反田", roma:["gotanda"]},
-    {jp:"目黒", roma:["meguro"]},
-    {jp:"恵比寿", roma:["ebisu"]},
-    {jp:"渋谷", roma:["shibuya","sibuya"]},
-    {jp:"原宿", roma:["harajuku","harazyuku"]},
-    {jp:"代々木", roma:["yoyogi"]},
-    {jp:"新宿", roma:["shinjuku","sinjuku","sinzyuku"]},
-    {jp:"新大久保", roma:["shinokubo","sinokubo"]},
-    {jp:"高田馬場", roma:["takadanobaba"]},
-    {jp:"目白", roma:["mejiro","meziro"]},
-    {jp:"池袋", roma:["ikebukuro"]},
-    {jp:"大塚", roma:["otsuka","ootsuka"]},
-    {jp:"巣鴨", roma:["sugamo"]},
-    {jp:"駒込", roma:["komagome"]},
-    {jp:"田端", roma:["tabata"]},
-    {jp:"西日暮里", roma:["nishinippori","nisinippori"]},
-    {jp:"日暮里", roma:["nippori"]},
-    {jp:"鶯谷", roma:["uguisudani"]},
-    {jp:"上野", roma:["ueno"]},
-    {jp:"御徒町", roma:["okachimachi","okatimati"]},
-    {jp:"秋葉原", roma:["akihabara"]},
-    {jp:"神田", roma:["kanda"]}
-  ];
-
-  const yamanote_outer = [
-    {jp:"東京", roma:["tokyo","toukyou"]},
-    {jp:"神田", roma:["kanda"]},
-    {jp:"秋葉原", roma:["akihabara"]},
-    {jp:"御徒町", roma:["okachimachi","okatimati"]},
-    {jp:"上野", roma:["ueno"]},
-    {jp:"鶯谷", roma:["uguisudani"]},
-    {jp:"日暮里", roma:["nippori"]},
-    {jp:"西日暮里", roma:["nishinippori","nisinippori"]},
-    {jp:"田端", roma:["tabata"]},
-    {jp:"駒込", roma:["komagome"]},
-    {jp:"巣鴨", roma:["sugamo"]},
-    {jp:"大塚", roma:["otsuka","ootsuka"]},
-    {jp:"池袋", roma:["ikebukuro"]},
-    {jp:"目白", roma:["mejiro","meziro"]},
-    {jp:"高田馬場", roma:["takadanobaba"]},
-    {jp:"新大久保", roma:["shinokubo","sinokubo"]},
-    {jp:"新宿", roma:["shinjuku","sinjuku","sinzyuku"]},
-    {jp:"代々木", roma:["yoyogi"]},
-    {jp:"原宿", roma:["harajuku","harazyuku"]},
-    {jp:"渋谷", roma:["shibuya","sibuya"]},
-    {jp:"恵比寿", roma:["ebisu"]},
-    {jp:"目黒", roma:["meguro"]},
-    {jp:"五反田", roma:["gotanda"]},
-    {jp:"大崎", roma:["osaki"]},
-    {jp:"品川", roma:["shinagawa","sinagawa"]},
-    {jp:"高輪ゲートウェイ", roma:["takanawagateway","takanawa gateway"]},
-    {jp:"田町", roma:["tamachi","tamati"]},
-    {jp:"浜松町", roma:["hamamatsucho","hamamatsutyo","hamamatsuchou","hamamatsutyou"]},
-    {jp:"新橋", roma:["shimbashi","shinbashi","simbasi"]},
-    {jp:"有楽町", roma:["yurakucho","yuurakuchou","yurakutyo","yuurakutyou"]}
-  ];
-
-  const state = {
-    mode: "yamanote_inner",
-    idx: 0,
-    started: false,
-    startMs: 0,
-    finishMs: 0,
-    mistype: 0
-  };
-
-  function dataset(){
-    return state.mode === "yamanote_outer" ? yamanote_outer : yamanote_inner;
-  }
-
-  function bestKey(modeKey){ return `best_${modeKey}`; }
-  function loadBest(modeKey){
-    try{
-      const raw = localStorage.getItem(bestKey(modeKey));
-      if(!raw) return null;
-      return JSON.parse(raw); // { timeMs, mistype }
-    }catch{ return null; }
-  }
-  function formatTime(ms){ return (ms/1000).toFixed(1) + " sec"; }
-  function renderBest(modeKey){
-    const b = loadBest(modeKey);
-    if(!b){
-      bestTimeEl.textContent = "-";
-      bestMistypeEl.textContent = "-";
-      return;
+// かな文字列を「かな単位」に分割（拗音などを優先）
+function splitKanaUnits(kana){
+  const units = [];
+  for(let i=0;i<kana.length;i++){
+    const two = kana.slice(i,i+2);
+    if(DIGRAPHS.includes(two)){
+      units.push(two);
+      i++;
+      continue;
     }
-    bestTimeEl.textContent = formatTime(b.timeMs);
-    bestMistypeEl.textContent = String(b.mistype);
+    units.push(kana[i]);
   }
-  function isNewRecord(newRec, oldRec){
-    if(!oldRec) return true;
-    if(newRec.timeMs < oldRec.timeMs) return true;
-    if(newRec.timeMs > oldRec.timeMs) return false;
-    return newRec.mistype < oldRec.mistype;
-  }
-  function saveBestIfNeeded(modeKey, timeMs, mistype){
-    const newRec = { timeMs, mistype };
-    const oldRec = loadBest(modeKey);
-    if(isNewRecord(newRec, oldRec)){
-      localStorage.setItem(bestKey(modeKey), JSON.stringify(newRec));
-    }
-    renderBest(modeKey);
-  }
+  return units;
+}
 
-  function currentTargets(){
-    const d = dataset();
-    if(state.idx >= d.length) return [];
-    const r = d[state.idx].roma;
-    const list = Array.isArray(r) ? r : [r];
-    return list.map(normalizeRoma);
-  }
+function startsWithVowelOrY(s){
+  return /^[aeiouy]/.test(s);
+}
 
-  function updateUI(){
-    const d = dataset();
-    const total = d.length;
+// かな読みから、あり得るローマ字列（上限付き）を生成
+function generateRomaCandidates(kana){
+  const units = splitKanaUnits(kana);
 
-    if(state.idx >= total){
-      progressBadge.textContent = `Finish · ${total}/${total}`;
-      promptMetaEl.textContent = "完了";
-      stationJpEl.textContent = "完了";
-      stationRomaEl.textContent = "";
-      return;
-    }
+  // DP: strings set（爆発防止のため上限）
+  let set = new Set([""]);
+  const LIMIT = 4000;
 
-    const cur = d[state.idx];
-    progressBadge.textContent = `${state.idx+1}/${total}`;
-    promptMetaEl.textContent = `${state.mode === "yamanote_outer" ? "山手線 外回り" : "山手線 内回り"}`;
-    stationJpEl.textContent = cur.jp;
+  for(let i=0;i<units.length;i++){
+    const u = units[i];
 
-    // 代表表示は最初の候補（正規化後）を出す（見やすさ優先）
-    const displayRoma = normalizeRoma(Array.isArray(cur.roma) ? cur.roma[0] : cur.roma);
-    stationRomaEl.textContent = displayRoma;
-
-    typedView.textContent = typedInput.value || "";
-  }
-
-  function resetRun(){
-    state.idx = 0;
-    state.started = false;
-    state.startMs = 0;
-    state.finishMs = 0;
-    state.mistype = 0;
-    typedInput.value = "";
-    prevValue = "";
-    typedView.textContent = "";
-    overlay.style.display = "none";
-    updateUI();
-  }
-
-  function startIfNeeded(){
-    if(state.started) return;
-    state.started = true;
-    state.startMs = performance.now();
-  }
-
-  function finish(){
-    if(state.finishMs) return;
-    state.finishMs = performance.now();
-    const elapsed = Math.max(0, state.finishMs - state.startMs);
-
-    timeNowEl.textContent = formatTime(elapsed);
-    mistypeNowEl.textContent = String(state.mistype);
-
-    saveBestIfNeeded(state.mode, elapsed, state.mistype);
-
-    overlay.style.display = "flex";
-  }
-
-  // Mistype rule (stable):
-  // 入力（正規化）が「どの正解候補のprefixにもなってない」状態にした入力イベントを 1ミスとして数える。
-  function scoreMistype(){
-    const targets = currentTargets();
-    if(targets.length === 0) return;
-
-    const curNorm = normalizeRoma(typedInput.value);
-    const isPrefix = targets.some(t => t.startsWith(curNorm));
-    if(!isPrefix){
-      state.mistype += 1;
-    }
-  }
-
-  function tryAdvance(){
-    const targets = currentTargets();
-    if(targets.length === 0) return;
-
-    const curNorm = normalizeRoma(typedInput.value);
-    const ok = targets.some(t => t === curNorm);
-
-    if(ok){
-      state.idx += 1;
-      typedInput.value = "";
-      prevValue = "";
-      typedView.textContent = "";
-
-      const total = dataset().length;
-      if(state.idx >= total){
-        updateUI();
-        finish();
-        return;
+    // 「ん」は次の音で打ち方が変わる
+    if(u === "ん"){
+      const nextUnits = units[i+1] ? [units[i+1]] : [];
+      let nextInitials = new Set();
+      if(nextUnits.length){
+        const nextRoma = KANA_TO_ROMA[nextUnits[0]] || [];
+        for(const r of nextRoma){
+          if(r) nextInitials.add(r[0]);
+        }
       }
-      updateUI();
+      const needNN = nextInitials.size === 0 ? false : [...nextInitials].some(c => "aeiouy".includes(c));
+      const variants = needNN ? ["nn","n'"] : ["n","nn"]; // n before consonant ok
+      const nextSet = new Set();
+      for(const base of set){
+        for(const v of variants){
+          nextSet.add(base + v);
+          if(nextSet.size > LIMIT) break;
+        }
+        if(nextSet.size > LIMIT) break;
+      }
+      set = nextSet;
+      continue;
+    }
+
+    // 小さい「っ」：次の子音を重ねる or xtu/ltu
+    if(u === "っ"){
+      const next = units[i+1];
+      const nextRomaList = next ? (KANA_TO_ROMA[next] || []) : [];
+      const sokuon = new Set(["xtu","ltu"]);
+      for(const nr of nextRomaList){
+        if(nr && /^[bcdfghjklmnpqrstvwxyz]/.test(nr)) sokuon.add(nr[0] + nr);
+      }
+      const variants = [...sokuon];
+      const nextSet = new Set();
+      for(const base of set){
+        for(const v of variants){
+          nextSet.add(base + v);
+          if(nextSet.size > LIMIT) break;
+        }
+        if(nextSet.size > LIMIT) break;
+      }
+      set = nextSet;
+      continue;
+    }
+
+    const variants = KANA_TO_ROMA[u] || [];
+    const nextSet = new Set();
+
+    for(const base of set){
+      for(const v of variants){
+        nextSet.add(base + v);
+        if(nextSet.size > LIMIT) break;
+      }
+      if(nextSet.size > LIMIT) break;
+    }
+    set = nextSet;
+  }
+
+  // 仕上げ：IME/人間がやりがちな長音省略（ou→o, oo→o, uu→u 等）も候補に混ぜる
+  // ただし無限に増えるので「変換1回だけ」程度に留める
+  const final = new Set();
+  for(const s of set){
+    final.add(s);
+    final.add(s.replace(/ou/g,"o"));
+    final.add(s.replace(/oo/g,"o"));
+    final.add(s.replace(/uu/g,"u"));
+    final.add(s.replace(/aa/g,"a"));
+    final.add(s.replace(/ee/g,"e"));
+    final.add(s.replace(/ii/g,"i"));
+    if(final.size > LIMIT) break;
+  }
+
+  return [...final];
+}
+
+// ------------------------------
+// ゲーム状態
+// ------------------------------
+const state = {
+  mode: "inner",
+  idx: 0,
+  typed: "",       // 受理した入力（ローマ字）
+  started: false,
+  startMs: 0,
+  finishMs: 0,
+  mistype: 0
+};
+
+// 駅ごとに「許可されるローマ字（prefixチェック用）」を事前計算
+function getDataset(){
+  return state.mode === "outer" ? Y_OUTER : Y_INNER;
+}
+
+function buildAllowedForStation(st){
+  // かな→生成
+  const gen = generateRomaCandidates(st.kana);
+
+  // extra（完全ローマ字）も追加
+  const extra = (st.extra || []).map(x => String(x).toLowerCase().replace(/[^a-z']/g,""));
+
+  // display 自体も候補に入れる（ハイフンなどは抜く）
+  const display = String(st.display || "").toLowerCase().replace(/[^a-z']/g,"");
+  const all = new Set([...gen, ...extra, display].filter(Boolean));
+
+  // prefixチェック高速化のため、候補を配列化
+  return {
+    full: [...all],
+    // prefixに使うため「短い順ではなく」そのまま（someで十分）
+  };
+}
+
+let allowedCache = []; // stations length
+function rebuildCache(){
+  const d = getDataset();
+  allowedCache = d.map(buildAllowedForStation);
+}
+
+// ------------------------------
+// UI
+// ------------------------------
+function formatTime(ms){ return (ms/1000).toFixed(1) + " sec"; }
+
+function bestKey(mode){ return `best_${mode}`; }
+function loadBest(mode){
+  try{
+    const raw = localStorage.getItem(bestKey(mode));
+    if(!raw) return null;
+    return JSON.parse(raw); // { timeMs, mistype }
+  }catch{ return null; }
+}
+function renderBest(mode){
+  const b = loadBest(mode);
+  if(!b){
+    bestTimeEl.textContent = "-";
+    bestMistypeEl.textContent = "-";
+    return;
+  }
+  bestTimeEl.textContent = formatTime(b.timeMs);
+  bestMistypeEl.textContent = String(b.mistype);
+}
+function isNewRecord(newRec, oldRec){
+  if(!oldRec) return true;
+  if(newRec.timeMs < oldRec.timeMs) return true;
+  if(newRec.timeMs > oldRec.timeMs) return false;
+  return newRec.mistype < oldRec.mistype;
+}
+function saveBestIfNeeded(mode, timeMs, mistype){
+  const newRec = { timeMs, mistype };
+  const oldRec = loadBest(mode);
+  if(isNewRecord(newRec, oldRec)){
+    localStorage.setItem(bestKey(mode), JSON.stringify(newRec));
+  }
+  renderBest(mode);
+}
+
+function renderPrompt(){
+  const d = getDataset();
+  const total = d.length;
+
+  if(state.idx >= total){
+    progressBadge.textContent = `Finish · ${total}/${total}`;
+    modeLabel.textContent = state.mode === "outer" ? "山手線 外回り" : "山手線 内回り";
+    stationJpEl.textContent = "完了";
+    stationRomaEl.textContent = "";
+    return;
+  }
+
+  const st = d[state.idx];
+  modeLabel.textContent = state.mode === "outer" ? "山手線 外回り" : "山手線 内回り";
+  progressBadge.textContent = `${state.idx+1}/${total}`;
+  stationJpEl.textContent = st.jp;
+
+  // 表示は st.display（ローマ字表記）をそのまま（記号は表示上消す）
+  const disp = String(st.display || "").toLowerCase().replace(/[^a-z]/g,"");
+  const okLen = Math.min(state.typed.length, disp.length);
+
+  const left = disp.slice(0, okLen);
+  const right = disp.slice(okLen);
+
+  stationRomaEl.innerHTML = `<span class="ok">${left}</span>${right}`;
+}
+
+function resetRun(){
+  state.idx = 0;
+  state.typed = "";
+  state.started = false;
+  state.startMs = 0;
+  state.finishMs = 0;
+  state.mistype = 0;
+  overlay.style.display = "none";
+  rebuildCache();
+  renderPrompt();
+}
+
+function startIfNeeded(){
+  if(state.started) return;
+  state.started = true;
+  state.startMs = performance.now();
+}
+
+function finish(){
+  if(state.finishMs) return;
+  state.finishMs = performance.now();
+  const elapsed = Math.max(0, state.finishMs - state.startMs);
+
+  timeNowEl.textContent = formatTime(elapsed);
+  mistypeNowEl.textContent = String(state.mistype);
+
+  saveBestIfNeeded(state.mode, elapsed, state.mistype);
+  overlay.style.display = "flex";
+}
+
+// ------------------------------
+// 入力判定（最重要）
+// - typed に新文字を足した状態が「許可候補のいずれかのprefix」なら受理して赤を進める
+// - prefixでなければ：受理せず、ミスタイプ+1、色も進まない、駅も進まない
+// - 完全一致したら次駅へ
+// ------------------------------
+function isPrefixOfAny(nextTyped, stationAllowed){
+  // stationAllowed.full のどれかが nextTyped で始まるならOK
+  for(const cand of stationAllowed.full){
+    if(cand.startsWith(nextTyped)) return true;
+  }
+  return false;
+}
+function isExactAny(nextTyped, stationAllowed){
+  for(const cand of stationAllowed.full){
+    if(cand === nextTyped) return true;
+  }
+  return false;
+}
+
+function handleChar(ch){
+  if(state.finishMs) return;
+
+  const d = getDataset();
+  if(state.idx >= d.length) return;
+
+  // 受けるのは英字と '（n'用）だけ
+  const c = ch.toLowerCase();
+  if(!/^[a-z']$/.test(c)) return;
+
+  startIfNeeded();
+
+  const allowed = allowedCache[state.idx];
+  const next = state.typed + c;
+
+  if(!isPrefixOfAny(next, allowed)){
+    state.mistype += 1;
+    // 受理しない（色も進めない）
+    return;
+  }
+
+  // 受理
+  state.typed = next;
+  renderPrompt();
+
+  // 完全一致なら次へ
+  if(isExactAny(state.typed, allowed)){
+    state.idx += 1;
+    state.typed = "";
+    renderPrompt();
+
+    if(state.idx >= d.length){
+      finish();
     }
   }
+}
 
-  function delta(prev,next){
-    if(next.startsWith(prev)) return next.slice(prev.length);
-    return "";
-  }
+// Backspaceは「typedを戻す」だけ（ミスタイプには数えない）
+function handleBackspace(){
+  if(state.finishMs) return;
+  if(state.typed.length === 0) return;
+  state.typed = state.typed.slice(0, -1);
+  renderPrompt();
+}
 
-  // Keyboard rendering (no space row)
-  function escapeHtml(s){
-    return s.replace(/[&<>"']/g, (c)=>({
-      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-    }[c]));
-  }
-  function fingerClass(keyId){
-    const f = fingerMap[keyId];
-    return f ? `finger-${f}` : "";
-  }
-  function renderKeyboard(){
-    const rows = [
-      [{id:"BACKTICK",label:"`"},{id:"1",label:"1"},{id:"2",label:"2"},{id:"3",label:"3"},{id:"4",label:"4"},
-       {id:"5",label:"5"},{id:"6",label:"6"},{id:"7",label:"7"},{id:"8",label:"8"},{id:"9",label:"9"},
-       {id:"0",label:"0"},{id:"MINUS",label:"-"},{id:"EQUAL",label:"="},{id:"BACKSPACE",label:"⌫",w:1.6}],
-      [{id:"TAB",label:"Tab",w:1.3},{id:"Q",label:"Q"},{id:"W",label:"W"},{id:"E",label:"E"},{id:"R",label:"R"},{id:"T",label:"T"},
-       {id:"Y",label:"Y"},{id:"U",label:"U"},{id:"I",label:"I"},{id:"O",label:"O"},{id:"P",label:"P"},
-       {id:"LBRACKET",label:"["},{id:"RBRACKET",label:"]"},{id:"BACKSLASH",label:"\\",w:1.3}],
-      [{id:"CAPS",label:"Caps",w:1.55},{id:"A",label:"A"},{id:"S",label:"S"},{id:"D",label:"D"},{id:"F",label:"F"},{id:"G",label:"G"},
-       {id:"H",label:"H"},{id:"J",label:"J"},{id:"K",label:"K"},{id:"L",label:"L"},
-       {id:"SEMICOLON",label:";"},{id:"QUOTE",label:"'"},{id:"ENTER",label:"Enter",w:1.75}],
-      [{id:"SHIFT_L",label:"Shift",w:2.0},{id:"Z",label:"Z"},{id:"X",label:"X"},{id:"C",label:"C"},{id:"V",label:"V"},{id:"B",label:"B"},
-       {id:"N",label:"N"},{id:"M",label:"M"},{id:"COMMA",label:","},{id:"DOT",label:"."},{id:"SLASH",label:"/"},
-       {id:"SHIFT_R",label:"Shift",w:2.2}]
-      // Space row removed
-    ];
+// ------------------------------
+// Keyboard rendering (no space row)
+// ------------------------------
+const fingerMap = {
+  "ENTER":"R_PINKY","BACKSPACE":"R_PINKY",
+  "TAB":"L_PINKY","CAPS":"L_PINKY",
+  "SHIFT_L":"L_PINKY","SHIFT_R":"R_PINKY",
+  "Q":"L_PINKY","W":"L_RING","E":"L_MIDDLE","R":"L_INDEX","T":"L_INDEX",
+  "Y":"R_INDEX","U":"R_INDEX","I":"R_MIDDLE","O":"R_RING","P":"R_PINKY",
+  "A":"L_PINKY","S":"L_RING","D":"L_MIDDLE","F":"L_INDEX","G":"L_INDEX",
+  "H":"R_INDEX","J":"R_INDEX","K":"R_MIDDLE","L":"R_RING",
+  "Z":"L_PINKY","X":"L_RING","C":"L_MIDDLE","V":"L_INDEX","B":"L_INDEX",
+  "N":"R_INDEX","M":"R_INDEX",
+  "1":"L_PINKY","2":"L_RING","3":"L_MIDDLE","4":"L_INDEX","5":"L_INDEX",
+  "6":"R_INDEX","7":"R_INDEX","8":"R_MIDDLE","9":"R_RING","0":"R_PINKY",
+  "MINUS":"R_PINKY","EQUAL":"R_PINKY",
+  "LBRACKET":"R_PINKY","RBRACKET":"R_PINKY","BACKSLASH":"R_PINKY",
+  "SEMICOLON":"R_PINKY","QUOTE":"R_PINKY",
+  "COMMA":"R_MIDDLE","DOT":"R_RING","SLASH":"R_PINKY",
+  "BACKTICK":"L_PINKY"
+};
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, (c)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+function fingerClass(keyId){
+  const f = fingerMap[keyId];
+  return f ? `finger-${f}` : "";
+}
+function renderKeyboard(){
+  const rows = [
+    [{id:"BACKTICK",label:"`"},{id:"1",label:"1"},{id:"2",label:"2"},{id:"3",label:"3"},{id:"4",label:"4"},
+     {id:"5",label:"5"},{id:"6",label:"6"},{id:"7",label:"7"},{id:"8",label:"8"},{id:"9",label:"9"},
+     {id:"0",label:"0"},{id:"MINUS",label:"-"},{id:"EQUAL",label:"="},{id:"BACKSPACE",label:"⌫",w:1.6}],
+    [{id:"TAB",label:"Tab",w:1.3},{id:"Q",label:"Q"},{id:"W",label:"W"},{id:"E",label:"E"},{id:"R",label:"R"},{id:"T",label:"T"},
+     {id:"Y",label:"Y"},{id:"U",label:"U"},{id:"I",label:"I"},{id:"O",label:"O"},{id:"P",label:"P"},
+     {id:"LBRACKET",label:"["},{id:"RBRACKET",label:"]"},{id:"BACKSLASH",label:"\\",w:1.3}],
+    [{id:"CAPS",label:"Caps",w:1.55},{id:"A",label:"A"},{id:"S",label:"S"},{id:"D",label:"D"},{id:"F",label:"F"},{id:"G",label:"G"},
+     {id:"H",label:"H"},{id:"J",label:"J"},{id:"K",label:"K"},{id:"L",label:"L"},
+     {id:"SEMICOLON",label:";"},{id:"QUOTE",label:"'"},{id:"ENTER",label:"Enter",w:1.75}],
+    [{id:"SHIFT_L",label:"Shift",w:2.0},{id:"Z",label:"Z"},{id:"X",label:"X"},{id:"C",label:"C"},{id:"V",label:"V"},{id:"B",label:"B"},
+     {id:"N",label:"N"},{id:"M",label:"M"},{id:"COMMA",label:","},{id:"DOT",label:"."},{id:"SLASH",label:"/"},
+     {id:"SHIFT_R",label:"Shift",w:2.2}]
+  ];
 
-    const unit=48, gap=8, h=48, rx=10;
-    const rowWidth = (row)=>row.reduce((sum,k)=>sum+(k.w??1)*unit+gap,0)-gap;
-    const maxW = Math.max(...rows.map(rowWidth))+24;
-    const totalH = rows.length*(h+gap)-gap+24;
+  const unit=48, gap=8, h=48, rx=10;
+  const rowWidth = (row)=>row.reduce((sum,k)=>sum+(k.w??1)*unit+gap,0)-gap;
+  const maxW = Math.max(...rows.map(rowWidth))+24;
+  const totalH = rows.length*(h+gap)-gap+24;
 
-    let svg = `<svg viewBox="0 0 ${maxW} ${totalH}" xmlns="http://www.w3.org/2000/svg">`;
-    rows.forEach((row,r)=>{
-      let x=12, y=12 + r*(h+gap);
-      row.forEach((k)=>{
-        const w=(k.w??1)*unit;
-        const id=`KEY_${k.id}`;
-        svg += `
-          <g>
-            <rect id="${id}" class="key ${fingerClass(k.id)}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"></rect>
-            <text class="keyText" x="${x+w/2}" y="${y+h/2}">${escapeHtml(k.label)}</text>
-          </g>`;
-        x += w + gap;
-      });
+  let svg = `<svg viewBox="0 0 ${maxW} ${totalH}" xmlns="http://www.w3.org/2000/svg">`;
+  rows.forEach((row,r)=>{
+    let x=12, y=12 + r*(h+gap);
+    row.forEach((k)=>{
+      const w=(k.w??1)*unit;
+      const id=`KEY_${k.id}`;
+      svg += `
+        <g>
+          <rect id="${id}" class="key ${fingerClass(k.id)}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"></rect>
+          <text class="keyText" x="${x+w/2}" y="${y+h/2}">${escapeHtml(k.label)}</text>
+        </g>`;
+      x += w + gap;
     });
-    svg += `</svg>`;
-    keyboardHost.innerHTML = svg;
-  }
-
-  function keyEventToKeyId(e){
-    const k = e.key;
-    if(k==="Enter") return "ENTER";
-    if(k==="Backspace") return "BACKSPACE";
-    if(k==="Tab") return "TAB";
-    if(k==="CapsLock") return "CAPS";
-    if(k==="Shift") return (e.location===1 ? "SHIFT_L" : "SHIFT_R");
-    if(/^[a-z]$/i.test(k)) return k.toUpperCase();
-    if(/^[0-9]$/.test(k)) return k;
-    const map = {"-":"MINUS","=":"EQUAL","[":"LBRACKET","]":"RBRACKET","\\":"BACKSLASH",";":"SEMICOLON","'":"QUOTE",",":"COMMA",".":"DOT","/":"SLASH","`":"BACKTICK"};
-    return map[k] || "";
-  }
-  function highlight(keyId){
-    document.querySelectorAll(".key.hit").forEach(el=>el.classList.remove("hit"));
-    if(!keyId) return;
-    const el = document.getElementById(`KEY_${keyId}`);
-    if(el) el.classList.add("hit");
-  }
-
-  // Events
-  modeSelect.addEventListener("change", ()=>{
-    state.mode = modeSelect.value;
-    resetRun();
-    renderBest(state.mode);
-    typedInput.focus();
   });
+  svg += `</svg>`;
+  keyboardHost.innerHTML = svg;
+}
+function keyEventToKeyId(e){
+  const k = e.key;
+  if(k==="Enter") return "ENTER";
+  if(k==="Backspace") return "BACKSPACE";
+  if(k==="Tab") return "TAB";
+  if(k==="CapsLock") return "CAPS";
+  if(k==="Shift") return (e.location===1 ? "SHIFT_L" : "SHIFT_R");
+  if(/^[a-z]$/i.test(k)) return k.toUpperCase();
+  if(/^[0-9]$/.test(k)) return k;
+  const map = {"-":"MINUS","=":"EQUAL","[":"LBRACKET","]":"RBRACKET","\\":"BACKSLASH",";":"SEMICOLON","'":"QUOTE",",":"COMMA",".":"DOT","/":"SLASH","`":"BACKTICK"};
+  return map[k] || "";
+}
+function highlight(keyId){
+  document.querySelectorAll(".key.hit").forEach(el=>el.classList.remove("hit"));
+  if(!keyId) return;
+  const el = document.getElementById(`KEY_${keyId}`);
+  if(el) el.classList.add("hit");
+}
 
-  restartBtn.addEventListener("click", ()=>{
-    resetRun();
-    renderBest(state.mode);
-    typedInput.focus();
-  });
-
-  restartBtn2.addEventListener("click", ()=>{
-    resetRun();
-    renderBest(state.mode);
-    typedInput.focus();
-  });
-
-  closeBtn.addEventListener("click", ()=>{
-    overlay.style.display = "none";
-    typedInput.focus();
-  });
-
-  clearBtn.addEventListener("click", ()=>{
-    typedInput.value = "";
-    prevValue = "";
-    typedView.textContent = "";
-    typedInput.focus();
-  });
-
-  window.addEventListener("keydown",(e)=>{
-    const id = keyEventToKeyId(e);
-    highlight(id);
-  });
-
-  typedInput.addEventListener("input", ()=>{
-    const next = typedInput.value;
-    const added = delta(prevValue, next);
-
-    // show typed in red
-    typedView.textContent = next;
-
-    if(next.length > 0) startIfNeeded();
-
-    if(added){
-      scoreMistype();
-      tryAdvance();
-    }
-
-    prevValue = next;
-  });
-
-  // Init
-  renderKeyboard();
+// ------------------------------
+// Events
+// ------------------------------
+modeSelect.addEventListener("change", ()=>{
   state.mode = modeSelect.value;
-  renderBest(state.mode);
   resetRun();
-  typedInput.focus();
+  renderBest(state.mode);
+});
+
+restartBtn.addEventListener("click", ()=>{
+  resetRun();
+  renderBest(state.mode);
+});
+restartBtn2.addEventListener("click", ()=>{
+  resetRun();
+  renderBest(state.mode);
+});
+closeBtn.addEventListener("click", ()=>{
+  overlay.style.display = "none";
+});
+
+window.addEventListener("keydown", (e)=>{
+  const id = keyEventToKeyId(e);
+  highlight(id);
+
+  if(e.key === "Backspace"){
+    e.preventDefault();
+    handleBackspace();
+    return;
+  }
+
+  // 1文字入力のみ拾う（Enter等は無視）
+  if(typeof e.key === "string" && e.key.length === 1){
+    handleChar(e.key);
+  }
+});
+
+// ------------------------------
+// Init
+// ------------------------------
+renderKeyboard();
+state.mode = modeSelect.value;
+rebuildCache();
+renderBest(state.mode);
+renderPrompt();
 </script>
 </body>
 </html>
