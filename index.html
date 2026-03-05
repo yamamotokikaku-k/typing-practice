@@ -43,7 +43,6 @@
     .key{ fill:var(--key); stroke:var(--line); stroke-width:1; }
     .keyText{ fill:var(--keyText); font-size:12px; text-anchor:middle; dominant-baseline:middle; pointer-events:none; user-select:none; }
 
-    /* finger colors */
     .finger-L_THUMB,.finger-R_THUMB{ fill: color-mix(in srgb, var(--thumb) 70%, var(--key)); }
     .finger-L_INDEX,.finger-R_INDEX{ fill: color-mix(in srgb, var(--index) 70%, var(--key)); }
     .finger-L_MIDDLE,.finger-R_MIDDLE{ fill: color-mix(in srgb, var(--middle) 70%, var(--key)); }
@@ -117,7 +116,6 @@
 
   let prevValue = "";
 
-  // --- finger map (US, minimal) ---
   const fingerMap = {
     "SPACE":"THUMBS",
     "ENTER":"R_PINKY","BACKSPACE":"R_PINKY",
