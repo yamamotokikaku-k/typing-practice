@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Typing Practice</title>
+  <title>タイピング練習</title>
   <style>
     :root{
       --bg:#ffffff;
@@ -12,6 +12,7 @@
       --text:#0f172a;
       --muted:#475569;
       --line:#d7dbe6;
+      --danger:#dc2626;
 
       --key:#ffffff;
       --keyText:#0f172a;
@@ -31,71 +32,132 @@
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
     }
     header{
-      padding:16px 16px 10px;
+      padding:14px 16px;
       border-bottom:1px solid var(--line);
       background:var(--panel2);
       position:sticky; top:0; z-index:10;
     }
-    h1{ margin:0; font-size:18px; }
-    .hint{ color:var(--muted); font-size:12px; margin-top:6px; }
+    h1{ margin:0; font-size:18px; font-weight:700; }
+
     main{
-      display:grid;
-      gap:12px;
-      padding:12px;
       max-width:980px;
       margin:0 auto;
+      padding:14px 12px 40px;
+      display:grid;
+      gap:12px;
     }
-    .panel{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:12px;
+
+    .bar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
     }
-    .label{ color:var(--muted); font-size:12px; margin-bottom:8px; }
-    textarea{
-      width:100%;
-      min-height:96px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--panel2);
-      color:var(--text);
-      padding:10px;
-      font-size:18px;
-      line-height:1.4;
-      outline:none;
-      resize:vertical;
-    }
-    .row{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; align-items:center; }
-    button, select{
+    select, button{
       appearance:none;
       border:1px solid var(--line);
       background:var(--panel2);
       color:var(--text);
       padding:10px 12px;
-      border-radius:10px;
+      border-radius:12px;
       font-size:14px;
     }
     button{ cursor:pointer; }
-    .meta{
-      margin-top:10px;
+    .badge{
+      display:inline-block;
+      border:1px solid var(--line);
+      background:var(--panel2);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .promptTitle{
       display:flex;
-      gap:12px;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
       color:var(--muted);
       font-size:12px;
+      margin-bottom:10px;
+    }
+    .station{
+      font-size:40px;
+      line-height:1.1;
+      font-weight:800;
+      letter-spacing:0.2px;
+      margin:0 0 8px;
+    }
+    .roma{
+      font-size:26px;
+      line-height:1.2;
+      font-weight:700;
+      margin:0 0 10px;
+      color:var(--text);
+    }
+    .typedLine{
+      display:flex;
+      align-items:baseline;
+      gap:10px;
       flex-wrap:wrap;
     }
-    .kbd{
+    .typedLabel{
+      color:var(--muted);
+      font-size:12px;
+    }
+    .typedText{
+      font-size:22px;
+      font-weight:700;
+      letter-spacing:0.6px;
+      color:var(--danger);
+      min-height:28px;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .inputWrap{
+      margin-top:10px;
+    }
+    input[type="text"]{
       width:100%;
-      overflow:auto;
-      -webkit-overflow-scrolling:touch;
-      padding-bottom:6px;
-      touch-action:manipulation;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--panel2);
+      color:var(--text);
+      padding:14px 14px;
+      font-size:20px;
+      outline:none;
+    }
+    .smallRow{
+      margin-top:10px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    /* Keyboard (no label, no space row) */
+    .kbd{
       background:var(--panel2);
       border:1px solid var(--line);
-      border-radius:12px;
+      border-radius:16px;
       padding:10px;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+      touch-action:manipulation;
     }
     .kbd svg{ width:860px; height:auto; display:block; }
+
     .key{ fill:var(--key); stroke:var(--line); stroke-width:1; }
     .keyText{
       fill:var(--keyText);
@@ -115,152 +177,144 @@
       stroke-width:2.4;
       filter: drop-shadow(0 0 6px rgba(17,24,39,0.20));
     }
-    .links .q{ color:var(--muted); font-size:12px; margin-bottom:8px; }
-    ul{ list-style:none; padding:0; margin:0; display:grid; gap:8px; }
-    a{
-      color:var(--text);
-      text-decoration:none;
-      border:1px solid var(--line);
-      background:var(--panel2);
-      padding:10px;
-      border-radius:10px;
-      display:block;
-    }
-    a span{ color:var(--muted); font-size:12px; display:block; margin-top:2px; }
 
-    .prompt{
-      border:1px solid var(--line);
-      background:var(--panel2);
-      border-radius:12px;
-      padding:12px;
+    /* Result overlay */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.35);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:100;
     }
-    .promptTitle{ color:var(--muted); font-size:12px; margin-bottom:6px; }
-    .promptWord{ font-size:26px; letter-spacing:0.2px; }
-    .promptRoma{ color:var(--muted); font-size:12px; margin-top:6px; }
-
-    .scoreGrid{
+    .modal{
+      width:min(640px, 100%);
+      background:var(--panel2);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      box-shadow: 0 20px 50px rgba(15,23,42,0.25);
+    }
+    .modal h2{
+      margin:0 0 10px;
+      font-size:18px;
+    }
+    .grid{
       display:grid;
+      grid-template-columns:1fr 1fr;
       gap:10px;
-      grid-template-columns: 1fr 1fr;
+      margin-top:10px;
     }
-    .card{
+    .stat{
       border:1px solid var(--line);
-      background:var(--panel2);
-      border-radius:12px;
+      border-radius:14px;
       padding:12px;
+      background:var(--panel);
     }
-    .cardTitle{ color:var(--muted); font-size:12px; margin-bottom:6px; }
-    .cardValue{ font-size:20px; }
-
-    .badge{
-      display:inline-block;
-      border:1px solid var(--line);
-      background:var(--panel2);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--muted);
+    .stat .t{ color:var(--muted); font-size:12px; margin-bottom:6px; }
+    .stat .v{ font-size:20px; font-weight:800; }
+    .modal .actions{
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+      margin-top:12px;
+      flex-wrap:wrap;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Typing Practice</h1>
-    <div id="deviceHint" class="hint"></div>
+    <h1>タイピング練習</h1>
   </header>
 
   <main>
-    <section class="panel">
-      <div class="label">Mode</div>
-      <div class="row">
-        <select id="modeSelect">
-          <option value="free">Free（自由入力）</option>
-          <option value="yamanote_inner">山手線：内回り（駅名→ローマ字）</option>
-          <option value="yamanote_outer">山手線：外回り（駅名→ローマ字）</option>
-        </select>
-        <button id="restartBtn" type="button" title="山手線モードを最初から">Restart</button>
-        <span id="progressBadge" class="badge">Free</span>
+    <div class="bar">
+      <select id="modeSelect">
+        <option value="yamanote_inner">山手線：内回り</option>
+        <option value="yamanote_outer">山手線：外回り</option>
+      </select>
+      <button id="restartBtn" type="button">Restart</button>
+      <span id="progressBadge" class="badge">-</span>
+    </div>
+
+    <section class="card">
+      <div class="promptTitle">
+        <span id="promptMeta">-</span>
+        <span id="lastMeta" style="display:none;">-</span>
       </div>
 
-      <div id="trainingBox" class="prompt" style="display:none; margin-top:10px;">
-        <div class="promptTitle" id="promptTitle">出題</div>
-        <div class="promptWord" id="promptWord">-</div>
-        <div class="promptRoma" id="promptRoma">-</div>
+      <h2 class="station" id="stationJp">-</h2>
+      <div class="roma" id="stationRoma">-</div>
+
+      <div class="typedLine">
+        <div class="typedLabel">typed</div>
+        <div class="typedText" id="typedView"></div>
       </div>
 
-      <div id="scoreBox" style="display:none; margin-top:10px;">
-        <div class="scoreGrid">
-          <div class="card">
-            <div class="cardTitle">タイム</div>
-            <div class="cardValue" id="timeNow">-</div>
-          </div>
-          <div class="card">
-            <div class="cardTitle">ミスタイプ数</div>
-            <div class="cardValue" id="mistypeNow">-</div>
-          </div>
-          <div class="card">
-            <div class="cardTitle">BEST タイム</div>
-            <div class="cardValue" id="bestTime">-</div>
-          </div>
-          <div class="card">
-            <div class="cardTitle">BEST ミスタイプ数</div>
-            <div class="cardValue" id="bestMistype">-</div>
-          </div>
+      <div class="inputWrap">
+        <input id="typedInput" type="text" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="ローマ字で入力（変換なし）" />
+        <div class="smallRow">
+          <button id="clearBtn" type="button">Clear</button>
+          <span>（toukyou / tokyo など揺れOK）</span>
         </div>
       </div>
     </section>
 
-    <section class="panel">
-      <div class="label">入力（ローマ字・変換なし）</div>
-      <textarea id="typed" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="ここにタイプ（iPhone OK）"></textarea>
-      <div class="row">
-        <button id="clearBtn" type="button">Clear</button>
-        <button id="copyBtn" type="button">Copy</button>
-      </div>
-      <div class="meta">
-        <div>Last key: <span id="lastKey">-</span></div>
-        <div>Last char: <span id="lastChar">-</span></div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="label">US Keyboard（指の担当）</div>
-      <div id="keyboard" class="kbd"></div>
-    </section>
-
-    <section class="panel links">
-      <div class="label">リンク候補</div>
-      <div class="q">Query: <span id="queryText">-</span></div>
-      <ul id="linkList"></ul>
-    </section>
+    <div class="kbd" id="keyboard"></div>
   </main>
+
+  <!-- Result -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>結果</h2>
+      <div class="grid">
+        <div class="stat">
+          <div class="t">タイム</div>
+          <div class="v" id="timeNow">-</div>
+        </div>
+        <div class="stat">
+          <div class="t">ミスタイプ</div>
+          <div class="v" id="mistypeNow">-</div>
+        </div>
+        <div class="stat">
+          <div class="t">BESTタイム</div>
+          <div class="v" id="bestTime">-</div>
+        </div>
+        <div class="stat">
+          <div class="t">BESTミスタイプ</div>
+          <div class="v" id="bestMistype">-</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="closeBtn" type="button">Close</button>
+        <button id="restartBtn2" type="button">Restart</button>
+      </div>
+    </div>
+  </div>
 
 <script>
   const $ = (s)=>document.querySelector(s);
-
-  const typedEl = $("#typed");
-  const keyboardHost = $("#keyboard");
-  const lastKeyEl = $("#lastKey");
-  const lastCharEl = $("#lastChar");
-
-  const queryTextEl = $("#queryText");
-  const linkListEl = $("#linkList");
-
-  const deviceHintEl = $("#deviceHint");
-
-  const clearBtn = $("#clearBtn");
-  const copyBtn = $("#copyBtn");
 
   const modeSelect = $("#modeSelect");
   const restartBtn = $("#restartBtn");
   const progressBadge = $("#progressBadge");
 
-  const trainingBox = $("#trainingBox");
-  const promptTitle = $("#promptTitle");
-  const promptWord = $("#promptWord");
-  const promptRoma = $("#promptRoma");
+  const stationJpEl = $("#stationJp");
+  const stationRomaEl = $("#stationRoma");
+  const promptMetaEl = $("#promptMeta");
 
-  const scoreBox = $("#scoreBox");
+  const typedInput = $("#typedInput");
+  const typedView = $("#typedView");
+  const clearBtn = $("#clearBtn");
+
+  const keyboardHost = $("#keyboard");
+
+  const overlay = $("#overlay");
+  const closeBtn = $("#closeBtn");
+  const restartBtn2 = $("#restartBtn2");
+
   const timeNowEl = $("#timeNow");
   const mistypeNowEl = $("#mistypeNow");
   const bestTimeEl = $("#bestTime");
@@ -268,33 +322,41 @@
 
   let prevValue = "";
 
-  // --- Roma normalization (allow variations) ---
-  // Strategy: normalize both target and input into a canonical form
-  // Canonical choices:
-  //  shi->si, chi->ti, tsu->tu, fu->hu, ji->zi
-  //  sha/shu/sho -> sya/syu/syo
-  //  cha/chu/cho -> tya/tyu/tyo
-  //  ja/ju/jo -> zya/zyu/zyo
+  // --- Roma normalization (allow variations + long vowels) ---
+  // - allow shi/si, chi/ti, tsu/tu, fu/hu, ji/zi
+  // - allow sha/sya etc (canonicalize)
+  // - allow long vowels: ou/oo/uu/aa/ee/ii collapse to single vowel
+  //   ex: toukyou -> tokyo, ootsuka -> otsuka, yuurakuchou -> yurakucho
   function normalizeRoma(s){
-    return (s || "")
-      .toLowerCase()
-      .replace(/[^a-z]/g, "")
-      // 3 letters -> 2 letters (do these first)
-      .replace(/shi/g, "si")
-      .replace(/chi/g, "ti")
-      .replace(/tsu/g, "tu")
-      // yoon (3 letters) -> canonical
-      .replace(/sha/g, "sya").replace(/shu/g, "syu").replace(/sho/g, "syo")
-      .replace(/cha/g, "tya").replace(/chu/g, "tyu").replace(/cho/g, "tyo")
-      .replace(/ja/g,  "zya").replace(/ju/g,  "zyu").replace(/jo/g,  "zyo")
-      // 2 letters variations
-      .replace(/fu/g, "hu")
-      .replace(/ji/g, "zi");
+    let x = (s || "").toLowerCase().replace(/[^a-z]/g, "");
+
+    // major 3->2 canonical
+    x = x.replace(/shi/g, "si")
+         .replace(/chi/g, "ti")
+         .replace(/tsu/g, "tu");
+
+    // yoon canonical
+    x = x.replace(/sha/g, "sya").replace(/shu/g, "syu").replace(/sho/g, "syo")
+         .replace(/cha/g, "tya").replace(/chu/g, "tyu").replace(/cho/g, "tyo")
+         .replace(/ja/g,  "zya").replace(/ju/g,  "zyu").replace(/jo/g,  "zyo");
+
+    // 2 letters variations
+    x = x.replace(/fu/g, "hu")
+         .replace(/ji/g, "zi");
+
+    // long vowels (very permissive)
+    x = x.replace(/aa/g, "a")
+         .replace(/ii/g, "i")
+         .replace(/uu/g, "u")
+         .replace(/ee/g, "e")
+         .replace(/oo/g, "o")
+         .replace(/ou/g, "o"); // toukyou -> tokyo, yuurakuchou -> yurakucho (after uu->u and ou->o)
+
+    return x;
   }
 
   // --- Finger map (US minimal) ---
   const fingerMap = {
-    "SPACE":"THUMBS",
     "ENTER":"R_PINKY","BACKSPACE":"R_PINKY",
     "TAB":"L_PINKY","CAPS":"L_PINKY",
     "SHIFT_L":"L_PINKY","SHIFT_R":"R_PINKY",
@@ -318,76 +380,76 @@
     "BACKTICK":"L_PINKY"
   };
 
-  // --- Yamanote data (30 stations) ---
-  // roma can be a string OR an array of strings (extra flexibility)
+  // --- Yamanote data (JP display + Roma target) ---
+  // roma can be string or array; we normalize both sides anyway.
   const yamanote_inner = [
-    {jp:"東京", roma:"tokyo"},
-    {jp:"有楽町", roma:["yurakucho","yurakutyo"]},
-    {jp:"新橋", roma:["shimbashi","simbasi"]},
-    {jp:"浜松町", roma:["hamamatsucho","hamamatsutyo"]},
-    {jp:"田町", roma:"tamachi"},
+    {jp:"東京", roma:["tokyo","toukyou"]},
+    {jp:"有楽町", roma:["yurakucho","yuurakuchou","yurakutyo","yuurakutyou"]},
+    {jp:"新橋", roma:["shimbashi","shinbashi","simbasi"]},
+    {jp:"浜松町", roma:["hamamatsucho","hamamatsutyo","hamamatsuchou","hamamatsutyou"]},
+    {jp:"田町", roma:["tamachi","tamati"]},
     {jp:"高輪ゲートウェイ", roma:["takanawagateway","takanawa gateway"]},
-    {jp:"品川", roma:"shinagawa"},
-    {jp:"大崎", roma:"osaki"},
-    {jp:"五反田", roma:"gotanda"},
-    {jp:"目黒", roma:"meguro"},
-    {jp:"恵比寿", roma:"ebisu"},
-    {jp:"渋谷", roma:"shibuya"},
+    {jp:"品川", roma:["shinagawa","sinagawa"]},
+    {jp:"大崎", roma:["osaki"]},
+    {jp:"五反田", roma:["gotanda"]},
+    {jp:"目黒", roma:["meguro"]},
+    {jp:"恵比寿", roma:["ebisu"]},
+    {jp:"渋谷", roma:["shibuya","sibuya"]},
     {jp:"原宿", roma:["harajuku","harazyuku"]},
-    {jp:"代々木", roma:"yoyogi"},
-    {jp:"新宿", roma:["shinjuku","sinzyuku","sinjuku"]},
+    {jp:"代々木", roma:["yoyogi"]},
+    {jp:"新宿", roma:["shinjuku","sinjuku","sinzyuku"]},
     {jp:"新大久保", roma:["shinokubo","sinokubo"]},
-    {jp:"高田馬場", roma:"takadanobaba"},
-    {jp:"目白", roma:"mejiro"},
-    {jp:"池袋", roma:["ikebukuro","ikebukuro"]},
+    {jp:"高田馬場", roma:["takadanobaba"]},
+    {jp:"目白", roma:["mejiro","meziro"]},
+    {jp:"池袋", roma:["ikebukuro"]},
     {jp:"大塚", roma:["otsuka","ootsuka"]},
-    {jp:"巣鴨", roma:["sugamo","sugamo"]},
-    {jp:"駒込", roma:["komagome","komagome"]},
-    {jp:"田端", roma:["tabata","tabata"]},
+    {jp:"巣鴨", roma:["sugamo"]},
+    {jp:"駒込", roma:["komagome"]},
+    {jp:"田端", roma:["tabata"]},
     {jp:"西日暮里", roma:["nishinippori","nisinippori"]},
-    {jp:"日暮里", roma:["nippori","nippori"]},
-    {jp:"鶯谷", roma:["uguisudani","uguisudani"]},
-    {jp:"上野", roma:["ueno","ueno"]},
+    {jp:"日暮里", roma:["nippori"]},
+    {jp:"鶯谷", roma:["uguisudani"]},
+    {jp:"上野", roma:["ueno"]},
     {jp:"御徒町", roma:["okachimachi","okatimati"]},
-    {jp:"秋葉原", roma:["akihabara","akihabara"]},
-    {jp:"神田", roma:["kanda","kanda"]}
+    {jp:"秋葉原", roma:["akihabara"]},
+    {jp:"神田", roma:["kanda"]}
   ];
 
   const yamanote_outer = [
-    {jp:"東京", roma:"tokyo"},
-    {jp:"神田", roma:["kanda","kanda"]},
-    {jp:"秋葉原", roma:["akihabara","akihabara"]},
+    {jp:"東京", roma:["tokyo","toukyou"]},
+    {jp:"神田", roma:["kanda"]},
+    {jp:"秋葉原", roma:["akihabara"]},
     {jp:"御徒町", roma:["okachimachi","okatimati"]},
-    {jp:"上野", roma:["ueno","ueno"]},
-    {jp:"鶯谷", roma:["uguisudani","uguisudani"]},
-    {jp:"日暮里", roma:["nippori","nippori"]},
+    {jp:"上野", roma:["ueno"]},
+    {jp:"鶯谷", roma:["uguisudani"]},
+    {jp:"日暮里", roma:["nippori"]},
     {jp:"西日暮里", roma:["nishinippori","nisinippori"]},
-    {jp:"田端", roma:["tabata","tabata"]},
-    {jp:"駒込", roma:["komagome","komagome"]},
-    {jp:"巣鴨", roma:["sugamo","sugamo"]},
+    {jp:"田端", roma:["tabata"]},
+    {jp:"駒込", roma:["komagome"]},
+    {jp:"巣鴨", roma:["sugamo"]},
     {jp:"大塚", roma:["otsuka","ootsuka"]},
-    {jp:"池袋", roma:["ikebukuro","ikebukuro"]},
-    {jp:"目白", roma:"mejiro"},
-    {jp:"高田馬場", roma:"takadanobaba"},
+    {jp:"池袋", roma:["ikebukuro"]},
+    {jp:"目白", roma:["mejiro","meziro"]},
+    {jp:"高田馬場", roma:["takadanobaba"]},
     {jp:"新大久保", roma:["shinokubo","sinokubo"]},
-    {jp:"新宿", roma:["shinjuku","sinzyuku","sinjuku"]},
-    {jp:"代々木", roma:"yoyogi"},
+    {jp:"新宿", roma:["shinjuku","sinjuku","sinzyuku"]},
+    {jp:"代々木", roma:["yoyogi"]},
     {jp:"原宿", roma:["harajuku","harazyuku"]},
-    {jp:"渋谷", roma:"shibuya"},
-    {jp:"恵比寿", roma:"ebisu"},
-    {jp:"目黒", roma:"meguro"},
-    {jp:"五反田", roma:"gotanda"},
-    {jp:"大崎", roma:"osaki"},
-    {jp:"品川", roma:"shinagawa"},
+    {jp:"渋谷", roma:["shibuya","sibuya"]},
+    {jp:"恵比寿", roma:["ebisu"]},
+    {jp:"目黒", roma:["meguro"]},
+    {jp:"五反田", roma:["gotanda"]},
+    {jp:"大崎", roma:["osaki"]},
+    {jp:"品川", roma:["shinagawa","sinagawa"]},
     {jp:"高輪ゲートウェイ", roma:["takanawagateway","takanawa gateway"]},
-    {jp:"田町", roma:"tamachi"},
-    {jp:"浜松町", roma:["hamamatsucho","hamamatsutyo"]},
-    {jp:"新橋", roma:["shimbashi","simbasi"]},
-    {jp:"有楽町", roma:["yurakucho","yurakutyo"]}
+    {jp:"田町", roma:["tamachi","tamati"]},
+    {jp:"浜松町", roma:["hamamatsucho","hamamatsutyo","hamamatsuchou","hamamatsutyou"]},
+    {jp:"新橋", roma:["shimbashi","shinbashi","simbasi"]},
+    {jp:"有楽町", roma:["yurakucho","yuurakuchou","yurakutyo","yuurakutyou"]}
   ];
 
   const state = {
-    mode: "free",
+    mode: "yamanote_inner",
     idx: 0,
     started: false,
     startMs: 0,
@@ -395,18 +457,159 @@
     mistype: 0
   };
 
+  function dataset(){
+    return state.mode === "yamanote_outer" ? yamanote_outer : yamanote_inner;
+  }
+
+  function bestKey(modeKey){ return `best_${modeKey}`; }
+  function loadBest(modeKey){
+    try{
+      const raw = localStorage.getItem(bestKey(modeKey));
+      if(!raw) return null;
+      return JSON.parse(raw); // { timeMs, mistype }
+    }catch{ return null; }
+  }
+  function formatTime(ms){ return (ms/1000).toFixed(1) + " sec"; }
+  function renderBest(modeKey){
+    const b = loadBest(modeKey);
+    if(!b){
+      bestTimeEl.textContent = "-";
+      bestMistypeEl.textContent = "-";
+      return;
+    }
+    bestTimeEl.textContent = formatTime(b.timeMs);
+    bestMistypeEl.textContent = String(b.mistype);
+  }
+  function isNewRecord(newRec, oldRec){
+    if(!oldRec) return true;
+    if(newRec.timeMs < oldRec.timeMs) return true;
+    if(newRec.timeMs > oldRec.timeMs) return false;
+    return newRec.mistype < oldRec.mistype;
+  }
+  function saveBestIfNeeded(modeKey, timeMs, mistype){
+    const newRec = { timeMs, mistype };
+    const oldRec = loadBest(modeKey);
+    if(isNewRecord(newRec, oldRec)){
+      localStorage.setItem(bestKey(modeKey), JSON.stringify(newRec));
+    }
+    renderBest(modeKey);
+  }
+
+  function currentTargets(){
+    const d = dataset();
+    if(state.idx >= d.length) return [];
+    const r = d[state.idx].roma;
+    const list = Array.isArray(r) ? r : [r];
+    return list.map(normalizeRoma);
+  }
+
+  function updateUI(){
+    const d = dataset();
+    const total = d.length;
+
+    if(state.idx >= total){
+      progressBadge.textContent = `Finish · ${total}/${total}`;
+      promptMetaEl.textContent = "完了";
+      stationJpEl.textContent = "完了";
+      stationRomaEl.textContent = "";
+      return;
+    }
+
+    const cur = d[state.idx];
+    progressBadge.textContent = `${state.idx+1}/${total}`;
+    promptMetaEl.textContent = `${state.mode === "yamanote_outer" ? "山手線 外回り" : "山手線 内回り"}`;
+    stationJpEl.textContent = cur.jp;
+
+    // 代表表示は最初の候補（正規化後）を出す（見やすさ優先）
+    const displayRoma = normalizeRoma(Array.isArray(cur.roma) ? cur.roma[0] : cur.roma);
+    stationRomaEl.textContent = displayRoma;
+
+    typedView.textContent = typedInput.value || "";
+  }
+
+  function resetRun(){
+    state.idx = 0;
+    state.started = false;
+    state.startMs = 0;
+    state.finishMs = 0;
+    state.mistype = 0;
+    typedInput.value = "";
+    prevValue = "";
+    typedView.textContent = "";
+    overlay.style.display = "none";
+    updateUI();
+  }
+
+  function startIfNeeded(){
+    if(state.started) return;
+    state.started = true;
+    state.startMs = performance.now();
+  }
+
+  function finish(){
+    if(state.finishMs) return;
+    state.finishMs = performance.now();
+    const elapsed = Math.max(0, state.finishMs - state.startMs);
+
+    timeNowEl.textContent = formatTime(elapsed);
+    mistypeNowEl.textContent = String(state.mistype);
+
+    saveBestIfNeeded(state.mode, elapsed, state.mistype);
+
+    overlay.style.display = "flex";
+  }
+
+  // Mistype rule (stable):
+  // 入力（正規化）が「どの正解候補のprefixにもなってない」状態にした入力イベントを 1ミスとして数える。
+  function scoreMistype(){
+    const targets = currentTargets();
+    if(targets.length === 0) return;
+
+    const curNorm = normalizeRoma(typedInput.value);
+    const isPrefix = targets.some(t => t.startsWith(curNorm));
+    if(!isPrefix){
+      state.mistype += 1;
+    }
+  }
+
+  function tryAdvance(){
+    const targets = currentTargets();
+    if(targets.length === 0) return;
+
+    const curNorm = normalizeRoma(typedInput.value);
+    const ok = targets.some(t => t === curNorm);
+
+    if(ok){
+      state.idx += 1;
+      typedInput.value = "";
+      prevValue = "";
+      typedView.textContent = "";
+
+      const total = dataset().length;
+      if(state.idx >= total){
+        updateUI();
+        finish();
+        return;
+      }
+      updateUI();
+    }
+  }
+
+  function delta(prev,next){
+    if(next.startsWith(prev)) return next.slice(prev.length);
+    return "";
+  }
+
+  // Keyboard rendering (no space row)
   function escapeHtml(s){
     return s.replace(/[&<>"']/g, (c)=>({
       "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
     }[c]));
   }
-
   function fingerClass(keyId){
-    if(keyId === "SPACE") return "finger-L_THUMB finger-R_THUMB";
     const f = fingerMap[keyId];
     return f ? `finger-${f}` : "";
   }
-
   function renderKeyboard(){
     const rows = [
       [{id:"BACKTICK",label:"`"},{id:"1",label:"1"},{id:"2",label:"2"},{id:"3",label:"3"},{id:"4",label:"4"},
@@ -420,8 +623,8 @@
        {id:"SEMICOLON",label:";"},{id:"QUOTE",label:"'"},{id:"ENTER",label:"Enter",w:1.75}],
       [{id:"SHIFT_L",label:"Shift",w:2.0},{id:"Z",label:"Z"},{id:"X",label:"X"},{id:"C",label:"C"},{id:"V",label:"V"},{id:"B",label:"B"},
        {id:"N",label:"N"},{id:"M",label:"M"},{id:"COMMA",label:","},{id:"DOT",label:"."},{id:"SLASH",label:"/"},
-       {id:"SHIFT_R",label:"Shift",w:2.2}],
-      [{id:"SPACE",label:"Space",w:6.2}]
+       {id:"SHIFT_R",label:"Shift",w:2.2}]
+      // Space row removed
     ];
 
     const unit=48, gap=8, h=48, rx=10;
@@ -447,48 +650,8 @@
     keyboardHost.innerHTML = svg;
   }
 
-  function highlight(keyId){
-    document.querySelectorAll(".key.hit").forEach(el=>el.classList.remove("hit"));
-    if(!keyId) return;
-    const el = document.getElementById(`KEY_${keyId}`);
-    if(el){
-      el.classList.add("hit");
-      el.scrollIntoView({behavior:"smooth", block:"nearest", inline:"center"});
-    }
-  }
-
-  function setLast(k,ch){
-    lastKeyEl.textContent = k || "-";
-    lastCharEl.textContent = ch ? JSON.stringify(ch) : "-";
-  }
-
-  function delta(prev,next){
-    if(next.startsWith(prev)) return next.slice(prev.length);
-    return "";
-  }
-
-  function charToKeyId(ch){
-    if(!ch) return "";
-    if(ch===" ") return "SPACE";
-    if(ch==="\n") return "ENTER";
-
-    const up = ch.toUpperCase();
-    if(/[A-Z]/.test(up)) return up;
-    if(/[0-9]/.test(ch)) return ch;
-
-    const sym = {
-      "-":"MINUS","_":"MINUS","=":"EQUAL","+":"EQUAL",
-      "[":"LBRACKET","{":"LBRACKET","]":"RBRACKET","}":"RBRACKET",
-      "\\":"BACKSLASH","|":"BACKSLASH",";":"SEMICOLON",":":"SEMICOLON",
-      "'":"QUOTE",'"':"QUOTE",",":"COMMA","<":"COMMA",".":"DOT",">":"DOT",
-      "/":"SLASH","?":"SLASH","`":"BACKTICK","~":"BACKTICK"
-    };
-    return sym[ch] || "";
-  }
-
   function keyEventToKeyId(e){
     const k = e.key;
-    if(k===" ") return "SPACE";
     if(k==="Enter") return "ENTER";
     if(k==="Backspace") return "BACKSPACE";
     if(k==="Tab") return "TAB";
@@ -499,290 +662,73 @@
     const map = {"-":"MINUS","=":"EQUAL","[":"LBRACKET","]":"RBRACKET","\\":"BACKSLASH",";":"SEMICOLON","'":"QUOTE",",":"COMMA",".":"DOT","/":"SLASH","`":"BACKTICK"};
     return map[k] || "";
   }
-
-  function extractQuery(text){
-    const t=text.trim();
-    if(!t) return "";
-    const parts=t.split(/\s+/);
-    return parts[parts.length-1] || "";
+  function highlight(keyId){
+    document.querySelectorAll(".key.hit").forEach(el=>el.classList.remove("hit"));
+    if(!keyId) return;
+    const el = document.getElementById(`KEY_${keyId}`);
+    if(el) el.classList.add("hit");
   }
 
-  function buildLinks(q){
-    const s=(q||"").trim();
-    queryTextEl.textContent = s || "-";
-    linkListEl.innerHTML = "";
-    if(!s) return;
+  // Events
+  modeSelect.addEventListener("change", ()=>{
+    state.mode = modeSelect.value;
+    resetRun();
+    renderBest(state.mode);
+    typedInput.focus();
+  });
 
-    const enc = encodeURIComponent(s);
-    const items = [
-      {title:"Wikipedia（検索）", url:`https://ja.wikipedia.org/wiki/Special:Search?search=${enc}`, note:"地名・一般語の入口"},
-      {title:"辞書（Weblio）", url:`https://www.weblio.jp/content/${enc}`, note:"一般語の意味"},
-      {title:"地図（Google Maps）", url:`https://www.google.com/maps/search/?api=1&query=${enc}`, note:"地名っぽいとき"},
-      {title:"公式っぽいもの（検索）", url:`https://www.google.com/search?q=${enc}%20%E5%85%AC%E5%BC%8F`, note:"公式サイト探し"}
-    ];
+  restartBtn.addEventListener("click", ()=>{
+    resetRun();
+    renderBest(state.mode);
+    typedInput.focus();
+  });
 
-    for(const it of items){
-      const li=document.createElement("li");
-      li.innerHTML = `<a href="${it.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(it.title)}<span>${escapeHtml(it.note)}</span></a>`;
-      linkListEl.appendChild(li);
-    }
-  }
+  restartBtn2.addEventListener("click", ()=>{
+    resetRun();
+    renderBest(state.mode);
+    typedInput.focus();
+  });
 
-  function bestKey(modeKey){ return `best_${modeKey}`; }
+  closeBtn.addEventListener("click", ()=>{
+    overlay.style.display = "none";
+    typedInput.focus();
+  });
 
-  function loadBest(modeKey){
-    try{
-      const raw = localStorage.getItem(bestKey(modeKey));
-      if(!raw) return null;
-      return JSON.parse(raw);
-    }catch{ return null; }
-  }
-
-  function formatTime(ms){
-    return (ms/1000).toFixed(1) + " sec";
-  }
-
-  function renderBest(modeKey){
-    const b = loadBest(modeKey);
-    if(!b){
-      bestTimeEl.textContent = "-";
-      bestMistypeEl.textContent = "-";
-      return;
-    }
-    bestTimeEl.textContent = formatTime(b.timeMs);
-    bestMistypeEl.textContent = String(b.mistype);
-  }
-
-  function isNewRecord(newRec, oldRec){
-    if(!oldRec) return true;
-    if(newRec.timeMs < oldRec.timeMs) return true;
-    if(newRec.timeMs > oldRec.timeMs) return false;
-    return newRec.mistype < oldRec.mistype;
-  }
-
-  function saveBestIfNeeded(modeKey, timeMs, mistype){
-    const newRec = { timeMs, mistype };
-    const oldRec = loadBest(modeKey);
-    if(isNewRecord(newRec, oldRec)){
-      localStorage.setItem(bestKey(modeKey), JSON.stringify(newRec));
-    }
-    renderBest(modeKey);
-  }
-
-  function datasetForMode(mode){
-    if(mode === "yamanote_inner") return yamanote_inner;
-    if(mode === "yamanote_outer") return yamanote_outer;
-    return null;
-  }
-
-  function showTrainingUI(on){
-    trainingBox.style.display = on ? "block" : "none";
-    scoreBox.style.display = on ? "block" : "none";
-  }
-
-  function resetRun(){
-    state.idx = 0;
-    state.started = false;
-    state.startMs = 0;
-    state.finishMs = 0;
-    state.mistype = 0;
-    typedEl.value = "";
+  clearBtn.addEventListener("click", ()=>{
+    typedInput.value = "";
     prevValue = "";
-    timeNowEl.textContent = "-";
-    mistypeNowEl.textContent = "0";
-  }
+    typedView.textContent = "";
+    typedInput.focus();
+  });
 
-  function currentTargetList(){
-    const data = datasetForMode(state.mode);
-    if(!data) return [];
-    if(state.idx >= data.length) return [];
-    const r = data[state.idx].roma;
-    return Array.isArray(r) ? r : [r];
-  }
+  window.addEventListener("keydown",(e)=>{
+    const id = keyEventToKeyId(e);
+    highlight(id);
+  });
 
-  function updatePrompt(){
-    const data = datasetForMode(state.mode);
-    if(!data) return;
+  typedInput.addEventListener("input", ()=>{
+    const next = typedInput.value;
+    const added = delta(prevValue, next);
 
-    const total = data.length;
-    if(state.idx >= total){
-      promptTitle.textContent = "FINISH";
-      promptWord.textContent = "完了";
-      promptRoma.textContent = "";
-      progressBadge.textContent = `Finish · ${total}/${total}`;
-      return;
+    // show typed in red
+    typedView.textContent = next;
+
+    if(next.length > 0) startIfNeeded();
+
+    if(added){
+      scoreMistype();
+      tryAdvance();
     }
 
-    const cur = data[state.idx];
-    promptTitle.textContent = `山手線 ${state.mode === "yamanote_inner" ? "内回り" : "外回り"} · ${state.idx+1}/${total}`;
-    promptWord.textContent = cur.jp;
+    prevValue = next;
+  });
 
-    const targets = currentTargetList().map(t => normalizeRoma(t));
-    promptRoma.textContent = `type: ${targets[0]}（揺れOK）`;
-
-    progressBadge.textContent = `${state.idx+1}/${total}`;
-    buildLinks(cur.jp);
-  }
-
-  function startIfNeeded(){
-    if(state.started) return;
-    state.started = true;
-    state.startMs = performance.now();
-  }
-
-  function finishIfNeeded(){
-    const data = datasetForMode(state.mode);
-    if(!data) return;
-    if(state.idx < data.length) return;
-
-    if(!state.finishMs){
-      state.finishMs = performance.now();
-      const elapsed = Math.max(0, state.finishMs - state.startMs);
-      timeNowEl.textContent = formatTime(elapsed);
-      mistypeNowEl.textContent = String(state.mistype);
-      saveBestIfNeeded(state.mode, elapsed, state.mistype);
-    }
-  }
-
-  function updateScoreLive(){
-    if(!state.started || state.finishMs) return;
-    const now = performance.now();
-    timeNowEl.textContent = formatTime(now - state.startMs);
-    mistypeNowEl.textContent = String(state.mistype);
-  }
-
-  // Mistype logic for variation mode:
-  // Count 1 mistype when the current normalized input is not a prefix of ANY valid target.
-  function scoreAddedChars(added){
-    if(!added) return;
-
-    const targets = currentTargetList().map(t => normalizeRoma(t));
-    if(targets.length === 0) return;
-
-    const curNorm = normalizeRoma(typedEl.value);
-
-    const isPrefix = targets.some(t => t.startsWith(curNorm));
-    if(!isPrefix){
-      state.mistype += 1;
-    }
-  }
-
-  function tryAdvance(){
-    const targets = currentTargetList().map(t => normalizeRoma(t));
-    if(targets.length === 0) return;
-
-    const curNorm = normalizeRoma(typedEl.value);
-
-    const ok = targets.some(t => t === curNorm);
-    if(ok){
-      state.idx += 1;
-      typedEl.value = "";
-      prevValue = "";
-      updatePrompt();
-
-      if(state.idx >= datasetForMode(state.mode).length){
-        finishIfNeeded();
-      }
-    }
-  }
-
-  function init(){
-    const hasTouch = ("ontouchstart" in window) || navigator.maxTouchPoints>0;
-    deviceHintEl.textContent = hasTouch
-      ? "iPhone: 予測変換OFF推奨（ローマ字・揺れOK）"
-      : "PC: ローマ字・揺れOK";
-
-    renderKeyboard();
-    buildLinks("");
-
-    modeSelect.addEventListener("change", ()=>{
-      state.mode = modeSelect.value;
-
-      if(state.mode === "free"){
-        showTrainingUI(false);
-        progressBadge.textContent = "Free";
-        resetRun();
-        buildLinks(extractQuery(typedEl.value));
-      }else{
-        showTrainingUI(true);
-        resetRun();
-        updatePrompt();
-        renderBest(state.mode);
-      }
-
-      typedEl.focus();
-    });
-
-    restartBtn.addEventListener("click", ()=>{
-      if(state.mode === "free"){
-        typedEl.value = "";
-        prevValue = "";
-        buildLinks("");
-      }else{
-        resetRun();
-        updatePrompt();
-        renderBest(state.mode);
-      }
-      typedEl.focus();
-    });
-
-    window.addEventListener("keydown",(e)=>{
-      const id=keyEventToKeyId(e);
-      if(id){
-        highlight(id);
-        setLast(id,e.key);
-      }
-    });
-
-    typedEl.addEventListener("input",()=>{
-      const next=typedEl.value;
-      const added = delta(prevValue, next);
-      const lastChar = added ? added.slice(-1) : "";
-
-      if(added){
-        const keyId=charToKeyId(lastChar);
-        highlight(keyId);
-        setLast(keyId||"(n/a)", lastChar);
-      }else{
-        highlight("");
-        setLast("(edit)","");
-      }
-
-      if(state.mode !== "free"){
-        if(next.length > 0) startIfNeeded();
-        scoreAddedChars(added);
-        updateScoreLive();
-        tryAdvance();
-      }else{
-        buildLinks(extractQuery(next));
-      }
-
-      prevValue = next;
-    });
-
-    clearBtn.addEventListener("click",()=>{
-      typedEl.value=""; prevValue="";
-      highlight(""); setLast("","");
-
-      if(state.mode === "free"){
-        buildLinks("");
-      }else{
-        updateScoreLive();
-      }
-      typedEl.focus();
-    });
-
-    copyBtn.addEventListener("click",async ()=>{
-      try{ await navigator.clipboard.writeText(typedEl.value); }catch{}
-      typedEl.focus();
-    });
-
-    state.mode = "free";
-    showTrainingUI(false);
-    progressBadge.textContent = "Free";
-  }
-
-  init();
+  // Init
+  renderKeyboard();
+  state.mode = modeSelect.value;
+  renderBest(state.mode);
+  resetRun();
+  typedInput.focus();
 </script>
 </body>
 </html>
