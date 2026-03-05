@@ -1,20 +1,329 @@
 <!doctype html>
-<html>
+<html lang="ja">
 <head>
-<meta charset="utf-8">
-<title>Typing Practice</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Typing Practice (US)</title>
+  <style>
+    :root{
+      --bg:#0b0b0f; --panel:#141421; --text:#f2f2f7; --muted:#a6a6b3; --line:#2a2a3a;
+      --key:#1b1b2a; --keyText:#e8e8f3; --hit:#ffffff;
+
+      --thumb:#2b3a55;
+      --index:#294b3f;
+      --middle:#3d3b29;
+      --ring:#4a2f2f;
+      --pinky:#4a2f44;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; background:var(--bg); color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+    }
+    header{ padding:16px 16px 8px; border-bottom:1px solid var(--line); }
+    h1{ margin:0; font-size:18px; }
+    .hint{ color:var(--muted); font-size:12px; margin-top:6px; }
+    main{ display:grid; gap:12px; padding:12px; max-width:980px; margin:0 auto; }
+    .panel{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; }
+    .label{ color:var(--muted); font-size:12px; margin-bottom:8px; }
+    textarea{
+      width:100%; min-height:96px; border-radius:10px; border:1px solid var(--line);
+      background:#0f0f18; color:var(--text); padding:10px; font-size:18px; line-height:1.4;
+      outline:none; resize:vertical;
+    }
+    .row{ display:flex; gap:8px; margin-top:10px; }
+    button{
+      appearance:none; border:1px solid var(--line); background:#0f0f18; color:var(--text);
+      padding:10px 12px; border-radius:10px; font-size:14px;
+    }
+    .meta{ margin-top:10px; display:flex; gap:12px; color:var(--muted); font-size:12px; }
+
+    .kbd{ width:100%; overflow:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px; touch-action:manipulation; }
+    .kbd svg{ width:860px; height:auto; display:block; }
+
+    .key{ fill:var(--key); stroke:var(--line); stroke-width:1; }
+    .keyText{ fill:var(--keyText); font-size:12px; text-anchor:middle; dominant-baseline:middle; pointer-events:none; user-select:none; }
+
+    /* finger colors */
+    .finger-L_THUMB,.finger-R_THUMB{ fill: color-mix(in srgb, var(--thumb) 70%, var(--key)); }
+    .finger-L_INDEX,.finger-R_INDEX{ fill: color-mix(in srgb, var(--index) 70%, var(--key)); }
+    .finger-L_MIDDLE,.finger-R_MIDDLE{ fill: color-mix(in srgb, var(--middle) 70%, var(--key)); }
+    .finger-L_RING,.finger-R_RING{ fill: color-mix(in srgb, var(--ring) 70%, var(--key)); }
+    .finger-L_PINKY,.finger-R_PINKY{ fill: color-mix(in srgb, var(--pinky) 70%, var(--key)); }
+
+    .hit{
+      stroke:var(--hit); stroke-width:2.2;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.35));
+    }
+
+    .links .q{ color:var(--muted); font-size:12px; margin-bottom:8px; }
+    ul{ list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+    a{
+      color:var(--text); text-decoration:none; border:1px solid var(--line);
+      background:#0f0f18; padding:10px; border-radius:10px; display:block;
+    }
+    a span{ color:var(--muted); font-size:12px; display:block; margin-top:2px; }
+    .note{ margin-top:10px; color:var(--muted); font-size:12px; line-height:1.5; }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>Typing Practice (US)</h1>
+    <div id="deviceHint" class="hint"></div>
+  </header>
 
-<h1>Typing Practice</h1>
+  <main>
+    <section class="panel">
+      <div class="label">入力</div>
+      <textarea id="typed" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="ここにタイプ（iPhone OK）"></textarea>
+      <div class="row">
+        <button id="clearBtn" type="button">Clear</button>
+        <button id="copyBtn" type="button">Copy</button>
+      </div>
+      <div class="meta">
+        <div>Last key: <span id="lastKey">-</span></div>
+        <div>Last char: <span id="lastChar">-</span></div>
+      </div>
+    </section>
 
-<input id="t" autofocus>
+    <section class="panel">
+      <div class="label">US Keyboard（指の担当が分かる）</div>
+      <div id="keyboard" class="kbd"></div>
+    </section>
+
+    <section class="panel links">
+      <div class="label">リンク候補（最後の単語）</div>
+      <div class="q">Query: <span id="queryText">-</span></div>
+      <ul id="linkList"></ul>
+      <div class="note">
+        名産品→店の公式リンクを「確定で出す」には、後で辞書（JSON）方式で強化するのが安全。
+        まずはWikipedia/辞書/地図/検索を常に提示するMVPにしてある。
+      </div>
+    </section>
+  </main>
 
 <script>
-document.getElementById("t").addEventListener("input",function(){
-console.log(this.value);
-});
-</script>
+  const $ = (s)=>document.querySelector(s);
 
+  const typedEl = $("#typed");
+  const keyboardHost = $("#keyboard");
+  const lastKeyEl = $("#lastKey");
+  const lastCharEl = $("#lastChar");
+  const queryTextEl = $("#queryText");
+  const linkListEl = $("#linkList");
+  const deviceHintEl = $("#deviceHint");
+
+  const clearBtn = $("#clearBtn");
+  const copyBtn = $("#copyBtn");
+
+  let prevValue = "";
+
+  // --- finger map (US, minimal) ---
+  const fingerMap = {
+    "SPACE":"THUMBS",
+    "ENTER":"R_PINKY","BACKSPACE":"R_PINKY",
+    "TAB":"L_PINKY","CAPS":"L_PINKY",
+    "SHIFT_L":"L_PINKY","SHIFT_R":"R_PINKY",
+
+    "Q":"L_PINKY","W":"L_RING","E":"L_MIDDLE","R":"L_INDEX","T":"L_INDEX",
+    "Y":"R_INDEX","U":"R_INDEX","I":"R_MIDDLE","O":"R_RING","P":"R_PINKY",
+
+    "A":"L_PINKY","S":"L_RING","D":"L_MIDDLE","F":"L_INDEX","G":"L_INDEX",
+    "H":"R_INDEX","J":"R_INDEX","K":"R_MIDDLE","L":"R_RING",
+
+    "Z":"L_PINKY","X":"L_RING","C":"L_MIDDLE","V":"L_INDEX","B":"L_INDEX",
+    "N":"R_INDEX","M":"R_INDEX",
+
+    "1":"L_PINKY","2":"L_RING","3":"L_MIDDLE","4":"L_INDEX","5":"L_INDEX",
+    "6":"R_INDEX","7":"R_INDEX","8":"R_MIDDLE","9":"R_RING","0":"R_PINKY",
+
+    "MINUS":"R_PINKY","EQUAL":"R_PINKY",
+    "LBRACKET":"R_PINKY","RBRACKET":"R_PINKY","BACKSLASH":"R_PINKY",
+    "SEMICOLON":"R_PINKY","QUOTE":"R_PINKY",
+    "COMMA":"R_MIDDLE","DOT":"R_RING","SLASH":"R_PINKY",
+    "BACKTICK":"L_PINKY"
+  };
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, (c)=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[c]));
+  }
+
+  function fingerClass(keyId){
+    if(keyId === "SPACE") return "finger-L_THUMB finger-R_THUMB";
+    const f = fingerMap[keyId];
+    return f ? `finger-${f}` : "";
+  }
+
+  function renderKeyboard(){
+    const rows = [
+      [{id:"BACKTICK",label:"`"},{id:"1",label:"1"},{id:"2",label:"2"},{id:"3",label:"3"},{id:"4",label:"4"},
+       {id:"5",label:"5"},{id:"6",label:"6"},{id:"7",label:"7"},{id:"8",label:"8"},{id:"9",label:"9"},
+       {id:"0",label:"0"},{id:"MINUS",label:"-"},{id:"EQUAL",label:"="},{id:"BACKSPACE",label:"⌫",w:1.6}],
+      [{id:"TAB",label:"Tab",w:1.3},{id:"Q",label:"Q"},{id:"W",label:"W"},{id:"E",label:"E"},{id:"R",label:"R"},{id:"T",label:"T"},
+       {id:"Y",label:"Y"},{id:"U",label:"U"},{id:"I",label:"I"},{id:"O",label:"O"},{id:"P",label:"P"},
+       {id:"LBRACKET",label:"["},{id:"RBRACKET",label:"]"},{id:"BACKSLASH",label:"\\",w:1.3}],
+      [{id:"CAPS",label:"Caps",w:1.55},{id:"A",label:"A"},{id:"S",label:"S"},{id:"D",label:"D"},{id:"F",label:"F"},{id:"G",label:"G"},
+       {id:"H",label:"H"},{id:"J",label:"J"},{id:"K",label:"K"},{id:"L",label:"L"},
+       {id:"SEMICOLON",label:";"},{id:"QUOTE",label:"'"},{id:"ENTER",label:"Enter",w:1.75}],
+      [{id:"SHIFT_L",label:"Shift",w:2.0},{id:"Z",label:"Z"},{id:"X",label:"X"},{id:"C",label:"C"},{id:"V",label:"V"},{id:"B",label:"B"},
+       {id:"N",label:"N"},{id:"M",label:"M"},{id:"COMMA",label:","},{id:"DOT",label:"."},{id:"SLASH",label:"/"},
+       {id:"SHIFT_R",label:"Shift",w:2.2}],
+      [{id:"SPACE",label:"Space",w:6.2}]
+    ];
+
+    const unit=48, gap=8, h=48, rx=10;
+    const rowWidth = (row)=>row.reduce((sum,k)=>sum+(k.w??1)*unit+gap,0)-gap;
+    const maxW = Math.max(...rows.map(rowWidth))+24;
+    const totalH = rows.length*(h+gap)-gap+24;
+
+    let svg = `<svg viewBox="0 0 ${maxW} ${totalH}" xmlns="http://www.w3.org/2000/svg">`;
+    rows.forEach((row,r)=>{
+      let x=12, y=12 + r*(h+gap);
+      row.forEach((k)=>{
+        const w=(k.w??1)*unit;
+        const id=`KEY_${k.id}`;
+        svg += `
+          <g>
+            <rect id="${id}" class="key ${fingerClass(k.id)}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"></rect>
+            <text class="keyText" x="${x+w/2}" y="${y+h/2}">${escapeHtml(k.label)}</text>
+          </g>`;
+        x += w + gap;
+      });
+    });
+    svg += `</svg>`;
+    keyboardHost.innerHTML = svg;
+  }
+
+  function highlight(keyId){
+    document.querySelectorAll(".key.hit").forEach(el=>el.classList.remove("hit"));
+    if(!keyId) return;
+    const el = document.getElementById(`KEY_${keyId}`);
+    if(el){
+      el.classList.add("hit");
+      el.scrollIntoView({behavior:"smooth", block:"nearest", inline:"center"});
+    }
+  }
+
+  function setLast(k,ch){
+    lastKeyEl.textContent = k || "-";
+    lastCharEl.textContent = ch ? JSON.stringify(ch) : "-";
+  }
+
+  function delta(prev,next){
+    if(next.startsWith(prev)) return next.slice(prev.length);
+    return "";
+  }
+
+  function charToKeyId(ch){
+    if(!ch) return "";
+    if(ch===" ") return "SPACE";
+    if(ch==="\n") return "ENTER";
+
+    const up = ch.toUpperCase();
+    if(/[A-Z]/.test(up)) return up;
+    if(/[0-9]/.test(ch)) return ch;
+
+    const sym = {
+      "-":"MINUS","_":"MINUS","=":"EQUAL","+":"EQUAL",
+      "[":"LBRACKET","{":"LBRACKET","]":"RBRACKET","}":"RBRACKET",
+      "\\":"BACKSLASH","|":"BACKSLASH",";":"SEMICOLON",":":"SEMICOLON",
+      "'":"QUOTE",'"':"QUOTE",",":"COMMA","<":"COMMA",".":"DOT",">":"DOT",
+      "/":"SLASH","?":"SLASH","`":"BACKTICK","~":"BACKTICK"
+    };
+    return sym[ch] || "";
+  }
+
+  function keyEventToKeyId(e){
+    const k = e.key;
+    if(k===" ") return "SPACE";
+    if(k==="Enter") return "ENTER";
+    if(k==="Backspace") return "BACKSPACE";
+    if(k==="Tab") return "TAB";
+    if(k==="CapsLock") return "CAPS";
+    if(k==="Shift") return (e.location===1 ? "SHIFT_L" : "SHIFT_R");
+    if(/^[a-z]$/i.test(k)) return k.toUpperCase();
+    if(/^[0-9]$/.test(k)) return k;
+    const map = {"-":"MINUS","=":"EQUAL","[":"LBRACKET","]":"RBRACKET","\\":"BACKSLASH",";":"SEMICOLON","'":"QUOTE",",":"COMMA",".":"DOT","/":"SLASH","`":"BACKTICK"};
+    return map[k] || "";
+  }
+
+  function extractQuery(text){
+    const t=text.trim();
+    if(!t) return "";
+    const parts=t.split(/\\s+/);
+    return parts[parts.length-1] || "";
+  }
+
+  function buildLinks(q){
+    const s=q.trim();
+    queryTextEl.textContent = s || "-";
+    linkListEl.innerHTML = "";
+    if(!s) return;
+
+    const enc = encodeURIComponent(s);
+    const items = [
+      {title:"Wikipedia（検索）", url:`https://ja.wikipedia.org/wiki/Special:Search?search=${enc}`, note:"地名・一般語の入口"},
+      {title:"辞書（Weblio）", url:`https://www.weblio.jp/content/${enc}`, note:"一般語の意味"},
+      {title:"地図（Google Maps）", url:`https://www.google.com/maps/search/?api=1&query=${enc}`, note:"地名っぽいとき"},
+      {title:"公式サイトっぽいもの（検索）", url:`https://www.google.com/search?q=${enc}%20%E5%85%AC%E5%BC%8F`, note:"自治体/団体/店の公式探し"},
+      {title:"通販/販売店っぽいもの（検索）", url:`https://www.google.com/search?q=${enc}%20%E9%80%9A%E8%B2%A9%20%E8%B2%A9%E5%A3%B2%E5%BA%97`, note:"名産品の暫定"}
+    ];
+    for(const it of items){
+      const li=document.createElement("li");
+      li.innerHTML = `<a href="${it.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(it.title)}<span>${escapeHtml(it.note)}</span></a>`;
+      linkListEl.appendChild(li);
+    }
+  }
+
+  function init(){
+    const hasTouch = ("ontouchstart" in window) || navigator.maxTouchPoints>0;
+    deviceHintEl.textContent = hasTouch
+      ? "iPhone: 入力差分でキーを推定してハイライト（予測変換でズレることあり）"
+      : "PC: keydownで正確にキーをハイライト";
+
+    renderKeyboard();
+    typedEl.focus();
+
+    window.addEventListener("keydown",(e)=>{
+      const id=keyEventToKeyId(e);
+      if(id){
+        highlight(id);
+        setLast(id,e.key);
+      }
+    });
+
+    typedEl.addEventListener("input",()=>{
+      const next=typedEl.value;
+      const d=delta(prevValue,next);
+      const ch = d ? d.slice(-1) : "";
+      if(d){
+        const keyId=charToKeyId(ch);
+        highlight(keyId);
+        setLast(keyId||"(n/a)", ch);
+      }else{
+        highlight("");
+        setLast("(edit)","");
+      }
+      prevValue=next;
+
+      buildLinks(extractQuery(next));
+    });
+
+    clearBtn.addEventListener("click",()=>{
+      typedEl.value=""; prevValue="";
+      highlight(""); setLast("","");
+      buildLinks("");
+      typedEl.focus();
+    });
+
+    copyBtn.addEventListener("click",async ()=>{
+      try{ await navigator.clipboard.writeText(typedEl.value); }catch{}
+      typedEl.focus();
+    });
+  }
+
+  init();
+</script>
 </body>
 </html>
