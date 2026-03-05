@@ -180,7 +180,24 @@ let soundOn = true;
 const AC = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
-function ensureAudio() {
+  function unlockAudio() {
+  ensureAudio();
+  // ついでに1回だけ無音に近い短音を鳴らしてロック解除を確実化
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  g.gain.value = 0.00001;
+  osc.connect(g);
+  g.connect(audioCtx.destination);
+  osc.start(t);
+  osc.stop(t + 0.01);
+}
+
+// Safari対策：最初の操作で必ずアンロック
+window.addEventListener("pointerdown", unlockAudio, { once: true });
+window.addEventListener("keydown", unlockAudio, { once: true });
+
+  function ensureAudio() {
   if (!audioCtx) audioCtx = new AC();
   if (audioCtx.state === "suspended") audioCtx.resume();
 }
@@ -211,6 +228,15 @@ function beepAt(freq, durSec, whenSec, gain = 0.03) {
   osc.type = "sine";
   osc.frequency.setValueAtTime(freq, whenSec);
 
+  g.gain.value = gain;
+
+  osc.connect(g);
+  g.connect(audioCtx.destination);
+
+  osc.start(whenSec);
+  osc.stop(whenSec + durSec);
+} 
+  
   // クリックノイズ防止の短いフェード
   const a = 0.002;
   g.gain.setValueAtTime(0.00001, whenSec);
