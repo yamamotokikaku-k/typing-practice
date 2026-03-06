@@ -9,176 +9,174 @@
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
-      background: #fff;
+      background: #f7f7f7;
       color: #111;
     }
     .wrap {
-      max-width: 900px;
+      max-width: 980px;
       margin: 0 auto;
-      padding: 20px 16px 48px;
+      padding: 24px 16px 40px;
     }
     h1 {
       margin: 0 0 16px;
       font-size: 28px;
       text-align: center;
-      font-weight: 700;
     }
-    .topbar {
+    .panel {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+    }
+    .controls {
       display: flex;
       flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin-bottom: 18px;
     }
-    button, select {
-      font-size: 16px;
+    .controls label {
+      font-size: 14px;
+      color: #333;
+    }
+    select, button {
+      font: inherit;
       padding: 10px 14px;
-      border: 1px solid #bbb;
       border-radius: 10px;
+      border: 1px solid #bbb;
       background: #fff;
       cursor: pointer;
     }
-    button:hover, select:hover {
-      border-color: #666;
-    }
-    .panel {
-      border: 1px solid #ddd;
-      border-radius: 16px;
-      padding: 24px 18px;
-      min-height: 330px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .status {
+    button:hover { background: #f0f0f0; }
+    .station-area {
       text-align: center;
-      font-size: 15px;
+      padding: 18px 8px 8px;
+    }
+    .lap-info {
+      font-size: 14px;
       color: #555;
-      margin-bottom: 16px;
-      min-height: 24px;
-    }
-    .station {
-      font-size: clamp(42px, 8vw, 82px);
-      font-weight: 700;
-      text-align: center;
       margin-bottom: 10px;
-      letter-spacing: 0.04em;
     }
-    .roman {
-      font-size: clamp(24px, 4vw, 38px);
+    .jp {
+      font-size: 52px;
       font-weight: 700;
-      text-align: center;
-      letter-spacing: 0.08em;
-      margin-bottom: 18px;
+      letter-spacing: 0.03em;
+      margin: 8px 0 10px;
+      min-height: 1.4em;
+    }
+    .roma {
+      font-size: 28px;
+      letter-spacing: 0.04em;
+      min-height: 1.5em;
       word-break: break-all;
     }
-    .typed {
-      font-size: clamp(20px, 3.2vw, 30px);
-      min-height: 42px;
-      text-align: center;
-      letter-spacing: 0.08em;
-      word-break: break-all;
-    }
-    .ok { color: #111; }
-    .ng {
-      color: #c62828;
+    .roma .done { color: #999; }
+    .roma .current {
+      color: #d00;
       text-decoration: underline;
     }
-    .rest {
-      color: #aaa;
-    }
-    .count {
-      font-size: 64px;
-      font-weight: 800;
+    .roma .rest { color: #111; }
+    .sub {
       text-align: center;
-      margin: 18px 0;
-      min-height: 78px;
+      color: #555;
+      font-size: 14px;
+      margin-top: 12px;
+      min-height: 1.5em;
     }
-    .progress {
-      width: 100%;
-      max-width: 620px;
-      height: 12px;
-      background: #eee;
-      border-radius: 999px;
-      overflow: hidden;
-      margin-top: 20px;
-    }
-    .bar {
-      height: 100%;
-      width: 0%;
-      background: #111;
-      transition: width 0.2s;
-    }
-    .result {
-      margin-top: 24px;
-      border: 1px solid #ddd;
-      border-radius: 16px;
-      padding: 20px 16px;
-      display: none;
-    }
-    .result h2 {
-      margin: 0 0 16px;
-      text-align: center;
-      font-size: 24px;
-    }
-    .result-grid {
+    .stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin-bottom: 18px;
     }
-    .card {
-      border: 1px solid #e3e3e3;
+    .stat {
+      background: #fafafa;
+      border: 1px solid #ddd;
       border-radius: 12px;
       padding: 14px;
       text-align: center;
     }
-    .label {
+    .stat .label {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    .stat .value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .result-box {
+      text-align: center;
+      padding: 10px 0 4px;
+    }
+    .result-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .result-main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .result-card {
+      min-width: 160px;
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .result-card .k {
       font-size: 13px;
       color: #666;
       margin-bottom: 6px;
     }
-    .value {
-      font-size: 30px;
-      font-weight: 800;
+    .result-card .v {
+      font-size: 26px;
+      font-weight: 700;
     }
-    .sub {
-      font-size: 13px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: #fff;
+    }
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #e5e5e5;
+      text-align: center;
+    }
+    th {
+      background: #fafafa;
+      font-weight: 700;
+    }
+    .rank-note {
+      margin-top: 8px;
+      font-size: 12px;
       color: #666;
-      margin-top: 4px;
+      text-align: right;
     }
-    .mistakes {
-      margin-top: 10px;
-      border-top: 1px solid #eee;
-      padding-top: 14px;
-    }
-    .mistakes h3 {
-      margin: 0 0 10px;
-      font-size: 18px;
-    }
-    .mistake-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .mistake-chip {
-      border: 1px solid #f0b7b7;
-      background: #fff5f5;
-      color: #b42318;
-      padding: 7px 10px;
-      border-radius: 999px;
+    .empty {
+      text-align: center;
+      color: #777;
+      padding: 14px 0 6px;
       font-size: 14px;
     }
     .footer-note {
-      margin-top: 18px;
       text-align: center;
       color: #666;
-      font-size: 14px;
+      font-size: 13px;
+      margin-top: 8px;
     }
-    @media (max-width: 640px) {
-      .wrap { padding: 16px 12px 36px; }
-      .panel { min-height: 300px; padding: 20px 12px; }
+    @media (max-width: 720px) {
+      .jp { font-size: 38px; }
+      .roma { font-size: 22px; }
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
   </style>
 </head>
@@ -186,382 +184,395 @@
   <div class="wrap">
     <h1>山手線タイピング練習</h1>
 
-    <div class="topbar">
-      <select id="modeSelect">
-        <option value="order">順番</option>
-        <option value="random">ランダム</option>
-      </select>
-
-      <select id="lapSelect">
-        <option value="1">1周</option>
-        <option value="2">2周</option>
-        <option value="3">3周</option>
-        <option value="4">4周</option>
-        <option value="5">5周</option>
-      </select>
-
-      <button id="startBtn">スタート</button>
-      <button id="resetBtn">リセット</button>
+    <div class="panel">
+      <div class="controls">
+        <label>
+          周回モード
+          <select id="lapSelect">
+            <option value="1">1周</option>
+            <option value="2">2周</option>
+            <option value="3">3周</option>
+            <option value="4">4周</option>
+            <option value="5">5周</option>
+          </select>
+        </label>
+        <button id="startBtn">スタート</button>
+        <button id="resetRankBtn">ランキング削除</button>
+      </div>
+      <div class="footer-note">Enterでもスタートできます</div>
     </div>
 
     <div class="panel">
-      <div class="status" id="status">Enterキーでも開始できます</div>
-      <div class="count" id="count"></div>
-      <div class="station" id="station">山手線</div>
-      <div class="roman" id="roman">ENTER</div>
-      <div class="typed" id="typed"></div>
-
-      <div class="progress">
-        <div class="bar" id="bar"></div>
+      <div class="station-area">
+        <div class="lap-info" id="lapInfo">未開始</div>
+        <div class="jp" id="jpStation">山手線</div>
+        <div class="roma" id="romaStation">Enter または スタートで開始</div>
+        <div class="sub" id="subMessage">入力欄なし。キーボードをそのまま打つ</div>
       </div>
     </div>
 
-    <div class="result" id="result">
-      <h2>結果</h2>
-
-      <div class="result-grid">
-        <div class="card">
+    <div class="panel">
+      <div class="stats">
+        <div class="stat">
+          <div class="label">タイム</div>
+          <div class="value" id="timeStat">0.00秒</div>
+        </div>
+        <div class="stat">
           <div class="label">正確率</div>
-          <div class="value" id="accuracyValue">0%</div>
-          <div class="sub">スピードは採点に含めません</div>
+          <div class="value" id="accuracyStat">100.00%</div>
         </div>
-        <div class="card">
-          <div class="label">正解キー数</div>
-          <div class="value" id="correctValue">0</div>
+        <div class="stat">
+          <div class="label">正打鍵</div>
+          <div class="value" id="correctStat">0</div>
         </div>
-        <div class="card">
-          <div class="label">ミスキー数</div>
-          <div class="value" id="missValue">0</div>
-        </div>
-        <div class="card">
-          <div class="label">採点</div>
-          <div class="value" id="scoreValue">0点</div>
-          <div class="sub">正確性のみ</div>
+        <div class="stat">
+          <div class="label">ミス</div>
+          <div class="value" id="missStat">0</div>
         </div>
       </div>
+    </div>
 
-      <div class="mistakes">
-        <h3>ミスタイプ一覧</h3>
-        <div class="mistake-list" id="mistakeList"></div>
+    <div class="panel">
+      <div class="result-box" id="resultBox">
+        <div class="result-title">今回の結果</div>
+        <div class="result-main">
+          <div class="result-card">
+            <div class="k">タイム</div>
+            <div class="v" id="resultTime">-</div>
+          </div>
+          <div class="result-card">
+            <div class="k">正確率</div>
+            <div class="v" id="resultAccuracy">-</div>
+          </div>
+          <div class="result-card">
+            <div class="k">周回</div>
+            <div class="v" id="resultLaps">-</div>
+          </div>
+        </div>
+        <div class="sub" id="resultSub">まだ記録はありません</div>
       </div>
+    </div>
 
-      <div class="footer-note" id="summaryText"></div>
+    <div class="panel">
+      <h2 style="margin:0 0 12px; font-size:22px;">正確率ランキング TOP10</h2>
+      <div id="rankingWrap"></div>
+      <div class="rank-note">順位は正確率のみで決定。タイムは表示のみ。</div>
     </div>
   </div>
 
   <script>
-    const stations = [
-      { jp: "東京", roma: ["toukyou", "tokyo"] },
-      { jp: "神田", roma: ["kanda"] },
-      { jp: "秋葉原", roma: ["akihabara"] },
-      { jp: "御徒町", roma: ["okachimachi"] },
-      { jp: "上野", roma: ["ueno"] },
-      { jp: "鶯谷", roma: ["uguisudani"] },
-      { jp: "日暮里", roma: ["nippori"] },
-      { jp: "西日暮里", roma: ["nishinippori"] },
-      { jp: "田端", roma: ["tabata"] },
-      { jp: "駒込", roma: ["komagome"] },
-      { jp: "巣鴨", roma: ["sugamo"] },
-      { jp: "大塚", roma: ["ootsuka", "otsuka"] },
-      { jp: "池袋", roma: ["ikebukuro"] },
-      { jp: "目白", roma: ["mejiro"] },
-      { jp: "高田馬場", roma: ["takadanobaba"] },
-      { jp: "新大久保", roma: ["shinookubo", "shinokubo"] },
-      { jp: "新宿", roma: ["shinjuku"] },
-      { jp: "代々木", roma: ["yoyogi"] },
-      { jp: "原宿", roma: ["harajuku"] },
-      { jp: "渋谷", roma: ["shibuya"] },
-      { jp: "恵比寿", roma: ["ebisu"] },
-      { jp: "目黒", roma: ["meguro"] },
-      { jp: "五反田", roma: ["gotanda"] },
-      { jp: "大崎", roma: ["oosaki", "osaki"] },
-      { jp: "品川", roma: ["shinagawa"] },
-      { jp: "高輪ゲートウェイ", roma: ["takanawagateway"] },
-      { jp: "田町", roma: ["tamachi"] },
-      { jp: "浜松町", roma: ["hamamatsuchou", "hamamatsucho"] },
-      { jp: "新橋", roma: ["shinbashi", "shimbashi"] },
-      { jp: "有楽町", roma: ["yuurakuchou", "yurakucho"] }
+    const STATIONS = [
+      { jp: "東京", roma: "tokyo" },
+      { jp: "神田", roma: "kanda" },
+      { jp: "秋葉原", roma: "akihabara" },
+      { jp: "御徒町", roma: "okachimachi" },
+      { jp: "上野", roma: "ueno" },
+      { jp: "鶯谷", roma: "uguisudani" },
+      { jp: "日暮里", roma: "nippori" },
+      { jp: "西日暮里", roma: "nishinippori" },
+      { jp: "田端", roma: "tabata" },
+      { jp: "駒込", roma: "komagome" },
+      { jp: "巣鴨", roma: "sugamo" },
+      { jp: "大塚", roma: "otsuka" },
+      { jp: "池袋", roma: "ikebukuro" },
+      { jp: "目白", roma: "mejiro" },
+      { jp: "高田馬場", roma: "takadanobaba" },
+      { jp: "新大久保", roma: "shinokubo" },
+      { jp: "新宿", roma: "shinjuku" },
+      { jp: "代々木", roma: "yoyogi" },
+      { jp: "原宿", roma: "harajuku" },
+      { jp: "渋谷", roma: "shibuya" },
+      { jp: "恵比寿", roma: "ebisu" },
+      { jp: "目黒", roma: "meguro" },
+      { jp: "五反田", roma: "gotanda" },
+      { jp: "大崎", roma: "osaki" },
+      { jp: "品川", roma: "shinagawa" },
+      { jp: "高輪ゲートウェイ", roma: "takanawagateway" },
+      { jp: "田町", roma: "tamachi" },
+      { jp: "浜松町", roma: "hamamatsucho" },
+      { jp: "新橋", roma: "shimbashi" },
+      { jp: "有楽町", roma: "yurakucho" }
     ];
 
-    const stationEl = document.getElementById("station");
-    const romanEl = document.getElementById("roman");
-    const typedEl = document.getElementById("typed");
-    const statusEl = document.getElementById("status");
-    const countEl = document.getElementById("count");
-    const barEl = document.getElementById("bar");
-    const resultEl = document.getElementById("result");
+    const RANKING_KEY = "yamanote_accuracy_ranking_v1";
 
-    const accuracyValue = document.getElementById("accuracyValue");
-    const correctValue = document.getElementById("correctValue");
-    const missValue = document.getElementById("missValue");
-    const scoreValue = document.getElementById("scoreValue");
-    const mistakeList = document.getElementById("mistakeList");
-    const summaryText = document.getElementById("summaryText");
-
-    const modeSelect = document.getElementById("modeSelect");
     const lapSelect = document.getElementById("lapSelect");
     const startBtn = document.getElementById("startBtn");
-    const resetBtn = document.getElementById("resetBtn");
+    const resetRankBtn = document.getElementById("resetRankBtn");
 
-    let playing = false;
-    let countdownRunning = false;
-    let queue = [];
-    let currentIndex = 0;
-    let typed = "";
-    let currentAnswers = [];
-    let currentTarget = "";
+    const lapInfo = document.getElementById("lapInfo");
+    const jpStation = document.getElementById("jpStation");
+    const romaStation = document.getElementById("romaStation");
+    const subMessage = document.getElementById("subMessage");
 
-    let totalCorrect = 0;
-    let totalMiss = 0;
-    let mistakeLogs = [];
+    const timeStat = document.getElementById("timeStat");
+    const accuracyStat = document.getElementById("accuracyStat");
+    const correctStat = document.getElementById("correctStat");
+    const missStat = document.getElementById("missStat");
 
-    function shuffle(arr) {
-      const a = [...arr];
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+    const resultTime = document.getElementById("resultTime");
+    const resultAccuracy = document.getElementById("resultAccuracy");
+    const resultLaps = document.getElementById("resultLaps");
+    const resultSub = document.getElementById("resultSub");
+
+    const rankingWrap = document.getElementById("rankingWrap");
+
+    let isPlaying = false;
+    let totalLaps = 1;
+    let currentLap = 1;
+    let stationIndex = 0;
+    let charIndex = 0;
+    let startTime = 0;
+    let timerId = null;
+
+    let correctCount = 0;
+    let missCount = 0;
+    let totalTyped = 0;
+    let currentRunId = null;
+
+    function formatTime(ms) {
+      return (ms / 1000).toFixed(2) + "秒";
+    }
+
+    function getAccuracy() {
+      if (totalTyped === 0) return 100;
+      return (correctCount / totalTyped) * 100;
+    }
+
+    function saveRanking(entry) {
+      const ranking = loadRanking();
+      ranking.push(entry);
+
+      ranking.sort((a, b) => {
+        if (b.accuracy !== a.accuracy) return b.accuracy - a.accuracy;
+        return a.createdAt - b.createdAt;
+      });
+
+      const top10 = ranking.slice(0, 10);
+      localStorage.setItem(RANKING_KEY, JSON.stringify(top10));
+    }
+
+    function loadRanking() {
+      try {
+        const raw = localStorage.getItem(RANKING_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
       }
-      return a;
     }
 
-    function buildQueue() {
-      const laps = Number(lapSelect.value);
-      const mode = modeSelect.value;
-      let result = [];
-      for (let i = 0; i < laps; i++) {
-        const oneLap = mode === "random" ? shuffle(stations) : [...stations];
-        result = result.concat(oneLap);
-      }
-      return result;
-    }
+    function renderRanking(highlightId = null) {
+      const ranking = loadRanking();
 
-    function chooseShortest(arr) {
-      return [...arr].sort((a, b) => a.length - b.length)[0];
-    }
-
-    function loadCurrent() {
-      const item = queue[currentIndex];
-      currentAnswers = item.roma.map(v => v.toLowerCase());
-      currentTarget = chooseShortest(currentAnswers);
-      typed = "";
-
-      stationEl.textContent = item.jp;
-      romanEl.textContent = currentTarget.toUpperCase();
-      renderTyped();
-      renderProgress();
-      statusEl.textContent = `${currentIndex + 1} / ${queue.length}`;
-    }
-
-    function renderTyped() {
-      let correctPart = "";
-      let wrongPart = "";
-      let restPart = currentTarget;
-
-      const lowerTyped = typed.toLowerCase();
-
-      for (let i = 0; i < lowerTyped.length; i++) {
-        if (i < currentTarget.length && lowerTyped[i] === currentTarget[i] && wrongPart === "") {
-          correctPart += currentTarget[i];
-        } else {
-          wrongPart = currentTarget.slice(correctPart.length, lowerTyped.length);
-          restPart = currentTarget.slice(lowerTyped.length);
-          break;
-        }
+      if (!ranking.length) {
+        rankingWrap.innerHTML = '<div class="empty">まだランキングはありません</div>';
+        return;
       }
 
-      if (lowerTyped.length <= correctPart.length) {
-        wrongPart = "";
-        restPart = currentTarget.slice(correctPart.length);
-      }
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>順位</th>
+              <th>正確率</th>
+              <th>タイム</th>
+              <th>周回</th>
+              <th>日時</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
 
-      typedEl.innerHTML =
-        `<span class="ok">${escapeHtml(correctPart)}</span>` +
-        `<span class="ng">${escapeHtml(wrongPart)}</span>` +
-        `<span class="rest">${escapeHtml(restPart)}</span>`;
+      ranking.forEach((item, i) => {
+        const d = new Date(item.createdAt);
+        const dt = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+        const bg = item.id === highlightId ? ' style="background:#fff6cc;"' : "";
+        html += `
+          <tr${bg}>
+            <td>${i + 1}</td>
+            <td>${item.accuracy.toFixed(2)}%</td>
+            <td>${formatTime(item.timeMs)}</td>
+            <td>${item.laps}周</td>
+            <td>${dt}</td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table>`;
+      rankingWrap.innerHTML = html;
     }
 
-    function renderProgress() {
-      const percent = queue.length ? (currentIndex / queue.length) * 100 : 0;
-      barEl.style.width = `${percent}%`;
+    function updateStats() {
+      const elapsed = isPlaying ? (Date.now() - startTime) : 0;
+      timeStat.textContent = formatTime(elapsed);
+      accuracyStat.textContent = getAccuracy().toFixed(2) + "%";
+      correctStat.textContent = correctCount;
+      missStat.textContent = missCount;
+    }
+
+    function startTimer() {
+      stopTimer();
+      timerId = setInterval(updateStats, 50);
+    }
+
+    function stopTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+    }
+
+    function renderCurrentStation() {
+      const station = STATIONS[stationIndex];
+      const roma = station.roma;
+
+      lapInfo.textContent = `${currentLap} / ${totalLaps} 周　|　${stationIndex + 1} / ${STATIONS.length} 駅`;
+      jpStation.textContent = station.jp;
+
+      const done = roma.slice(0, charIndex);
+      const current = roma[charIndex] || "";
+      const rest = roma.slice(charIndex + 1);
+
+      romaStation.innerHTML =
+        `<span class="done">${escapeHtml(done)}</span>` +
+        `<span class="current">${escapeHtml(current)}</span>` +
+        `<span class="rest">${escapeHtml(rest)}</span>`;
+
+      subMessage.textContent = "キーボードでそのまま入力";
     }
 
     function escapeHtml(str) {
-      return str
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
+      return str.replace(/[&<>"']/g, m => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[m]));
+    }
+
+    function resetRunState() {
+      currentLap = 1;
+      stationIndex = 0;
+      charIndex = 0;
+      correctCount = 0;
+      missCount = 0;
+      totalTyped = 0;
+      updateStats();
     }
 
     function startGame() {
-      if (countdownRunning) return;
-      countdownRunning = true;
-      resultEl.style.display = "none";
+      totalLaps = Number(lapSelect.value);
+      resetRunState();
+      isPlaying = true;
+      currentRunId = "run_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+      startTime = Date.now();
+      renderCurrentStation();
+      startTimer();
 
-      queue = buildQueue();
-      currentIndex = 0;
-      typed = "";
-      totalCorrect = 0;
-      totalMiss = 0;
-      mistakeLogs = [];
-      barEl.style.width = "0%";
-
-      stationEl.textContent = "";
-      romanEl.textContent = "";
-      typedEl.textContent = "";
-      statusEl.textContent = "開始します";
-
-      const seq = ["3", "2", "1", "GO!"];
-      let i = 0;
-
-      function step() {
-        countEl.textContent = seq[i];
-        i++;
-        if (i < seq.length) {
-          setTimeout(step, 700);
-        } else {
-          setTimeout(() => {
-            countEl.textContent = "";
-            countdownRunning = false;
-            playing = true;
-            loadCurrent();
-          }, 500);
-        }
-      }
-
-      step();
-    }
-
-    function resetGame() {
-      playing = false;
-      countdownRunning = false;
-      queue = [];
-      currentIndex = 0;
-      typed = "";
-      currentAnswers = [];
-      currentTarget = "";
-      totalCorrect = 0;
-      totalMiss = 0;
-      mistakeLogs = [];
-
-      stationEl.textContent = "山手線";
-      romanEl.textContent = "ENTER";
-      typedEl.textContent = "";
-      statusEl.textContent = "Enterキーでも開始できます";
-      countEl.textContent = "";
-      barEl.style.width = "0%";
-      resultEl.style.display = "none";
+      resultTime.textContent = "-";
+      resultAccuracy.textContent = "-";
+      resultLaps.textContent = "-";
+      resultSub.textContent = "プレイ中";
     }
 
     function finishGame() {
-      playing = false;
-      countEl.textContent = "";
-      stationEl.textContent = "終了";
-      romanEl.textContent = "FINISH";
-      typedEl.textContent = "";
-      statusEl.textContent = "おつかれさまでした";
-      barEl.style.width = "100%";
+      isPlaying = false;
+      stopTimer();
 
-      const totalKeys = totalCorrect + totalMiss;
-      const accuracy = totalKeys === 0 ? 0 : Math.round((totalCorrect / totalKeys) * 1000) / 10;
-      const score = Math.round(accuracy);
+      const elapsed = Date.now() - startTime;
+      const accuracy = getAccuracy();
 
-      accuracyValue.textContent = `${accuracy}%`;
-      correctValue.textContent = totalCorrect;
-      missValue.textContent = totalMiss;
-      scoreValue.textContent = `${score}点`;
+      timeStat.textContent = formatTime(elapsed);
+      accuracyStat.textContent = accuracy.toFixed(2) + "%";
 
-      mistakeList.innerHTML = "";
-      if (mistakeLogs.length === 0) {
-        const chip = document.createElement("div");
-        chip.className = "mistake-chip";
-        chip.textContent = "ミスなし";
-        mistakeList.appendChild(chip);
-      } else {
-        mistakeLogs.forEach(m => {
-          const chip = document.createElement("div");
-          chip.className = "mistake-chip";
-          chip.textContent = `${m.station}： ${m.expected} → ${m.input}`;
-          mistakeList.appendChild(chip);
-        });
+      resultTime.textContent = formatTime(elapsed);
+      resultAccuracy.textContent = accuracy.toFixed(2) + "%";
+      resultLaps.textContent = totalLaps + "周";
+      resultSub.textContent = `正打鍵 ${correctCount} / ミス ${missCount}`;
+
+      const entry = {
+        id: currentRunId,
+        accuracy,
+        timeMs: elapsed,
+        laps: totalLaps,
+        createdAt: Date.now()
+      };
+
+      saveRanking(entry);
+      renderRanking(currentRunId);
+
+      lapInfo.textContent = "完了";
+      jpStation.textContent = "終了";
+      romaStation.textContent = "Enter または スタートで再開";
+      subMessage.textContent = "ランキングは正確率のみで決定";
+    }
+
+    function moveNextStation() {
+      charIndex = 0;
+      stationIndex++;
+
+      if (stationIndex >= STATIONS.length) {
+        stationIndex = 0;
+        currentLap++;
       }
 
-      summaryText.textContent =
-        `${lapSelect.value}周 / ${modeSelect.value === "order" ? "順番" : "ランダム"} / 正確性のみで採点`;
-
-      resultEl.style.display = "block";
-    }
-
-    function isPrefixOfAnyAnswer(str) {
-      return currentAnswers.some(ans => ans.startsWith(str));
-    }
-
-    function isExactAnswer(str) {
-      return currentAnswers.includes(str);
-    }
-
-    function nextQuestion() {
-      currentIndex++;
-      if (currentIndex >= queue.length) {
+      if (currentLap > totalLaps) {
         finishGame();
-      } else {
-        loadCurrent();
+        return;
       }
+
+      renderCurrentStation();
     }
 
-    document.addEventListener("keydown", (e) => {
-      if (countdownRunning) return;
+    function handleKeyInput(key) {
+      if (!isPlaying) return;
 
-      if (!playing) {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          startGame();
-        }
-        return;
-      }
+      if (key.length !== 1) return;
 
-      if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta" || e.key === "CapsLock" || e.key === "Tab") {
-        return;
-      }
+      const expected = STATIONS[stationIndex].roma[charIndex];
+      if (!expected) return;
 
-      if (e.key === "Backspace") {
-        e.preventDefault();
-        typed = typed.slice(0, -1);
-        renderTyped();
-        return;
-      }
+      const input = key.toLowerCase();
 
-      if (e.key.length !== 1) return;
+      totalTyped++;
 
-      const key = e.key.toLowerCase();
-      if (!/^[a-z\-]$/.test(key)) return;
+      if (input === expected) {
+        correctCount++;
+        charIndex++;
 
-      const trial = typed + key;
-
-      if (isPrefixOfAnyAnswer(trial)) {
-        typed = trial;
-        totalCorrect++;
-        renderTyped();
-
-        if (isExactAnswer(typed)) {
-          nextQuestion();
+        if (charIndex >= STATIONS[stationIndex].roma.length) {
+          moveNextStation();
+        } else {
+          renderCurrentStation();
         }
       } else {
-        totalMiss++;
-        mistakeLogs.push({
-          station: queue[currentIndex].jp,
-          expected: currentTarget[typed.length] || "(終了後)",
-          input: key
-        });
-        renderTyped();
+        missCount++;
       }
-    });
+
+      updateStats();
+    }
 
     startBtn.addEventListener("click", startGame);
-    resetBtn.addEventListener("click", resetGame);
 
-    resetGame();
+    resetRankBtn.addEventListener("click", () => {
+      if (!confirm("ランキングを削除しますか？")) return;
+      localStorage.removeItem(RANKING_KEY);
+      renderRanking();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !isPlaying) {
+        startGame();
+        return;
+      }
+      handleKeyInput(e.key);
+    });
+
+    renderRanking();
+    updateStats();
   </script>
 </body>
 </html>
