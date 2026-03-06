@@ -85,7 +85,9 @@
       color: #c62828;
       text-decoration: underline;
     }
-    .rest { color: #aaa; }
+    .rest {
+      color: #aaa;
+    }
     .count {
       font-size: 64px;
       font-weight: 800;
@@ -198,12 +200,6 @@
         <option value="5">5周</option>
       </select>
 
-      <select id="soundSelect">
-        <option value="typewriter_heavy.wav">タイプライター</option>
-        <option value="mechanical_click.wav">メカニカル</option>
-        <option value="off">音なし</option>
-      </select>
-
       <button id="startBtn">スタート</button>
       <button id="resetBtn">リセット</button>
     </div>
@@ -252,8 +248,6 @@
       <div class="footer-note" id="summaryText"></div>
     </div>
   </div>
-
-  <audio id="typeSound" preload="auto"></audio>
 
   <script>
     const stations = [
@@ -306,10 +300,8 @@
 
     const modeSelect = document.getElementById("modeSelect");
     const lapSelect = document.getElementById("lapSelect");
-    const soundSelect = document.getElementById("soundSelect");
     const startBtn = document.getElementById("startBtn");
     const resetBtn = document.getElementById("resetBtn");
-    const typeSound = document.getElementById("typeSound");
 
     let playing = false;
     let countdownRunning = false;
@@ -345,22 +337,6 @@
 
     function chooseShortest(arr) {
       return [...arr].sort((a, b) => a.length - b.length)[0];
-    }
-
-    function updateSound() {
-      if (soundSelect.value === "off") {
-        typeSound.removeAttribute("src");
-        typeSound.load();
-        return;
-      }
-      typeSound.src = soundSelect.value;
-      typeSound.load();
-    }
-
-    function playTypeSound() {
-      if (soundSelect.value === "off") return;
-      typeSound.currentTime = 0;
-      typeSound.play().catch(() => {});
     }
 
     function loadCurrent() {
@@ -512,7 +488,7 @@
       }
 
       summaryText.textContent =
-        `${lapSelect.value}周 / ${modeSelect.value === "order" ? "順番" : "ランダム"} / ${soundSelect.options[soundSelect.selectedIndex].text} / 正確性のみで採点`;
+        `${lapSelect.value}周 / ${modeSelect.value === "order" ? "順番" : "ランダム"} / 正確性のみで採点`;
 
       resultEl.style.display = "block";
     }
@@ -545,14 +521,7 @@
         return;
       }
 
-      if (
-        e.key === "Shift" ||
-        e.key === "Control" ||
-        e.key === "Alt" ||
-        e.key === "Meta" ||
-        e.key === "CapsLock" ||
-        e.key === "Tab"
-      ) {
+      if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta" || e.key === "CapsLock" || e.key === "Tab") {
         return;
       }
 
@@ -567,8 +536,6 @@
 
       const key = e.key.toLowerCase();
       if (!/^[a-z\-]$/.test(key)) return;
-
-      playTypeSound();
 
       const trial = typed + key;
 
@@ -593,9 +560,7 @@
 
     startBtn.addEventListener("click", startGame);
     resetBtn.addEventListener("click", resetGame);
-    soundSelect.addEventListener("change", updateSound);
 
-    updateSound();
     resetGame();
   </script>
 </body>
