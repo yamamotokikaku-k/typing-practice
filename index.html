@@ -1,200 +1,567 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>おとタイピング</title>
-
-<style>
-body{
-font-family:sans-serif;
-text-align:center;
-margin-top:80px;
-background:white;
-}
-
-#kana{
-font-size:120px;
-margin-bottom:20px;
-}
-
-#roman{
-font-size:50px;
-margin-bottom:30px;
-}
-
-button{
-font-size:20px;
-margin:5px;
-padding:10px 20px;
-}
-
-#msg{
-font-size:20px;
-color:#666;
-margin-top:20px;
-}
-</style>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>山手線タイピング練習</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: #fff;
+      color: #111;
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
+    h1 {
+      margin: 0 0 16px;
+      font-size: 28px;
+      text-align: center;
+      font-weight: 700;
+    }
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    button, select {
+      font-size: 16px;
+      padding: 10px 14px;
+      border: 1px solid #bbb;
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+    }
+    button:hover, select:hover {
+      border-color: #666;
+    }
+    .panel {
+      border: 1px solid #ddd;
+      border-radius: 16px;
+      padding: 24px 18px;
+      min-height: 330px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .status {
+      text-align: center;
+      font-size: 15px;
+      color: #555;
+      margin-bottom: 16px;
+      min-height: 24px;
+    }
+    .station {
+      font-size: clamp(42px, 8vw, 82px);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 10px;
+      letter-spacing: 0.04em;
+    }
+    .roman {
+      font-size: clamp(24px, 4vw, 38px);
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.08em;
+      margin-bottom: 18px;
+      word-break: break-all;
+    }
+    .typed {
+      font-size: clamp(20px, 3.2vw, 30px);
+      min-height: 42px;
+      text-align: center;
+      letter-spacing: 0.08em;
+      word-break: break-all;
+    }
+    .ok { color: #111; }
+    .ng {
+      color: #c62828;
+      text-decoration: underline;
+    }
+    .rest {
+      color: #aaa;
+    }
+    .count {
+      font-size: 64px;
+      font-weight: 800;
+      text-align: center;
+      margin: 18px 0;
+      min-height: 78px;
+    }
+    .progress {
+      width: 100%;
+      max-width: 620px;
+      height: 12px;
+      background: #eee;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: #111;
+      transition: width 0.2s;
+    }
+    .result {
+      margin-top: 24px;
+      border: 1px solid #ddd;
+      border-radius: 16px;
+      padding: 20px 16px;
+      display: none;
+    }
+    .result h2 {
+      margin: 0 0 16px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .card {
+      border: 1px solid #e3e3e3;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
+    .label {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    .value {
+      font-size: 30px;
+      font-weight: 800;
+    }
+    .sub {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .mistakes {
+      margin-top: 10px;
+      border-top: 1px solid #eee;
+      padding-top: 14px;
+    }
+    .mistakes h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .mistake-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .mistake-chip {
+      border: 1px solid #f0b7b7;
+      background: #fff5f5;
+      color: #b42318;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+    .footer-note {
+      margin-top: 18px;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+    @media (max-width: 640px) {
+      .wrap { padding: 16px 12px 36px; }
+      .panel { min-height: 300px; padding: 20px 12px; }
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <h1>山手線タイピング練習</h1>
 
-<div id="kana">Enterで開始</div>
-<div id="roman"></div>
+    <div class="topbar">
+      <select id="modeSelect">
+        <option value="order">順番</option>
+        <option value="random">ランダム</option>
+      </select>
 
-<div>
-<button onclick="setMode('all')">全部</button>
-<button onclick="setMode('a')">あ行</button>
-<button onclick="setMode('ka')">か行</button>
-<button onclick="setMode('sa')">さ行</button>
-</div>
+      <select id="lapSelect">
+        <option value="1">1周</option>
+        <option value="2">2周</option>
+        <option value="3">3周</option>
+        <option value="4">4周</option>
+        <option value="5">5周</option>
+      </select>
 
-<div id="msg"></div>
+      <button id="startBtn">スタート</button>
+      <button id="resetBtn">リセット</button>
+    </div>
 
-<audio id="ok" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
-<audio id="ng" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+    <div class="panel">
+      <div class="status" id="status">Enterキーでも開始できます</div>
+      <div class="count" id="count"></div>
+      <div class="station" id="station">山手線</div>
+      <div class="roman" id="roman">ENTER</div>
+      <div class="typed" id="typed"></div>
 
-<script>
+      <div class="progress">
+        <div class="bar" id="bar"></div>
+      </div>
+    </div>
 
-const allWords=[
-["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],
-["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"],
-["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"],
-["た","ta"],["ち","chi"],["つ","tsu"],["て","te"],["と","to"],
-["な","na"],["に","ni"],["ぬ","nu"],["ね","ne"],["の","no"],
-["は","ha"],["ひ","hi"],["ふ","fu"],["へ","he"],["ほ","ho"],
-["ま","ma"],["み","mi"],["む","mu"],["め","me"],["も","mo"],
-["や","ya"],["ゆ","yu"],["よ","yo"],
-["ら","ra"],["り","ri"],["る","ru"],["れ","re"],["ろ","ro"],
-["わ","wa"],["を","wo"],["ん","n"]
-]
+    <div class="result" id="result">
+      <h2>結果</h2>
 
-const rows={
-a:allWords.slice(0,5),
-ka:allWords.slice(5,10),
-sa:allWords.slice(10,15)
-}
+      <div class="result-grid">
+        <div class="card">
+          <div class="label">正確率</div>
+          <div class="value" id="accuracyValue">0%</div>
+          <div class="sub">スピードは採点に含めません</div>
+        </div>
+        <div class="card">
+          <div class="label">正解キー数</div>
+          <div class="value" id="correctValue">0</div>
+        </div>
+        <div class="card">
+          <div class="label">ミスキー数</div>
+          <div class="value" id="missValue">0</div>
+        </div>
+        <div class="card">
+          <div class="label">採点</div>
+          <div class="value" id="scoreValue">0点</div>
+          <div class="sub">正確性のみ</div>
+        </div>
+      </div>
 
-let words=[...allWords]
-let index=0
-let pos=0
-let started=false
+      <div class="mistakes">
+        <h3>ミスタイプ一覧</h3>
+        <div class="mistake-list" id="mistakeList"></div>
+      </div>
 
-let combo=0
+      <div class="footer-note" id="summaryText"></div>
+    </div>
+  </div>
 
-function setMode(mode){
+  <script>
+    const stations = [
+      { jp: "東京", roma: ["toukyou", "tokyo"] },
+      { jp: "神田", roma: ["kanda"] },
+      { jp: "秋葉原", roma: ["akihabara"] },
+      { jp: "御徒町", roma: ["okachimachi"] },
+      { jp: "上野", roma: ["ueno"] },
+      { jp: "鶯谷", roma: ["uguisudani"] },
+      { jp: "日暮里", roma: ["nippori"] },
+      { jp: "西日暮里", roma: ["nishinippori"] },
+      { jp: "田端", roma: ["tabata"] },
+      { jp: "駒込", roma: ["komagome"] },
+      { jp: "巣鴨", roma: ["sugamo"] },
+      { jp: "大塚", roma: ["ootsuka", "otsuka"] },
+      { jp: "池袋", roma: ["ikebukuro"] },
+      { jp: "目白", roma: ["mejiro"] },
+      { jp: "高田馬場", roma: ["takadanobaba"] },
+      { jp: "新大久保", roma: ["shinookubo", "shinokubo"] },
+      { jp: "新宿", roma: ["shinjuku"] },
+      { jp: "代々木", roma: ["yoyogi"] },
+      { jp: "原宿", roma: ["harajuku"] },
+      { jp: "渋谷", roma: ["shibuya"] },
+      { jp: "恵比寿", roma: ["ebisu"] },
+      { jp: "目黒", roma: ["meguro"] },
+      { jp: "五反田", roma: ["gotanda"] },
+      { jp: "大崎", roma: ["oosaki", "osaki"] },
+      { jp: "品川", roma: ["shinagawa"] },
+      { jp: "高輪ゲートウェイ", roma: ["takanawagateway"] },
+      { jp: "田町", roma: ["tamachi"] },
+      { jp: "浜松町", roma: ["hamamatsuchou", "hamamatsucho"] },
+      { jp: "新橋", roma: ["shinbashi", "shimbashi"] },
+      { jp: "有楽町", roma: ["yuurakuchou", "yurakucho"] }
+    ];
 
-if(mode==="all")words=[...allWords]
-else words=[...rows[mode]]
+    const stationEl = document.getElementById("station");
+    const romanEl = document.getElementById("roman");
+    const typedEl = document.getElementById("typed");
+    const statusEl = document.getElementById("status");
+    const countEl = document.getElementById("count");
+    const barEl = document.getElementById("bar");
+    const resultEl = document.getElementById("result");
 
-reset()
+    const accuracyValue = document.getElementById("accuracyValue");
+    const correctValue = document.getElementById("correctValue");
+    const missValue = document.getElementById("missValue");
+    const scoreValue = document.getElementById("scoreValue");
+    const mistakeList = document.getElementById("mistakeList");
+    const summaryText = document.getElementById("summaryText");
 
-}
+    const modeSelect = document.getElementById("modeSelect");
+    const lapSelect = document.getElementById("lapSelect");
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
 
-function reset(){
+    let playing = false;
+    let countdownRunning = false;
+    let queue = [];
+    let currentIndex = 0;
+    let typed = "";
+    let currentAnswers = [];
+    let currentTarget = "";
 
-index=0
-pos=0
-combo=0
-started=false
+    let totalCorrect = 0;
+    let totalMiss = 0;
+    let mistakeLogs = [];
 
-document.getElementById("kana").textContent="Enterで開始"
-document.getElementById("roman").textContent=""
-document.getElementById("msg").textContent=""
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
 
-}
+    function buildQueue() {
+      const laps = Number(lapSelect.value);
+      const mode = modeSelect.value;
+      let result = [];
+      for (let i = 0; i < laps; i++) {
+        const oneLap = mode === "random" ? shuffle(stations) : [...stations];
+        result = result.concat(oneLap);
+      }
+      return result;
+    }
 
-function start(){
+    function chooseShortest(arr) {
+      return [...arr].sort((a, b) => a.length - b.length)[0];
+    }
 
-started=true
-show()
+    function loadCurrent() {
+      const item = queue[currentIndex];
+      currentAnswers = item.roma.map(v => v.toLowerCase());
+      currentTarget = chooseShortest(currentAnswers);
+      typed = "";
 
-}
+      stationEl.textContent = item.jp;
+      romanEl.textContent = currentTarget.toUpperCase();
+      renderTyped();
+      renderProgress();
+      statusEl.textContent = `${currentIndex + 1} / ${queue.length}`;
+    }
 
-function show(){
+    function renderTyped() {
+      let correctPart = "";
+      let wrongPart = "";
+      let restPart = currentTarget;
 
-let w=words[index]
+      const lowerTyped = typed.toLowerCase();
 
-document.getElementById("kana").textContent=w[0]
-document.getElementById("roman").textContent=w[1]
+      for (let i = 0; i < lowerTyped.length; i++) {
+        if (i < currentTarget.length && lowerTyped[i] === currentTarget[i] && wrongPart === "") {
+          correctPart += currentTarget[i];
+        } else {
+          wrongPart = currentTarget.slice(correctPart.length, lowerTyped.length);
+          restPart = currentTarget.slice(lowerTyped.length);
+          break;
+        }
+      }
 
-}
+      if (lowerTyped.length <= correctPart.length) {
+        wrongPart = "";
+        restPart = currentTarget.slice(correctPart.length);
+      }
 
-function next(){
+      typedEl.innerHTML =
+        `<span class="ok">${escapeHtml(correctPart)}</span>` +
+        `<span class="ng">${escapeHtml(wrongPart)}</span>` +
+        `<span class="rest">${escapeHtml(restPart)}</span>`;
+    }
 
-index++
+    function renderProgress() {
+      const percent = queue.length ? (currentIndex / queue.length) * 100 : 0;
+      barEl.style.width = `${percent}%`;
+    }
 
-if(index>=words.length){
+    function escapeHtml(str) {
+      return str
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
 
-document.getElementById("kana").textContent="おわり"
-document.getElementById("roman").textContent=""
-document.getElementById("msg").textContent="クリア！"
+    function startGame() {
+      if (countdownRunning) return;
+      countdownRunning = true;
+      resultEl.style.display = "none";
 
-started=false
-return
+      queue = buildQueue();
+      currentIndex = 0;
+      typed = "";
+      totalCorrect = 0;
+      totalMiss = 0;
+      mistakeLogs = [];
+      barEl.style.width = "0%";
 
-}
+      stationEl.textContent = "";
+      romanEl.textContent = "";
+      typedEl.textContent = "";
+      statusEl.textContent = "開始します";
 
-pos=0
-show()
+      const seq = ["3", "2", "1", "GO!"];
+      let i = 0;
 
-}
+      function step() {
+        countEl.textContent = seq[i];
+        i++;
+        if (i < seq.length) {
+          setTimeout(step, 700);
+        } else {
+          setTimeout(() => {
+            countEl.textContent = "";
+            countdownRunning = false;
+            playing = true;
+            loadCurrent();
+          }, 500);
+        }
+      }
 
-function okSound(){
+      step();
+    }
 
-let a=document.getElementById("ok")
-a.currentTime=0
-a.play()
+    function resetGame() {
+      playing = false;
+      countdownRunning = false;
+      queue = [];
+      currentIndex = 0;
+      typed = "";
+      currentAnswers = [];
+      currentTarget = "";
+      totalCorrect = 0;
+      totalMiss = 0;
+      mistakeLogs = [];
 
-}
+      stationEl.textContent = "山手線";
+      romanEl.textContent = "ENTER";
+      typedEl.textContent = "";
+      statusEl.textContent = "Enterキーでも開始できます";
+      countEl.textContent = "";
+      barEl.style.width = "0%";
+      resultEl.style.display = "none";
+    }
 
-function ngSound(){
+    function finishGame() {
+      playing = false;
+      countEl.textContent = "";
+      stationEl.textContent = "終了";
+      romanEl.textContent = "FINISH";
+      typedEl.textContent = "";
+      statusEl.textContent = "おつかれさまでした";
+      barEl.style.width = "100%";
 
-let a=document.getElementById("ng")
-a.currentTime=0
-a.play()
+      const totalKeys = totalCorrect + totalMiss;
+      const accuracy = totalKeys === 0 ? 0 : Math.round((totalCorrect / totalKeys) * 1000) / 10;
+      const score = Math.round(accuracy);
 
-}
+      accuracyValue.textContent = `${accuracy}%`;
+      correctValue.textContent = totalCorrect;
+      missValue.textContent = totalMiss;
+      scoreValue.textContent = `${score}点`;
 
-document.addEventListener("keydown",e=>{
+      mistakeList.innerHTML = "";
+      if (mistakeLogs.length === 0) {
+        const chip = document.createElement("div");
+        chip.className = "mistake-chip";
+        chip.textContent = "ミスなし";
+        mistakeList.appendChild(chip);
+      } else {
+        mistakeLogs.forEach(m => {
+          const chip = document.createElement("div");
+          chip.className = "mistake-chip";
+          chip.textContent = `${m.station}： ${m.expected} → ${m.input}`;
+          mistakeList.appendChild(chip);
+        });
+      }
 
-if(!started){
+      summaryText.textContent =
+        `${lapSelect.value}周 / ${modeSelect.value === "order" ? "順番" : "ランダム"} / 正確性のみで採点`;
 
-if(e.key==="Enter")start()
-return
+      resultEl.style.display = "block";
+    }
 
-}
+    function isPrefixOfAnyAnswer(str) {
+      return currentAnswers.some(ans => ans.startsWith(str));
+    }
 
-let target=words[index][1]
+    function isExactAnswer(str) {
+      return currentAnswers.includes(str);
+    }
 
-if(e.key===target[pos]){
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex >= queue.length) {
+        finishGame();
+      } else {
+        loadCurrent();
+      }
+    }
 
-okSound()
+    document.addEventListener("keydown", (e) => {
+      if (countdownRunning) return;
 
-pos++
-combo++
+      if (!playing) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          startGame();
+        }
+        return;
+      }
 
-if(combo%10===0){
+      if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta" || e.key === "CapsLock" || e.key === "Tab") {
+        return;
+      }
 
-document.getElementById("msg").textContent="🔥 "+combo+" コンボ"
+      if (e.key === "Backspace") {
+        e.preventDefault();
+        typed = typed.slice(0, -1);
+        renderTyped();
+        return;
+      }
 
-}
+      if (e.key.length !== 1) return;
 
-if(pos>=target.length){
-next()
-}
+      const key = e.key.toLowerCase();
+      if (!/^[a-z\-]$/.test(key)) return;
 
-}else{
+      const trial = typed + key;
 
-ngSound()
-combo=0
+      if (isPrefixOfAnyAnswer(trial)) {
+        typed = trial;
+        totalCorrect++;
+        renderTyped();
 
-document.getElementById("msg").textContent="ミス: "+e.key
+        if (isExactAnswer(typed)) {
+          nextQuestion();
+        }
+      } else {
+        totalMiss++;
+        mistakeLogs.push({
+          station: queue[currentIndex].jp,
+          expected: currentTarget[typed.length] || "(終了後)",
+          input: key
+        });
+        renderTyped();
+      }
+    });
 
-}
+    startBtn.addEventListener("click", startGame);
+    resetBtn.addEventListener("click", resetGame);
 
-})
-
-</script>
-
+    resetGame();
+  </script>
 </body>
 </html>
