@@ -3,576 +3,1292 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>山手線タイピング練習</title>
+  <title>名言タイピング練習</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
-      background: #f7f7f7;
-      color: #111;
+    :root{
+      --bg:#0c1630;
+      --bg-deep:#07101f;
+      --bg-light:#1d2d57;
+      --gold:#d7b56d;
+      --gold-soft:#edd7a6;
+      --panel:rgba(255,255,255,.08);
+      --panel-strong:rgba(255,255,255,.12);
+      --line:rgba(215,181,109,.24);
+
+      --text:#f5f1e6;
+      --sub:#d8cba8;
+
+      --display-main:#fff9ee;
+      --display-sub:#ead8ad;
+      --typed:#111111;
+      --typed-bg:rgba(215,181,109,.85);
+
+      --accent:#f1d38a;
+      --ok:#fff4c8;
+      --miss:#ff9a9a;
+
+      --shadow:0 20px 50px rgba(0,0,0,.35);
     }
-    .wrap {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
+
+    *{box-sizing:border-box}
+
+    html,body{
+      margin:0;
+      min-height:100%;
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
+      background:
+        radial-gradient(circle at 50% 8%, rgba(255,244,200,.14), transparent 24%),
+        radial-gradient(circle at 50% 0%, rgba(215,181,109,.10), transparent 34%),
+        linear-gradient(180deg, var(--bg-light) 0%, var(--bg) 44%, var(--bg-deep) 100%);
+      color:var(--text);
     }
-    h1 {
-      margin: 0 0 16px;
-      font-size: 28px;
-      text-align: center;
+
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
     }
-    .panel {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+
+    .app{
+      width:min(1180px,100%);
+      min-height:86vh;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      gap:18px;
     }
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: center;
+
+    .topbar{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:18px 20px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(8px);
     }
-    .controls label {
-      font-size: 14px;
-      color: #333;
+
+    .title{
+      font-size:clamp(22px,2.8vw,34px);
+      font-weight:900;
+      letter-spacing:.06em;
+      color:var(--gold-soft);
+      text-shadow:0 2px 18px rgba(0,0,0,.24);
     }
-    select, button {
-      font: inherit;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1px solid #bbb;
-      background: #fff;
-      cursor: pointer;
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
     }
-    button:hover { background: #f0f0f0; }
-    .station-area {
-      text-align: center;
-      padding: 18px 8px 8px;
+
+    .mode-btn{
+      border:none;
+      background:rgba(255,255,255,.10);
+      color:var(--gold-soft);
+      padding:10px 16px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:900;
+      letter-spacing:.04em;
+      box-shadow:0 3px 10px rgba(0,0,0,.12);
+      transition:.15s transform,.15s background,.15s box-shadow,.15s color;
     }
-    .lap-info {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 10px;
+
+    .mode-btn:hover{
+      transform:translateY(-1px);
+      background:rgba(255,255,255,.16);
     }
-    .jp {
-      font-size: 52px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      margin: 8px 0 10px;
-      min-height: 1.4em;
+
+    .mode-btn.active{
+      background:linear-gradient(180deg, #f3deab, #caa45a);
+      color:#22170a;
+      box-shadow:0 10px 22px rgba(0,0,0,.22);
     }
-    .roma {
-      font-size: 28px;
-      letter-spacing: 0.04em;
-      min-height: 1.5em;
-      word-break: break-all;
+
+    .main{
+      display:grid;
+      place-items:center;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border:1px solid var(--line);
+      border-radius:32px;
+      padding:28px 22px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
     }
-    .roma .done { color: #999; }
-    .roma .current {
-      color: #d00;
-      text-decoration: underline;
+
+    .main::before{
+      content:"";
+      position:absolute;
+      inset:auto -12% -34% -12%;
+      height:55%;
+      background:
+        radial-gradient(ellipse at center, rgba(215,181,109,.18), transparent 60%);
+      pointer-events:none;
     }
-    .roma .rest { color: #111; }
-    .sub {
-      text-align: center;
-      color: #555;
-      font-size: 14px;
-      margin-top: 12px;
-      min-height: 1.5em;
+
+    .center{
+      width:min(940px,100%);
+      text-align:center;
+      display:grid;
+      gap:20px;
+      position:relative;
+      z-index:1;
     }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
+
+    .status-line{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:10px;
     }
-    .stat {
-      background: #fafafa;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 14px;
-      text-align: center;
+
+    .badge{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(215,181,109,.20);
+      border-radius:999px;
+      padding:8px 14px;
+      font-weight:800;
+      color:var(--gold-soft);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
     }
-    .stat .label {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 8px;
+
+    .quote{
+      font-size:clamp(28px,4.8vw,62px);
+      font-weight:900;
+      line-height:1.28;
+      min-height:2.8em;
+      color:var(--display-main);
+      text-shadow:
+        0 2px 0 rgba(0,0,0,.12),
+        0 8px 24px rgba(0,0,0,.20);
+      letter-spacing:.05em;
+      display:grid;
+      place-items:center;
+      padding:0 2px;
     }
-    .stat .value {
-      font-size: 24px;
-      font-weight: 700;
+
+    .speaker{
+      font-size:clamp(18px,2.3vw,28px);
+      font-weight:900;
+      color:var(--display-sub);
+      letter-spacing:.12em;
+      min-height:1.4em;
+      text-shadow:
+        0 2px 0 rgba(0,0,0,.10),
+        0 4px 12px rgba(0,0,0,.14);
     }
-    .result-box {
-      text-align: center;
-      padding: 10px 0 4px;
+
+    .typing{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(215,181,109,.18);
+      border-radius:24px;
+      padding:20px;
+      min-height:108px;
+      display:grid;
+      align-items:center;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.06),
+        0 10px 24px rgba(0,0,0,.14);
     }
-    .result-title {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 12px;
+
+    .romaji{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      font-size:clamp(18px,2.2vw,30px);
+      line-height:1.6;
+      letter-spacing:.06em;
+      word-break:break-all;
+      font-weight:900;
+      text-align:left;
+      color:var(--display-main);
     }
-    .result-main {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 12px;
+
+    .done{
+      color:var(--typed);
+      background:var(--typed-bg);
+      border-radius:10px;
+      padding:0 .08em;
+      box-shadow:0 2px 10px rgba(0,0,0,.12);
     }
-    .result-card {
-      min-width: 160px;
-      background: #fafafa;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 14px;
+
+    .rest{
+      color:var(--display-main);
+      text-shadow:
+        0 2px 0 rgba(0,0,0,.08),
+        0 4px 12px rgba(0,0,0,.10);
     }
-    .result-card .k {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 6px;
+
+    .cursor{
+      display:inline-block;
+      width:.65em;
+      text-align:center;
+      color:var(--gold-soft);
+      animation:blink 1s step-end infinite;
+      font-weight:900;
+      text-shadow:0 2px 8px rgba(0,0,0,.18);
     }
-    .result-card .v {
-      font-size: 26px;
-      font-weight: 700;
+
+    @keyframes blink{
+      50%{ opacity:0; }
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-      background: #fff;
+
+    .message{
+      min-height:1.6em;
+      font-size:clamp(16px,2vw,22px);
+      font-weight:900;
+      color:var(--sub);
     }
-    th, td {
-      padding: 10px 8px;
-      border-bottom: 1px solid #e5e5e5;
-      text-align: center;
+
+    .message.ok{
+      color:var(--ok);
+      text-shadow:0 2px 8px rgba(0,0,0,.18);
     }
-    th {
-      background: #fafafa;
-      font-weight: 700;
+
+    .message.miss{
+      color:var(--miss);
     }
-    .rank-note {
-      margin-top: 8px;
-      font-size: 12px;
-      color: #666;
-      text-align: right;
+
+    .bottom{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
     }
-    .empty {
-      text-align: center;
-      color: #777;
-      padding: 14px 0 6px;
-      font-size: 14px;
+
+    .stat{
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:16px 14px;
+      box-shadow:var(--shadow);
+      text-align:center;
     }
-    .footer-note {
-      text-align: center;
-      color: #666;
-      font-size: 13px;
-      margin-top: 8px;
+
+    .stat .label{
+      font-size:13px;
+      color:var(--sub);
+      font-weight:900;
+      letter-spacing:.08em;
     }
-    @media (max-width: 720px) {
-      .jp { font-size: 38px; }
-      .roma { font-size: 22px; }
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
+
+    .stat .value{
+      margin-top:8px;
+      font-size:clamp(22px,3vw,36px);
+      font-weight:900;
+      color:var(--display-main);
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:none;
+      place-items:center;
+      background:rgba(0,0,0,.26);
+      backdrop-filter:blur(2px);
+      z-index:5;
+    }
+
+    .overlay.show{
+      display:grid;
+    }
+
+    .count{
+      width:160px;
+      height:160px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      font-size:72px;
+      font-weight:900;
+      background:linear-gradient(180deg, #fff4d6, #d4af66);
+      color:#22170a;
+      box-shadow:0 18px 40px rgba(0,0,0,.28);
+    }
+
+    .help{
+      font-size:14px;
+      color:var(--sub);
+      margin-top:4px;
+      line-height:1.75;
+      font-weight:700;
+    }
+
+    .result-panel{
+      margin-top:8px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(215,181,109,.18);
+      border-radius:20px;
+      padding:16px;
+      display:none;
+      box-shadow:0 10px 26px rgba(0,0,0,.16);
+    }
+
+    .result-panel.show{
+      display:block;
+    }
+
+    .result-title{
+      font-size:24px;
+      font-weight:900;
+      margin-bottom:10px;
+      color:var(--gold-soft);
+    }
+
+    .result-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .result-card{
+      background:rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:12px;
+      border:1px solid rgba(215,181,109,.16);
+    }
+
+    .result-card .r-label{
+      font-size:13px;
+      font-weight:900;
+      color:var(--sub);
+    }
+
+    .result-card .r-value{
+      margin-top:6px;
+      font-size:30px;
+      font-weight:900;
+      color:var(--display-main);
+    }
+
+    @media (max-width:900px){
+      .bottom{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+      .result-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width:640px){
+      .topbar{
+        justify-content:center;
+      }
+      .bottom{
+        grid-template-columns:1fr;
+      }
+      .quote{
+        min-height:3.4em;
+      }
+      .romaji{
+        font-size:clamp(17px,4.3vw,24px);
       }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>山手線タイピング練習</h1>
-
-    <div class="panel">
-      <div class="controls">
-        <label>
-          周回モード
-          <select id="lapSelect">
-            <option value="1">1周</option>
-            <option value="2">2周</option>
-            <option value="3">3周</option>
-            <option value="4">4周</option>
-            <option value="5">5周</option>
-          </select>
-        </label>
-        <button id="startBtn">スタート</button>
-        <button id="resetRankBtn">ランキング削除</button>
+  <div class="app">
+    <div class="topbar">
+      <div>
+        <div class="title">名言タイピング練習</div>
+        <div class="help">
+          スペースキーで 3 秒カウントダウン後に開始。<br>
+          プレイ中にもう一度スペースキーで中断。無限モードは正解後 Enter で次へ、Enter を押さなければ同じ名言を繰り返し練習。
+        </div>
       </div>
-      <div class="footer-note">Enterでもスタートできます</div>
-    </div>
 
-    <div class="panel">
-      <div class="station-area">
-        <div class="lap-info" id="lapInfo">未開始</div>
-        <div class="jp" id="jpStation">山手線</div>
-        <div class="roma" id="romaStation">Enter または スタートで開始</div>
-        <div class="sub" id="subMessage">入力欄なし。キーボードをそのまま打つ</div>
+      <div class="controls" id="modeButtons">
+        <button class="mode-btn active" data-mode="10">10問</button>
+        <button class="mode-btn" data-mode="30">30問</button>
+        <button class="mode-btn" data-mode="50">50問</button>
+        <button class="mode-btn" data-mode="infinite">無限</button>
       </div>
     </div>
 
-    <div class="panel">
-      <div class="stats">
-        <div class="stat">
-          <div class="label">タイム</div>
-          <div class="value" id="timeStat">0.00秒</div>
-        </div>
-        <div class="stat">
-          <div class="label">正確率</div>
-          <div class="value" id="accuracyStat">100.00%</div>
-        </div>
-        <div class="stat">
-          <div class="label">正打鍵</div>
-          <div class="value" id="correctStat">0</div>
-        </div>
-        <div class="stat">
-          <div class="label">ミス</div>
-          <div class="value" id="missStat">0</div>
-        </div>
+    <div class="main">
+      <div class="overlay" id="overlay">
+        <div class="count" id="countText">3</div>
       </div>
-    </div>
 
-    <div class="panel">
-      <div class="result-box" id="resultBox">
-        <div class="result-title">今回の結果</div>
-        <div class="result-main">
-          <div class="result-card">
-            <div class="k">タイム</div>
-            <div class="v" id="resultTime">-</div>
-          </div>
-          <div class="result-card">
-            <div class="k">正確率</div>
-            <div class="v" id="resultAccuracy">-</div>
-          </div>
-          <div class="result-card">
-            <div class="k">周回</div>
-            <div class="v" id="resultLaps">-</div>
+      <div class="center">
+        <div class="status-line">
+          <div class="badge" id="modeLabel">モード：10問</div>
+          <div class="badge" id="runLabel">待機中</div>
+        </div>
+
+        <div class="quote" id="quote">名言タイピング</div>
+        <div class="speaker" id="speaker">人物名</div>
+
+        <div class="typing">
+          <div class="romaji" id="romajiView"></div>
+        </div>
+
+        <div class="message" id="message">スペースキーで開始</div>
+
+        <div class="result-panel" id="resultPanel">
+          <div class="result-title">結果</div>
+          <div class="result-grid">
+            <div class="result-card">
+              <div class="r-label">クリア数</div>
+              <div class="r-value" id="resultClear">0</div>
+            </div>
+            <div class="result-card">
+              <div class="r-label">正確率</div>
+              <div class="r-value" id="resultAcc">0%</div>
+            </div>
+            <div class="result-card">
+              <div class="r-label">タイム</div>
+              <div class="r-value" id="resultTime">0.0s</div>
+            </div>
           </div>
         </div>
-        <div class="sub" id="resultSub">まだ記録はありません</div>
       </div>
     </div>
 
-    <div class="panel">
-      <h2 style="margin:0 0 12px; font-size:22px;">正確率ランキング TOP10</h2>
-      <div id="rankingWrap"></div>
-      <div class="rank-note">順位は正確率のみで決定。タイムは表示のみ。</div>
+    <div class="bottom">
+      <div class="stat">
+        <div class="label">進行</div>
+        <div class="value" id="progressValue">0 / 10</div>
+      </div>
+      <div class="stat">
+        <div class="label">ミス</div>
+        <div class="value" id="missValue">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">正確率</div>
+        <div class="value" id="accValue">100%</div>
+      </div>
+      <div class="stat">
+        <div class="label">経過時間</div>
+        <div class="value" id="timeValue">0.0s</div>
+      </div>
     </div>
   </div>
 
   <script>
-    const STATIONS = [
-      { jp: "東京", roma: "tokyo" },
-      { jp: "神田", roma: "kanda" },
-      { jp: "秋葉原", roma: "akihabara" },
-      { jp: "御徒町", roma: "okachimachi" },
-      { jp: "上野", roma: "ueno" },
-      { jp: "鶯谷", roma: "uguisudani" },
-      { jp: "日暮里", roma: "nippori" },
-      { jp: "西日暮里", roma: "nishinippori" },
-      { jp: "田端", roma: "tabata" },
-      { jp: "駒込", roma: "komagome" },
-      { jp: "巣鴨", roma: "sugamo" },
-      { jp: "大塚", roma: "otsuka" },
-      { jp: "池袋", roma: "ikebukuro" },
-      { jp: "目白", roma: "mejiro" },
-      { jp: "高田馬場", roma: "takadanobaba" },
-      { jp: "新大久保", roma: "shinokubo" },
-      { jp: "新宿", roma: "shinjuku" },
-      { jp: "代々木", roma: "yoyogi" },
-      { jp: "原宿", roma: "harajuku" },
-      { jp: "渋谷", roma: "shibuya" },
-      { jp: "恵比寿", roma: "ebisu" },
-      { jp: "目黒", roma: "meguro" },
-      { jp: "五反田", roma: "gotanda" },
-      { jp: "大崎", roma: "osaki" },
-      { jp: "品川", roma: "shinagawa" },
-      { jp: "高輪ゲートウェイ", roma: "takanawagateway" },
-      { jp: "田町", roma: "tamachi" },
-      { jp: "浜松町", roma: "hamamatsucho" },
-      { jp: "新橋", roma: "shimbashi" },
-      { jp: "有楽町", roma: "yurakucho" }
+    const WORDS = [
+      {
+        quote:"余の辞書に不可能という文字はない",
+        kana:"よのじしょにふかのうというもじはない",
+        speaker:"ナポレオン"
+      },
+      {
+        quote:"天才とは一パーセントのひらめきと九十九パーセントの努力である",
+        kana:"てんさいとはいちぱーせんとのひらめきときゅうじゅうきゅうぱーせんとのどりょくである",
+        speaker:"トーマス・エジソン"
+      },
+      {
+        quote:"私は失敗したことがない ただ一万通りのうまくいかない方法を見つけただけだ",
+        kana:"わたしはしっぱいしたことがないただいちまんとおりのうまくいかないほうほうをみつけただけだ",
+        speaker:"トーマス・エジソン"
+      },
+      {
+        quote:"想像力は知識よりも重要である",
+        kana:"そうぞうりょくはちしきよりもじゅうようである",
+        speaker:"アルベルト・アインシュタイン"
+      },
+      {
+        quote:"神は細部に宿る",
+        kana:"かみはさいぶにやどる",
+        speaker:"ミース・ファン・デル・ローエ"
+      },
+      {
+        quote:"為せば成る",
+        kana:"なせばなる",
+        speaker:"上杉鷹山"
+      },
+      {
+        quote:"学問のすすめは独立自尊にある",
+        kana:"がくもんのすすめはどくりつじそんにある",
+        speaker:"福沢諭吉"
+      },
+      {
+        quote:"過去と他人は変えられない 未来と自分は変えられる",
+        kana:"かことたにんはかえられないみらいとじぶんはかえられる",
+        speaker:"エリック・バーン"
+      },
+      {
+        quote:"勝って兜の緒を締めよ",
+        kana:"かってかぶとのおをしめよ",
+        speaker:"徳川家康"
+      },
+      {
+        quote:"夢なき者に成功なし",
+        kana:"ゆめなきものにせいこうなし",
+        speaker:"吉田松陰"
+      },
+      {
+        quote:"諦めたらそこで試合終了ですよ",
+        kana:"あきらめたらそこでしあいしゅうりょうですよ",
+        speaker:"安西光義"
+      },
+      {
+        quote:"努力に勝る天才なし",
+        kana:"どりょくにまさるてんさいなし",
+        speaker:"野村克也"
+      },
+      {
+        quote:"準備しておけばチャンスは必ず来る",
+        kana:"じゅんびしておけばちゃんすはかならずくる",
+        speaker:"大谷翔平"
+      },
+      {
+        quote:"勝者は決して諦めない",
+        kana:"しょうしゃはけっしてあきらめない",
+        speaker:"マイケル・ジョーダン"
+      },
+      {
+        quote:"限界は自分で決めるものだ",
+        kana:"げんかいはじぶんできめるものだ",
+        speaker:"イチロー"
+      },
+      {
+        quote:"壁というのはできる人にしかやってこない",
+        kana:"かべというのはできるひとにしかやってこない",
+        speaker:"イチロー"
+      },
+      {
+        quote:"幕は上がったら下がる",
+        kana:"まくはあがったらさがる",
+        speaker:"樹木希林"
+      },
+      {
+        quote:"夢を見るから人生は輝く",
+        kana:"ゆめをみるからじんせいはかがやく",
+        speaker:"モーツァルト"
+      },
+      {
+        quote:"迷ったら前へ",
+        kana:"まよったらまえへ",
+        speaker:"星野仙一"
+      },
+      {
+        quote:"私の人生は私のもの",
+        kana:"わたしのじんせいはわたしのもの",
+        speaker:"オードリー・ヘプバーン"
+      },
+      {
+        quote:"私たちは我慢しなくていいように賢くならなければならない",
+        kana:"わたしたちはがまんしなくていいようにかしこくならなければならない",
+        speaker:"ココ・シャネル"
+      },
+      {
+        quote:"政治とは社会をよくする実践である",
+        kana:"せいじとはしゃかいをよくするじっせんである",
+        speaker:"大久保利通"
+      },
+      {
+        quote:"失敗を恐れるより何もしないことを恐れろ",
+        kana:"しっぱいをおそれるよりなにもしないことをおそれろ",
+        speaker:"本田宗一郎"
+      },
+      {
+        quote:"人生に必要なのは勇気と想像力 そして少しのお金だ",
+        kana:"じんせいにひつようなのはゆうきとそうぞうりょくそしてすこしのおかねだ",
+        speaker:"チャールズ・チャップリン"
+      },
+      {
+        quote:"私は準備してきた 自信はそこから生まれる",
+        kana:"わたしはじゅんびしてきたじしんはそこからうまれる",
+        speaker:"羽生結弦"
+      },
+      {
+        quote:"努力は必ず報われる",
+        kana:"どりょくはかならずむくわれる",
+        speaker:"王貞治"
+      },
+      {
+        quote:"幸運とは準備と機会が出会うことだ",
+        kana:"こううんとはじゅんびときかいがであうことだ",
+        speaker:"セネカ"
+      },
+      {
+        quote:"やってみなはれ",
+        kana:"やってみなはれ",
+        speaker:"鳥井信治郎"
+      },
+      {
+        quote:"小さなことを重ねることがとんでもないところへ行くただひとつの道",
+        kana:"ちいさなことをかさねることがとんでもないところへいくただひとつのみち",
+        speaker:"イチロー"
+      },
+      {
+        quote:"何事も成し遂げるまではいつも不可能に見える",
+        kana:"なにごともなしとげるまではいつもふかのうにみえる",
+        speaker:"ネルソン・マンデラ"
+      }
     ];
 
-    const RANKING_KEY = "yamanote_accuracy_ranking_v1";
+    const BASIC = {
+      "あ":"a","い":"i","う":"u","え":"e","お":"o",
+      "か":"ka","き":"ki","く":"ku","け":"ke","こ":"ko",
+      "さ":"sa","し":"si","す":"su","せ":"se","そ":"so",
+      "た":"ta","ち":"ti","つ":"tu","て":"te","と":"to",
+      "な":"na","に":"ni","ぬ":"nu","ね":"ne","の":"no",
+      "は":"ha","ひ":"hi","ふ":"hu","へ":"he","ほ":"ho",
+      "ま":"ma","み":"mi","む":"mu","め":"me","も":"mo",
+      "や":"ya","ゆ":"yu","よ":"yo",
+      "ら":"ra","り":"ri","る":"ru","れ":"re","ろ":"ro",
+      "わ":"wa","を":"o",
+      "が":"ga","ぎ":"gi","ぐ":"gu","げ":"ge","ご":"go",
+      "ざ":"za","じ":"zi","ず":"zu","ぜ":"ze","ぞ":"zo",
+      "だ":"da","ぢ":"di","づ":"du","で":"de","ど":"do",
+      "ば":"ba","び":"bi","ぶ":"bu","べ":"be","ぼ":"bo",
+      "ぱ":"pa","ぴ":"pi","ぷ":"pu","ぺ":"pe","ぽ":"po",
+      "ぁ":"a","ぃ":"i","ぅ":"u","ぇ":"e","ぉ":"o",
+      "ゔ":"vu"
+    };
 
-    const lapSelect = document.getElementById("lapSelect");
-    const startBtn = document.getElementById("startBtn");
-    const resetRankBtn = document.getElementById("resetRankBtn");
+    const DIGRAPHS = {
+      "きゃ":"kya","きゅ":"kyu","きょ":"kyo",
+      "しゃ":"sya","しゅ":"syu","しょ":"syo",
+      "ちゃ":"tya","ちゅ":"tyu","ちょ":"tyo",
+      "にゃ":"nya","にゅ":"nyu","にょ":"nyo",
+      "ひゃ":"hya","ひゅ":"hyu","ひょ":"hyo",
+      "みゃ":"mya","みゅ":"myu","みょ":"myo",
+      "りゃ":"rya","りゅ":"ryu","りょ":"ryo",
+      "ぎゃ":"gya","ぎゅ":"gyu","ぎょ":"gyo",
+      "じゃ":"zya","じゅ":"zyu","じょ":"zyo",
+      "ぢゃ":"dya","ぢゅ":"dyu","ぢょ":"dyo",
+      "びゃ":"bya","びゅ":"byu","びょ":"byo",
+      "ぴゃ":"pya","ぴゅ":"pyu","ぴょ":"pyo"
+    };
 
-    const lapInfo = document.getElementById("lapInfo");
-    const jpStation = document.getElementById("jpStation");
-    const romaStation = document.getElementById("romaStation");
-    const subMessage = document.getElementById("subMessage");
-
-    const timeStat = document.getElementById("timeStat");
-    const accuracyStat = document.getElementById("accuracyStat");
-    const correctStat = document.getElementById("correctStat");
-    const missStat = document.getElementById("missStat");
-
-    const resultTime = document.getElementById("resultTime");
-    const resultAccuracy = document.getElementById("resultAccuracy");
-    const resultLaps = document.getElementById("resultLaps");
-    const resultSub = document.getElementById("resultSub");
-
-    const rankingWrap = document.getElementById("rankingWrap");
-
-    let isPlaying = false;
-    let totalLaps = 1;
-    let currentLap = 1;
-    let stationIndex = 0;
-    let charIndex = 0;
-    let startTime = 0;
-    let timerId = null;
-
-    let correctCount = 0;
-    let missCount = 0;
-    let totalTyped = 0;
-    let currentRunId = null;
-
-    function formatTime(ms) {
-      return (ms / 1000).toFixed(2) + "秒";
-    }
-
-    function getAccuracy() {
-      if (totalTyped === 0) return 100;
-      return (correctCount / totalTyped) * 100;
-    }
-
-    function saveRanking(entry) {
-      const ranking = loadRanking();
-      ranking.push(entry);
-
-      ranking.sort((a, b) => {
-        if (b.accuracy !== a.accuracy) return b.accuracy - a.accuracy;
-        return a.createdAt - b.createdAt;
-      });
-
-      const top10 = ranking.slice(0, 10);
-      localStorage.setItem(RANKING_KEY, JSON.stringify(top10));
-    }
-
-    function loadRanking() {
-      try {
-        const raw = localStorage.getItem(RANKING_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
-    }
-
-    function renderRanking(highlightId = null) {
-      const ranking = loadRanking();
-
-      if (!ranking.length) {
-        rankingWrap.innerHTML = '<div class="empty">まだランキングはありません</div>';
-        return;
-      }
-
-      let html = `
-        <table>
-          <thead>
-            <tr>
-              <th>順位</th>
-              <th>正確率</th>
-              <th>タイム</th>
-              <th>周回</th>
-              <th>日時</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      ranking.forEach((item, i) => {
-        const d = new Date(item.createdAt);
-        const dt = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-        const bg = item.id === highlightId ? ' style="background:#fff6cc;"' : "";
-        html += `
-          <tr${bg}>
-            <td>${i + 1}</td>
-            <td>${item.accuracy.toFixed(2)}%</td>
-            <td>${formatTime(item.timeMs)}</td>
-            <td>${item.laps}周</td>
-            <td>${dt}</td>
-          </tr>
-        `;
-      });
-
-      html += `</tbody></table>`;
-      rankingWrap.innerHTML = html;
-    }
-
-    function updateStats() {
-      const elapsed = isPlaying ? (Date.now() - startTime) : 0;
-      timeStat.textContent = formatTime(elapsed);
-      accuracyStat.textContent = getAccuracy().toFixed(2) + "%";
-      correctStat.textContent = correctCount;
-      missStat.textContent = missCount;
-    }
-
-    function startTimer() {
-      stopTimer();
-      timerId = setInterval(updateStats, 50);
-    }
-
-    function stopTimer() {
-      if (timerId) {
-        clearInterval(timerId);
-        timerId = null;
-      }
-    }
-
-    function renderCurrentStation() {
-      const station = STATIONS[stationIndex];
-      const roma = station.roma;
-
-      lapInfo.textContent = `${currentLap} / ${totalLaps} 周　|　${stationIndex + 1} / ${STATIONS.length} 駅`;
-      jpStation.textContent = station.jp;
-
-      const done = roma.slice(0, charIndex);
-      const current = roma[charIndex] || "";
-      const rest = roma.slice(charIndex + 1);
-
-      romaStation.innerHTML =
-        `<span class="done">${escapeHtml(done)}</span>` +
-        `<span class="current">${escapeHtml(current)}</span>` +
-        `<span class="rest">${escapeHtml(rest)}</span>`;
-
-      subMessage.textContent = "キーボードでそのまま入力";
-    }
-
-    function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, m => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-      }[m]));
-    }
-
-    function resetRunState() {
-      currentLap = 1;
-      stationIndex = 0;
-      charIndex = 0;
-      correctCount = 0;
-      missCount = 0;
-      totalTyped = 0;
-      updateStats();
-    }
-
-    function startGame() {
-      totalLaps = Number(lapSelect.value);
-      resetRunState();
-      isPlaying = true;
-      currentRunId = "run_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
-      startTime = Date.now();
-      renderCurrentStation();
-      startTimer();
-
-      resultTime.textContent = "-";
-      resultAccuracy.textContent = "-";
-      resultLaps.textContent = "-";
-      resultSub.textContent = "プレイ中";
-    }
-
-    function finishGame() {
-      isPlaying = false;
-      stopTimer();
-
-      const elapsed = Date.now() - startTime;
-      const accuracy = getAccuracy();
-
-      timeStat.textContent = formatTime(elapsed);
-      accuracyStat.textContent = accuracy.toFixed(2) + "%";
-
-      resultTime.textContent = formatTime(elapsed);
-      resultAccuracy.textContent = accuracy.toFixed(2) + "%";
-      resultLaps.textContent = totalLaps + "周";
-      resultSub.textContent = `正打鍵 ${correctCount} / ミス ${missCount}`;
-
-      const entry = {
-        id: currentRunId,
-        accuracy,
-        timeMs: elapsed,
-        laps: totalLaps,
-        createdAt: Date.now()
-      };
-
-      saveRanking(entry);
-      renderRanking(currentRunId);
-
-      lapInfo.textContent = "完了";
-      jpStation.textContent = "終了";
-      romaStation.textContent = "Enter または スタートで再開";
-      subMessage.textContent = "ランキングは正確率のみで決定";
-    }
-
-    function moveNextStation() {
-      charIndex = 0;
-      stationIndex++;
-
-      if (stationIndex >= STATIONS.length) {
-        stationIndex = 0;
-        currentLap++;
-      }
-
-      if (currentLap > totalLaps) {
-        finishGame();
-        return;
-      }
-
-      renderCurrentStation();
-    }
-
-    function handleKeyInput(key) {
-      if (!isPlaying) return;
-
-      if (key.length !== 1) return;
-
-      const expected = STATIONS[stationIndex].roma[charIndex];
-      if (!expected) return;
-
-      const input = key.toLowerCase();
-
-      totalTyped++;
-
-      if (input === expected) {
-        correctCount++;
-        charIndex++;
-
-        if (charIndex >= STATIONS[stationIndex].roma.length) {
-          moveNextStation();
-        } else {
-          renderCurrentStation();
+    function kanaTokenize(str){
+      const arr = [];
+      for(let i=0;i<str.length;i++){
+        const two = str.slice(i,i+2);
+        if(DIGRAPHS[two]){
+          arr.push(two);
+          i++;
+        }else{
+          arr.push(str[i]);
         }
-      } else {
-        missCount++;
+      }
+      return arr;
+    }
+
+    function getRomanForToken(token){
+      if(DIGRAPHS[token]) return DIGRAPHS[token];
+      if(BASIC[token]) return BASIC[token];
+      if(token === "ー") return "-";
+      return token;
+    }
+
+    function getInitialConsonant(roman){
+      if(!roman) return "";
+      const m = roman.match(/^[^aeiou]+/);
+      return m ? m[0][0] : "";
+    }
+
+    function kanaToRomajiStrict(kana){
+      const tokens = kanaTokenize(kana);
+      let out = "";
+
+      for(let i=0;i<tokens.length;i++){
+        const t = tokens[i];
+
+        if(t === "っ"){
+          const next = tokens[i+1];
+          const nextRoman = getRomanForToken(next);
+          const c = getInitialConsonant(nextRoman);
+          if(c) out += c;
+          continue;
+        }
+
+        if(t === "ん"){
+          const next = tokens[i+1];
+          if(!next){
+            out += "nn";
+          }else{
+            const nextRoman = getRomanForToken(next);
+            if(/^[aiueoy]/.test(nextRoman)){
+              out += "nn";
+            }else{
+              out += "n";
+            }
+          }
+          continue;
+        }
+
+        out += getRomanForToken(t);
+      }
+
+      return out;
+    }
+
+    function shuffle(array){
+      const a = [...array];
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
+
+    const state = {
+      mode:"10",
+      isCounting:false,
+      isRunning:false,
+      isFinished:false,
+      isInfinite:false,
+      awaitingEnter:false,
+      canAdvanceInfinite:false,
+      queue:[],
+      current:null,
+      currentIndex:0,
+      typed:"",
+      misses:0,
+      totalKeys:0,
+      correctKeys:0,
+      startTime:0,
+      endTime:0,
+      timerId:null,
+      countdownTimers:[],
+      repeatCount:0,
+      repeatTimer:null
+    };
+
+    const el = {
+      modeButtons:document.getElementById("modeButtons"),
+      modeLabel:document.getElementById("modeLabel"),
+      runLabel:document.getElementById("runLabel"),
+      quote:document.getElementById("quote"),
+      speaker:document.getElementById("speaker"),
+      romajiView:document.getElementById("romajiView"),
+      message:document.getElementById("message"),
+      progressValue:document.getElementById("progressValue"),
+      missValue:document.getElementById("missValue"),
+      accValue:document.getElementById("accValue"),
+      timeValue:document.getElementById("timeValue"),
+      overlay:document.getElementById("overlay"),
+      countText:document.getElementById("countText"),
+      resultPanel:document.getElementById("resultPanel"),
+      resultClear:document.getElementById("resultClear"),
+      resultAcc:document.getElementById("resultAcc"),
+      resultTime:document.getElementById("resultTime")
+    };
+
+    let audioCtx = null;
+    let keyBuffer = null;
+    let correctBuffer = null;
+    let missBuffer = null;
+
+    function ensureAudio(){
+      if(!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)({
+          latencyHint:"interactive"
+        });
+      }
+      if(!keyBuffer) keyBuffer = createKeyBuffer(audioCtx);
+      if(!correctBuffer) correctBuffer = createCorrectBuffer(audioCtx);
+      if(!missBuffer) missBuffer = createMissBuffer(audioCtx);
+      if(audioCtx.state === "suspended"){
+        audioCtx.resume();
+      }
+    }
+
+    function createKeyBuffer(ctx){
+      const duration = 0.04;
+      const sampleRate = ctx.sampleRate;
+      const length = Math.floor(sampleRate * duration);
+      const buffer = ctx.createBuffer(1, length, sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for(let i=0;i<length;i++){
+        const t = i / sampleRate;
+        const env = Math.exp(-70 * t);
+        const click = Math.sin(2 * Math.PI * 1750 * t) * 0.18;
+        const body = Math.sin(2 * Math.PI * 260 * t) * 0.55;
+        const noise = (Math.random() * 2 - 1) * 0.16;
+        data[i] = (click + body + noise) * env;
+      }
+      return buffer;
+    }
+
+    function createCorrectBuffer(ctx){
+      const duration = 0.22;
+      const sampleRate = ctx.sampleRate;
+      const length = Math.floor(sampleRate * duration);
+      const buffer = ctx.createBuffer(1, length, sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for(let i=0;i<length;i++){
+        const t = i / sampleRate;
+        const env = Math.exp(-8.5 * t);
+        const tone1 = Math.sin(2 * Math.PI * 880 * t) * 0.35;
+        const tone2 = Math.sin(2 * Math.PI * 1320 * t) * 0.24;
+        const tone3 = Math.sin(2 * Math.PI * 1760 * t) * 0.12;
+        data[i] = (tone1 + tone2 + tone3) * env;
+      }
+      return buffer;
+    }
+
+    function createMissBuffer(ctx){
+      const duration = 0.11;
+      const sampleRate = ctx.sampleRate;
+      const length = Math.floor(sampleRate * duration);
+      const buffer = ctx.createBuffer(1, length, sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for(let i=0;i<length;i++){
+        const t = i / sampleRate;
+        const env = Math.exp(-22 * t);
+        const low = Math.sin(2 * Math.PI * 120 * t) * 0.6;
+        const harsh = Math.sin(2 * Math.PI * 200 * t) * 0.22;
+        const noise = (Math.random() * 2 - 1) * 0.12;
+        data[i] = (low + harsh + noise) * env;
+      }
+      return buffer;
+    }
+
+    function playBuffer(buffer, {
+      gainValue = 0.5,
+      filterType = "lowpass",
+      frequency = 2000,
+      q = 0.8,
+      when = 0.0005
+    } = {}){
+      if(!audioCtx || !buffer) return;
+
+      const src = audioCtx.createBufferSource();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+
+      filter.type = filterType;
+      filter.frequency.value = frequency;
+      filter.Q.value = q;
+      gain.gain.value = gainValue;
+
+      src.buffer = buffer;
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      src.start(audioCtx.currentTime + when);
+    }
+
+    function playKeySound(){
+      playBuffer(keyBuffer, {
+        gainValue:0.50,
+        filterType:"bandpass",
+        frequency:1600,
+        q:0.9
+      });
+    }
+
+    function playCorrectSound(){
+      playBuffer(correctBuffer, {
+        gainValue:0.42,
+        filterType:"lowpass",
+        frequency:2600,
+        q:0.7
+      });
+    }
+
+    function playMissSound(){
+      playBuffer(missBuffer, {
+        gainValue:0.44,
+        filterType:"lowpass",
+        frequency:820,
+        q:0.9
+      });
+    }
+
+    function clearRepeatTimer(){
+      if(state.repeatTimer){
+        clearTimeout(state.repeatTimer);
+        state.repeatTimer = null;
+      }
+    }
+
+    function setMode(mode){
+      if(state.isRunning || state.isCounting) return;
+      state.mode = mode;
+      state.isInfinite = mode === "infinite";
+
+      [...el.modeButtons.querySelectorAll(".mode-btn")].forEach(btn=>{
+        btn.classList.toggle("active", btn.dataset.mode === mode);
+      });
+
+      el.modeLabel.textContent = `モード：${mode === "infinite" ? "無限" : mode + "問"}`;
+      resetIdleScreen();
+    }
+
+    function resetIdleScreen(){
+      clearRepeatTimer();
+      state.isFinished = false;
+      state.awaitingEnter = false;
+      state.canAdvanceInfinite = false;
+      state.current = null;
+      state.currentIndex = 0;
+      state.typed = "";
+      state.misses = 0;
+      state.totalKeys = 0;
+      state.correctKeys = 0;
+      state.repeatCount = 0;
+      state.startTime = 0;
+      state.endTime = 0;
+      updateStats();
+      el.runLabel.textContent = "待機中";
+      el.quote.textContent = "名言タイピング";
+      el.speaker.textContent = "人物名";
+      renderRomaji("");
+      setMessage("スペースキーで開始", "");
+      el.resultPanel.classList.remove("show");
+    }
+
+    function buildQueue(){
+      const shuffled = shuffle(WORDS);
+      if(state.isInfinite) return shuffled;
+
+      const count = Number(state.mode);
+      const pool = [];
+      while(pool.length < count){
+        pool.push(...shuffle(WORDS));
+      }
+      return pool.slice(0, count);
+    }
+
+    function startCountdown(){
+      if(state.isCounting || state.isRunning) return;
+
+      clearRepeatTimer();
+      ensureAudio();
+      state.isCounting = true;
+      el.resultPanel.classList.remove("show");
+      el.overlay.classList.add("show");
+      el.runLabel.textContent = "カウントダウン";
+      setMessage("開始します", "");
+
+      const seq = ["3","2","1","START"];
+      el.countText.textContent = seq[0];
+
+      state.countdownTimers.forEach(id=>clearTimeout(id));
+      state.countdownTimers = [];
+
+      seq.forEach((text,idx)=>{
+        const id = setTimeout(()=>{
+          el.countText.textContent = text;
+        }, idx * 700);
+        state.countdownTimers.push(id);
+      });
+
+      const endId = setTimeout(()=>{
+        el.overlay.classList.remove("show");
+        state.isCounting = false;
+        beginGame();
+      }, seq.length * 700);
+      state.countdownTimers.push(endId);
+    }
+
+    function beginGame(){
+      clearRepeatTimer();
+      state.queue = buildQueue();
+      state.currentIndex = 0;
+      state.typed = "";
+      state.misses = 0;
+      state.totalKeys = 0;
+      state.correctKeys = 0;
+      state.repeatCount = 0;
+      state.awaitingEnter = false;
+      state.canAdvanceInfinite = false;
+      state.isRunning = true;
+      state.isFinished = false;
+      state.startTime = performance.now();
+      state.endTime = 0;
+
+      if(state.timerId) cancelAnimationFrame(state.timerId);
+      tickTimer();
+
+      el.runLabel.textContent = "プレイ中";
+      nextWord(true);
+      updateStats();
+    }
+
+    function stopGame(manual = true){
+      clearRepeatTimer();
+      state.isCounting = false;
+      state.isRunning = false;
+      state.awaitingEnter = false;
+      state.canAdvanceInfinite = false;
+      state.endTime = performance.now();
+
+      state.countdownTimers.forEach(id=>clearTimeout(id));
+      state.countdownTimers = [];
+      el.overlay.classList.remove("show");
+
+      if(state.timerId) cancelAnimationFrame(state.timerId);
+      el.runLabel.textContent = manual ? "中断" : "終了";
+
+      if(manual){
+        setMessage("停止しました。スペースキーで最初から再開", "");
+      }
+      updateStats();
+    }
+
+    function finishGame(){
+      clearRepeatTimer();
+      state.isRunning = false;
+      state.isFinished = true;
+      state.awaitingEnter = false;
+      state.canAdvanceInfinite = false;
+      state.endTime = performance.now();
+
+      if(state.timerId) cancelAnimationFrame(state.timerId);
+      el.runLabel.textContent = "終了";
+      setMessage("おつかれさまでした。スペースキーで再スタート", "ok");
+
+      const cleared = state.currentIndex;
+      const acc = calcAccuracy();
+      const time = elapsedSec();
+
+      el.resultClear.textContent = String(cleared);
+      el.resultAcc.textContent = `${acc}%`;
+      el.resultTime.textContent = `${time.toFixed(1)}s`;
+      el.resultPanel.classList.add("show");
+      updateStats();
+    }
+
+    function tickTimer(){
+      if(!state.isRunning) return;
+      el.timeValue.textContent = `${elapsedSec().toFixed(1)}s`;
+      state.timerId = requestAnimationFrame(tickTimer);
+    }
+
+    function elapsedSec(){
+      if(!state.startTime) return 0;
+      const end = state.isRunning ? performance.now() : (state.endTime || performance.now());
+      return (end - state.startTime) / 1000;
+    }
+
+    function nextWord(initial = false){
+      clearRepeatTimer();
+
+      if(state.isInfinite){
+        if(initial || !state.current){
+          if(state.currentIndex === 0){
+            state.queue = shuffle(WORDS);
+          }
+          const idx = state.currentIndex % state.queue.length;
+          state.current = state.queue[idx];
+          state.currentIndex = state.currentIndex || 0;
+        }
+      }else{
+        if(state.currentIndex >= state.queue.length){
+          finishGame();
+          return;
+        }
+        state.current = state.queue[state.currentIndex];
+      }
+
+      state.awaitingEnter = false;
+      state.canAdvanceInfinite = false;
+      state.current.roman = kanaToRomajiStrict(state.current.kana).toUpperCase();
+      state.typed = "";
+      el.quote.textContent = state.current.quote;
+      el.speaker.textContent = state.current.speaker;
+      renderRomaji();
+      updateStats();
+
+      if(state.isInfinite){
+        setMessage("入力して練習。正解後 Enter で次へ", "");
+      }else{
+        setMessage("入力開始", "");
+      }
+    }
+
+    function repeatCurrentWord(){
+      clearRepeatTimer();
+      state.awaitingEnter = false;
+      state.typed = "";
+      renderRomaji();
+      state.repeatCount++;
+      updateStats();
+      setMessage("同じ名言をもう一度。Enter で次の名言へ", "");
+    }
+
+    function renderRomaji(initialText = null){
+      const target = initialText !== null ? initialText : (state.current?.roman || "");
+      const done = escapeHtml(target.slice(0, state.typed.length));
+      const rest = escapeHtml(target.slice(state.typed.length));
+
+      el.romajiView.innerHTML = `
+        <span class="done">${done}</span><span class="cursor">|</span><span class="rest">${rest}</span>
+      `;
+    }
+
+    function escapeHtml(str){
+      return str
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;");
+    }
+
+    function setMessage(text, type=""){
+      el.message.textContent = text;
+      el.message.className = "message" + (type ? ` ${type}` : "");
+    }
+
+    function calcAccuracy(){
+      if(state.totalKeys === 0) return 100;
+      return Math.max(0, Math.round((state.correctKeys / state.totalKeys) * 100));
+    }
+
+    function updateStats(){
+      el.missValue.textContent = String(state.misses);
+      el.accValue.textContent = `${calcAccuracy()}%`;
+
+      if(state.isInfinite){
+        el.progressValue.textContent = `${state.currentIndex} 件クリア / 同文反復 ${state.repeatCount}`;
+      }else{
+        el.progressValue.textContent = `${state.currentIndex} / ${state.mode}`;
+      }
+
+      if(!state.isRunning){
+        if(state.isFinished || state.endTime){
+          el.timeValue.textContent = `${elapsedSec().toFixed(1)}s`;
+        }else{
+          el.timeValue.textContent = "0.0s";
+        }
+      }
+    }
+
+    function advanceWordFinite(){
+      clearRepeatTimer();
+      state.currentIndex++;
+      if(state.currentIndex >= state.queue.length){
+        finishGame();
+      }else{
+        nextWord();
+      }
+      updateStats();
+    }
+
+    function advanceWordInfinite(){
+      clearRepeatTimer();
+      state.currentIndex++;
+      state.awaitingEnter = false;
+      state.canAdvanceInfinite = false;
+
+      const idx = state.currentIndex % state.queue.length;
+      if(idx === 0){
+        state.queue = shuffle(WORDS);
+      }
+
+      state.current = state.queue[idx];
+      state.current.roman = kanaToRomajiStrict(state.current.kana).toUpperCase();
+      state.typed = "";
+      el.quote.textContent = state.current.quote;
+      el.speaker.textContent = state.current.speaker;
+      renderRomaji();
+      updateStats();
+      setMessage("入力して練習。正解後 Enter で次へ", "");
+    }
+
+    function onCorrectComplete(){
+      clearRepeatTimer();
+      ensureAudio();
+      playCorrectSound();
+
+      if(state.isInfinite){
+        state.awaitingEnter = true;
+        state.canAdvanceInfinite = true;
+        setMessage("正解。Enter で次へ / そのまま同じ名言を繰り返し練習", "ok");
+      }else{
+        setMessage("正解", "ok");
+        state.repeatTimer = setTimeout(()=>{
+          if(state.isRunning){
+            advanceWordFinite();
+          }
+        }, 260);
+      }
+    }
+
+    function handleTypingKey(key){
+      if(!state.current) return;
+      const target = state.current.roman;
+
+      if(state.awaitingEnter && state.isInfinite && /^[a-z]$/.test(key)){
+        repeatCurrentWord();
+      }
+
+      if(!/^[a-z]$/.test(key)) return;
+
+      ensureAudio();
+
+      const upperKey = key.toUpperCase();
+      state.totalKeys++;
+      const expected = target[state.typed.length];
+
+      if(upperKey === expected){
+        state.correctKeys++;
+        state.typed += upperKey;
+        playKeySound();
+        renderRomaji();
+
+        if(state.typed === target){
+          onCorrectComplete();
+        }else{
+          setMessage("入力中", "");
+        }
+      }else{
+        state.misses++;
+        playMissSound();
+        setMessage(`ミス：次は "${expected}"`, "miss");
       }
 
       updateStats();
     }
 
-    startBtn.addEventListener("click", startGame);
+    document.addEventListener("keydown",(e)=>{
+      const key = e.key;
 
-    resetRankBtn.addEventListener("click", () => {
-      if (!confirm("ランキングを削除しますか？")) return;
-      localStorage.removeItem(RANKING_KEY);
-      renderRanking();
-    });
+      if(key === " " || key === "Spacebar"){
+        e.preventDefault();
+        ensureAudio();
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !isPlaying) {
-        startGame();
+        if(state.isCounting){
+          stopGame(true);
+          return;
+        }
+
+        if(state.isRunning){
+          stopGame(true);
+          return;
+        }
+
+        startCountdown();
         return;
       }
-      handleKeyInput(e.key);
+
+      if(!state.isRunning) return;
+
+      if(key === "Enter"){
+        e.preventDefault();
+        if(state.isInfinite && state.canAdvanceInfinite){
+          advanceWordInfinite();
+        }
+        return;
+      }
+
+      if(key.length === 1 && /^[a-zA-Z]$/.test(key)){
+        e.preventDefault();
+        handleTypingKey(key.toLowerCase());
+      }
     });
 
-    renderRanking();
-    updateStats();
+    el.modeButtons.addEventListener("click",(e)=>{
+      const btn = e.target.closest(".mode-btn");
+      if(!btn) return;
+      setMode(btn.dataset.mode);
+    });
+
+    setMode("10");
   </script>
 </body>
 </html>
