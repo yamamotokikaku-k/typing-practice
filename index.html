@@ -555,7 +555,7 @@
         <div class="help">
           スペースキーで 3 秒カウントダウン後に開始。<br>
           プレイ中にもう一度スペースキーで中断。無限モードは正解後 Enter で次へ、Enter を押さなければ同じ名言を繰り返し練習。<br>
-          「を」は <strong>WO</strong> 固定表示。「ん」は <strong>N / NN</strong> のどちらでも入力可能。
+          「を」は <strong>WO</strong> 固定表示。「ん」は <strong>N / NN</strong> のどちらでも入力可能。長音符「ー」は <strong>- / ー / ほか一部ダッシュ記号</strong> でも入力可能。
         </div>
       </div>
 
@@ -928,6 +928,14 @@
           continue;
         }
 
+        if(t === "ー"){
+          segments.push({
+            display:"-",
+            inputs:["-"]
+          });
+          continue;
+        }
+
         const roman = getRomanForToken(t);
         segments.push({
           display:roman,
@@ -996,6 +1004,17 @@
         [a[i],a[j]] = [a[j],a[i]];
       }
       return a;
+    }
+
+    function normalizeTypingKey(key){
+      if(!key) return null;
+
+      if(/^[a-zA-Z]$/.test(key)) return key.toUpperCase();
+
+      const dashKeys = ["-","ー","－","―","ｰ","‐","-","‒","–","—","−","_"];
+      if(dashKeys.includes(key)) return "-";
+
+      return null;
     }
 
     const state = {
@@ -1073,7 +1092,6 @@
       if(!audioCtx) return;
       const osc = audioCtx.createOscillator();
       const g = audioCtx.createGain();
-      let last = g;
 
       if(filter){
         const f = audioCtx.createBiquadFilter();
@@ -1097,7 +1115,7 @@
       g.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain), now + 0.003);
       g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
-      last.connect(audioCtx.destination);
+      g.connect(audioCtx.destination);
       osc.start(now);
       osc.stop(now + duration + 0.01);
     }
@@ -1553,14 +1571,16 @@
       return [...set];
     }
 
-    function handleTypingKey(key){
+    function handleTypingKey(rawKey){
       if(!state.current) return;
 
-      if(state.awaitingEnter && state.isInfinite && /^[A-Z]$/.test(key)){
+      const key = normalizeTypingKey(rawKey);
+
+      if(state.awaitingEnter && state.isInfinite && key){
         repeatCurrentWord();
       }
 
-      if(!/^[A-Z]$/.test(key)) return;
+      if(!key) return;
 
       ensureAudio();
 
@@ -1623,9 +1643,10 @@
         return;
       }
 
-      if(key.length === 1 && /^[a-zA-Z-]$/.test(key)){
+      const normalized = normalizeTypingKey(key);
+      if(normalized){
         e.preventDefault();
-        handleTypingKey(key.toUpperCase());
+        handleTypingKey(key);
       }
     });
 
