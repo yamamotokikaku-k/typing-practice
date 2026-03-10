@@ -85,6 +85,7 @@
       flex-wrap:wrap;
       gap:10px;
       align-items:center;
+      justify-content:flex-end;
     }
 
     .mode-btn{
@@ -111,17 +112,46 @@
       box-shadow:0 10px 22px rgba(0,0,0,.22);
     }
 
+    .sound-wrap{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.08);
+      color:var(--gold-soft);
+      font-weight:900;
+      min-height:44px;
+    }
+
+    .sound-select{
+      appearance:none;
+      border:none;
+      outline:none;
+      background:transparent;
+      color:var(--display-main);
+      font-weight:900;
+      font-size:14px;
+      cursor:pointer;
+      min-width:180px;
+    }
+
+    .sound-select option{
+      color:#111;
+    }
+
     .main{
       display:grid;
       place-items:center;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
       border:1px solid var(--line);
       border-radius:32px;
       padding:28px 22px;
       box-shadow:var(--shadow);
       position:relative;
       overflow:hidden;
+      isolation:isolate;
     }
 
     .main::before{
@@ -132,6 +162,110 @@
       background:
         radial-gradient(ellipse at center, rgba(215,181,109,.18), transparent 60%);
       pointer-events:none;
+      z-index:0;
+    }
+
+    .main::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 50% 14%, rgba(255,240,196,.08), transparent 18%),
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .silhouettes{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      opacity:.42;
+    }
+
+    .figure{
+      position:absolute;
+      bottom:-14px;
+      filter:drop-shadow(0 14px 28px rgba(0,0,0,.4));
+    }
+
+    .figure .head{
+      position:absolute;
+      border-radius:50%;
+      background:linear-gradient(180deg, rgba(5,8,14,.92), rgba(17,24,40,.96));
+    }
+
+    .figure .body{
+      position:absolute;
+      background:linear-gradient(180deg, rgba(10,14,24,.95), rgba(18,24,40,.98));
+      border-radius:46% 46% 20% 20% / 40% 40% 14% 14%;
+    }
+
+    .figure .cape{
+      position:absolute;
+      background:linear-gradient(180deg, rgba(8,12,20,.94), rgba(16,22,36,.98));
+      clip-path:polygon(18% 0, 82% 0, 100% 100%, 0 100%);
+      border-radius:18px;
+    }
+
+    .figure .hat{
+      position:absolute;
+      background:linear-gradient(180deg, rgba(6,10,18,.94), rgba(14,20,34,.98));
+    }
+
+    .figure.f1{
+      left:1.5%;
+      width:250px;
+      height:320px;
+      transform:scale(.95);
+    }
+    .figure.f1 .head{ width:60px;height:60px;left:92px;top:72px; }
+    .figure.f1 .body{ width:150px;height:170px;left:48px;top:120px; }
+    .figure.f1 .cape{ width:182px;height:140px;left:30px;top:150px; }
+    .figure.f1 .hat{ width:96px;height:22px;left:74px;top:62px;border-radius:50px; }
+
+    .figure.f2{
+      left:19%;
+      width:180px;
+      height:270px;
+      opacity:.78;
+      transform:scale(.84);
+    }
+    .figure.f2 .head{ width:56px;height:56px;left:60px;top:64px; }
+    .figure.f2 .body{ width:122px;height:154px;left:28px;top:112px; border-radius:38% 38% 18% 18% / 34% 34% 14% 14%; }
+    .figure.f2 .cape{ width:146px;height:118px;left:17px;top:146px; }
+    .figure.f2 .hat{ width:84px;height:16px;left:46px;top:56px;border-radius:50px; transform:rotate(-7deg); }
+
+    .figure.f3{
+      right:17%;
+      width:210px;
+      height:290px;
+      opacity:.8;
+      transform:scale(.9);
+    }
+    .figure.f3 .head{ width:58px;height:58px;left:76px;top:66px; }
+    .figure.f3 .body{ width:138px;height:168px;left:36px;top:116px; }
+    .figure.f3 .cape{ width:170px;height:128px;left:18px;top:148px; }
+    .figure.f3 .hat{
+      width:34px;height:90px;left:88px;top:0;
+      border-radius:18px 18px 8px 8px;
+      transform:rotate(4deg);
+    }
+
+    .figure.f4{
+      right:0;
+      width:270px;
+      height:330px;
+      transform:scale(.98);
+    }
+    .figure.f4 .head{ width:62px;height:62px;left:96px;top:76px; }
+    .figure.f4 .body{ width:158px;height:184px;left:54px;top:126px; }
+    .figure.f4 .cape{ width:196px;height:152px;left:34px;top:154px; }
+    .figure.f4 .hat{
+      width:112px;height:20px;left:74px;top:68px;
+      border-radius:50px;
+      transform:rotate(6deg);
     }
 
     .center{
@@ -366,6 +500,20 @@
       color:var(--display-main);
     }
 
+    @media (max-width:980px){
+      .controls{
+        justify-content:flex-start;
+      }
+      .sound-wrap{
+        width:100%;
+        justify-content:space-between;
+      }
+      .sound-select{
+        min-width:0;
+        width:100%;
+      }
+    }
+
     @media (max-width:900px){
       .bottom{
         grid-template-columns:repeat(2,minmax(0,1fr));
@@ -373,6 +521,8 @@
       .result-grid{
         grid-template-columns:1fr;
       }
+      .figure.f1,.figure.f4{ opacity:.28; }
+      .figure.f2,.figure.f3{ opacity:.18; }
     }
 
     @media (max-width:640px){
@@ -388,6 +538,12 @@
       .romaji{
         font-size:clamp(17px,4.3vw,24px);
       }
+      .figure.f1,.figure.f2,.figure.f3,.figure.f4{
+        transform:scale(.66);
+      }
+      .figure.f2,.figure.f3{
+        display:none;
+      }
     }
   </style>
 </head>
@@ -398,7 +554,8 @@
         <div class="title">名言タイピング練習</div>
         <div class="help">
           スペースキーで 3 秒カウントダウン後に開始。<br>
-          プレイ中にもう一度スペースキーで中断。無限モードは正解後 Enter で次へ、Enter を押さなければ同じ名言を繰り返し練習。
+          プレイ中にもう一度スペースキーで中断。無限モードは正解後 Enter で次へ、Enter を押さなければ同じ名言を繰り返し練習。<br>
+          「を」は <strong>WO</strong> 固定表示。「ん」は <strong>N / NN</strong> のどちらでも入力可能。
         </div>
       </div>
 
@@ -407,10 +564,53 @@
         <button class="mode-btn" data-mode="30">30問</button>
         <button class="mode-btn" data-mode="50">50問</button>
         <button class="mode-btn" data-mode="infinite">無限</button>
+
+        <label class="sound-wrap">
+          <span>効果音</span>
+          <select class="sound-select" id="soundSelect" aria-label="効果音選択">
+            <option value="simple1">1. ドライクリック</option>
+            <option value="simple2">2. クリアタップ</option>
+            <option value="simple3">3. シャープキー</option>
+            <option value="simple4">4. ライトメタル</option>
+            <option value="simple5">5. ソフトチップ</option>
+            <option value="simple6">6. タイトビート</option>
+            <option value="simple7">7. ペン先タップ</option>
+            <option value="simple8">8. ミニスナップ</option>
+            <option value="bass">9. 低いバス音</option>
+            <option value="fireworks">10. 重低音ファイア</option>
+          </select>
+        </label>
       </div>
     </div>
 
     <div class="main">
+      <div class="silhouettes" aria-hidden="true">
+        <div class="figure f1">
+          <div class="hat"></div>
+          <div class="head"></div>
+          <div class="body"></div>
+          <div class="cape"></div>
+        </div>
+        <div class="figure f2">
+          <div class="hat"></div>
+          <div class="head"></div>
+          <div class="body"></div>
+          <div class="cape"></div>
+        </div>
+        <div class="figure f3">
+          <div class="hat"></div>
+          <div class="head"></div>
+          <div class="body"></div>
+          <div class="cape"></div>
+        </div>
+        <div class="figure f4">
+          <div class="hat"></div>
+          <div class="head"></div>
+          <div class="body"></div>
+          <div class="cape"></div>
+        </div>
+      </div>
+
       <div class="overlay" id="overlay">
         <div class="count" id="countText">3</div>
       </div>
@@ -419,6 +619,7 @@
         <div class="status-line">
           <div class="badge" id="modeLabel">モード：10問</div>
           <div class="badge" id="runLabel">待機中</div>
+          <div class="badge" id="soundLabel">効果音：ドライクリック</div>
         </div>
 
         <div class="quote" id="quote">名言タイピング</div>
@@ -625,38 +826,51 @@
     ];
 
     const BASIC = {
-      "あ":"a","い":"i","う":"u","え":"e","お":"o",
-      "か":"ka","き":"ki","く":"ku","け":"ke","こ":"ko",
-      "さ":"sa","し":"si","す":"su","せ":"se","そ":"so",
-      "た":"ta","ち":"ti","つ":"tu","て":"te","と":"to",
-      "な":"na","に":"ni","ぬ":"nu","ね":"ne","の":"no",
-      "は":"ha","ひ":"hi","ふ":"hu","へ":"he","ほ":"ho",
-      "ま":"ma","み":"mi","む":"mu","め":"me","も":"mo",
-      "や":"ya","ゆ":"yu","よ":"yo",
-      "ら":"ra","り":"ri","る":"ru","れ":"re","ろ":"ro",
-      "わ":"wa","を":"o",
-      "が":"ga","ぎ":"gi","ぐ":"gu","げ":"ge","ご":"go",
-      "ざ":"za","じ":"zi","ず":"zu","ぜ":"ze","ぞ":"zo",
-      "だ":"da","ぢ":"di","づ":"du","で":"de","ど":"do",
-      "ば":"ba","び":"bi","ぶ":"bu","べ":"be","ぼ":"bo",
-      "ぱ":"pa","ぴ":"pi","ぷ":"pu","ぺ":"pe","ぽ":"po",
-      "ぁ":"a","ぃ":"i","ぅ":"u","ぇ":"e","ぉ":"o",
-      "ゔ":"vu"
+      "あ":"A","い":"I","う":"U","え":"E","お":"O",
+      "か":"KA","き":"KI","く":"KU","け":"KE","こ":"KO",
+      "さ":"SA","し":"SI","す":"SU","せ":"SE","そ":"SO",
+      "た":"TA","ち":"TI","つ":"TU","て":"TE","と":"TO",
+      "な":"NA","に":"NI","ぬ":"NU","ね":"NE","の":"NO",
+      "は":"HA","ひ":"HI","ふ":"HU","へ":"HE","ほ":"HO",
+      "ま":"MA","み":"MI","む":"MU","め":"ME","も":"MO",
+      "や":"YA","ゆ":"YU","よ":"YO",
+      "ら":"RA","り":"RI","る":"RU","れ":"RE","ろ":"RO",
+      "わ":"WA","を":"WO",
+      "が":"GA","ぎ":"GI","ぐ":"GU","げ":"GE","ご":"GO",
+      "ざ":"ZA","じ":"ZI","ず":"ZU","ぜ":"ZE","ぞ":"ZO",
+      "だ":"DA","ぢ":"DI","づ":"DU","で":"DE","ど":"DO",
+      "ば":"BA","び":"BI","ぶ":"BU","べ":"BE","ぼ":"BO",
+      "ぱ":"PA","ぴ":"PI","ぷ":"PU","ぺ":"PE","ぽ":"PO",
+      "ぁ":"A","ぃ":"I","ぅ":"U","ぇ":"E","ぉ":"O",
+      "ゔ":"VU"
     };
 
     const DIGRAPHS = {
-      "きゃ":"kya","きゅ":"kyu","きょ":"kyo",
-      "しゃ":"sya","しゅ":"syu","しょ":"syo",
-      "ちゃ":"tya","ちゅ":"tyu","ちょ":"tyo",
-      "にゃ":"nya","にゅ":"nyu","にょ":"nyo",
-      "ひゃ":"hya","ひゅ":"hyu","ひょ":"hyo",
-      "みゃ":"mya","みゅ":"myu","みょ":"myo",
-      "りゃ":"rya","りゅ":"ryu","りょ":"ryo",
-      "ぎゃ":"gya","ぎゅ":"gyu","ぎょ":"gyo",
-      "じゃ":"zya","じゅ":"zyu","じょ":"zyo",
-      "ぢゃ":"dya","ぢゅ":"dyu","ぢょ":"dyo",
-      "びゃ":"bya","びゅ":"byu","びょ":"byo",
-      "ぴゃ":"pya","ぴゅ":"pyu","ぴょ":"pyo"
+      "きゃ":"KYA","きゅ":"KYU","きょ":"KYO",
+      "しゃ":"SYA","しゅ":"SYU","しょ":"SYO",
+      "ちゃ":"TYA","ちゅ":"TYU","ちょ":"TYO",
+      "にゃ":"NYA","にゅ":"NYU","にょ":"NYO",
+      "ひゃ":"HYA","ひゅ":"HYU","ひょ":"HYO",
+      "みゃ":"MYA","みゅ":"MYU","みょ":"MYO",
+      "りゃ":"RYA","りゅ":"RYU","りょ":"RYO",
+      "ぎゃ":"GYA","ぎゅ":"GYU","ぎょ":"GYO",
+      "じゃ":"ZYA","じゅ":"ZYU","じょ":"ZYO",
+      "ぢゃ":"DYA","ぢゅ":"DYU","ぢょ":"DYO",
+      "びゃ":"BYA","びゅ":"BYU","びょ":"BYO",
+      "ぴゃ":"PYA","ぴゅ":"PYU","ぴょ":"PYO"
+    };
+
+    const SOUND_PRESETS = {
+      simple1:{ label:"ドライクリック", mode:"simple", osc1:1800, osc2:320, noise:0.15, decay:0.028, gain:0.30, correct:820, miss:145 },
+      simple2:{ label:"クリアタップ", mode:"simple", osc1:2100, osc2:420, noise:0.10, decay:0.024, gain:0.26, correct:900, miss:130 },
+      simple3:{ label:"シャープキー", mode:"simple", osc1:2400, osc2:300, noise:0.12, decay:0.020, gain:0.24, correct:1040, miss:150 },
+      simple4:{ label:"ライトメタル", mode:"simple", osc1:1500, osc2:520, noise:0.08, decay:0.030, gain:0.28, correct:980, miss:125 },
+      simple5:{ label:"ソフトチップ", mode:"simple", osc1:1200, osc2:280, noise:0.14, decay:0.035, gain:0.28, correct:760, miss:118 },
+      simple6:{ label:"タイトビート", mode:"simple", osc1:1700, osc2:240, noise:0.12, decay:0.022, gain:0.29, correct:860, miss:135 },
+      simple7:{ label:"ペン先タップ", mode:"simple", osc1:2300, osc2:360, noise:0.11, decay:0.018, gain:0.23, correct:1080, miss:155 },
+      simple8:{ label:"ミニスナップ", mode:"simple", osc1:2000, osc2:260, noise:0.16, decay:0.019, gain:0.27, correct:930, miss:140 },
+      bass:{ label:"低いバス音", mode:"bass", osc1:92, osc2:46, noise:0.02, decay:0.11, gain:0.44, correct:320, miss:70 },
+      fireworks:{ label:"重低音ファイア", mode:"fireworks", osc1:62, osc2:31, noise:0.12, decay:0.26, gain:0.56, correct:260, miss:52 }
     };
 
     function kanaTokenize(str){
@@ -677,18 +891,18 @@
       if(DIGRAPHS[token]) return DIGRAPHS[token];
       if(BASIC[token]) return BASIC[token];
       if(token === "ー") return "-";
-      return token;
+      return token.toUpperCase();
     }
 
     function getInitialConsonant(roman){
       if(!roman) return "";
-      const m = roman.match(/^[^aeiou]+/);
+      const m = roman.match(/^[^AEIOU]+/);
       return m ? m[0][0] : "";
     }
 
-    function kanaToRomajiStrict(kana){
+    function buildSegments(kana){
       const tokens = kanaTokenize(kana);
-      let out = "";
+      const segments = [];
 
       for(let i=0;i<tokens.length;i++){
         const t = tokens[i];
@@ -697,29 +911,82 @@
           const next = tokens[i+1];
           const nextRoman = getRomanForToken(next);
           const c = getInitialConsonant(nextRoman);
-          if(c) out += c;
-          continue;
-        }
-
-        if(t === "ん"){
-          const next = tokens[i+1];
-          if(!next){
-            out += "nn";
-          }else{
-            const nextRoman = getRomanForToken(next);
-            if(/^[aiueoy]/.test(nextRoman)){
-              out += "nn";
-            }else{
-              out += "n";
-            }
+          if(c){
+            segments.push({
+              display:c,
+              inputs:[c]
+            });
           }
           continue;
         }
 
-        out += getRomanForToken(t);
+        if(t === "ん"){
+          segments.push({
+            display:"N",
+            inputs:["N","NN"]
+          });
+          continue;
+        }
+
+        const roman = getRomanForToken(t);
+        segments.push({
+          display:roman,
+          inputs:[roman]
+        });
       }
 
-      return out;
+      return segments;
+    }
+
+    function expandVariantsFromSegments(segments){
+      let displayPos = 0;
+      let variants = [{ input:"", progressMap:[] }];
+
+      for(const seg of segments){
+        const nextVariants = [];
+
+        for(const variant of variants){
+          for(const opt of seg.inputs){
+            const progressMap = [...variant.progressMap];
+            for(let i=0;i<opt.length;i++){
+              if(seg.display === "N" && opt === "NN"){
+                progressMap.push(displayPos + 1);
+              }else{
+                const ratio = Math.min(seg.display.length, i + 1);
+                progressMap.push(displayPos + ratio);
+              }
+            }
+
+            nextVariants.push({
+              input:variant.input + opt,
+              progressMap
+            });
+          }
+        }
+
+        variants = dedupeVariants(nextVariants);
+        displayPos += seg.display.length;
+      }
+
+      return variants;
+    }
+
+    function dedupeVariants(list){
+      const seen = new Map();
+      for(const item of list){
+        const key = item.input + "|" + item.progressMap.join(",");
+        if(!seen.has(key)){
+          seen.set(key, item);
+        }
+      }
+      return [...seen.values()];
+    }
+
+    function buildTypingModel(kana){
+      const segments = buildSegments(kana);
+      const display = segments.map(seg=>seg.display).join("");
+      const variants = expandVariantsFromSegments(segments);
+      return { display, variants };
     }
 
     function shuffle(array){
@@ -742,7 +1009,8 @@
       queue:[],
       current:null,
       currentIndex:0,
-      typed:"",
+      typedInput:"",
+      activeVariants:[],
       misses:0,
       totalKeys:0,
       correctKeys:0,
@@ -751,13 +1019,16 @@
       timerId:null,
       countdownTimers:[],
       repeatCount:0,
-      repeatTimer:null
+      repeatTimer:null,
+      soundType:"simple1"
     };
 
     const el = {
       modeButtons:document.getElementById("modeButtons"),
       modeLabel:document.getElementById("modeLabel"),
       runLabel:document.getElementById("runLabel"),
+      soundLabel:document.getElementById("soundLabel"),
+      soundSelect:document.getElementById("soundSelect"),
       quote:document.getElementById("quote"),
       speaker:document.getElementById("speaker"),
       romajiView:document.getElementById("romajiView"),
@@ -775,9 +1046,6 @@
     };
 
     let audioCtx = null;
-    let keyBuffer = null;
-    let correctBuffer = null;
-    let missBuffer = null;
 
     function ensureAudio(){
       if(!audioCtx){
@@ -785,118 +1053,140 @@
           latencyHint:"interactive"
         });
       }
-      if(!keyBuffer) keyBuffer = createKeyBuffer(audioCtx);
-      if(!correctBuffer) correctBuffer = createCorrectBuffer(audioCtx);
-      if(!missBuffer) missBuffer = createMissBuffer(audioCtx);
       if(audioCtx.state === "suspended"){
         audioCtx.resume();
       }
     }
 
-    function createKeyBuffer(ctx){
-      const duration = 0.04;
-      const sampleRate = ctx.sampleRate;
+    function createNoiseBuffer(duration){
+      const sampleRate = audioCtx.sampleRate;
       const length = Math.floor(sampleRate * duration);
-      const buffer = ctx.createBuffer(1, length, sampleRate);
+      const buffer = audioCtx.createBuffer(1, length, sampleRate);
       const data = buffer.getChannelData(0);
-
       for(let i=0;i<length;i++){
-        const t = i / sampleRate;
-        const env = Math.exp(-70 * t);
-        const click = Math.sin(2 * Math.PI * 1750 * t) * 0.18;
-        const body = Math.sin(2 * Math.PI * 260 * t) * 0.55;
-        const noise = (Math.random() * 2 - 1) * 0.16;
-        data[i] = (click + body + noise) * env;
+        data[i] = Math.random() * 2 - 1;
       }
       return buffer;
     }
 
-    function createCorrectBuffer(ctx){
-      const duration = 0.22;
-      const sampleRate = ctx.sampleRate;
-      const length = Math.floor(sampleRate * duration);
-      const buffer = ctx.createBuffer(1, length, sampleRate);
-      const data = buffer.getChannelData(0);
+    function playTone({freq = 440, type = "sine", gain = 0.2, duration = 0.05, start = 0, endFreq = null, filter = null}){
+      if(!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      let last = g;
 
-      for(let i=0;i<length;i++){
-        const t = i / sampleRate;
-        const env = Math.exp(-8.5 * t);
-        const tone1 = Math.sin(2 * Math.PI * 880 * t) * 0.35;
-        const tone2 = Math.sin(2 * Math.PI * 1320 * t) * 0.24;
-        const tone3 = Math.sin(2 * Math.PI * 1760 * t) * 0.12;
-        data[i] = (tone1 + tone2 + tone3) * env;
+      if(filter){
+        const f = audioCtx.createBiquadFilter();
+        f.type = filter.type || "lowpass";
+        f.frequency.value = filter.frequency || 1800;
+        f.Q.value = filter.q || 0.7;
+        osc.connect(f);
+        f.connect(g);
+      }else{
+        osc.connect(g);
       }
-      return buffer;
+
+      osc.type = type;
+      const now = audioCtx.currentTime + start;
+      osc.frequency.setValueAtTime(freq, now);
+      if(endFreq !== null){
+        osc.frequency.exponentialRampToValueAtTime(Math.max(20, endFreq), now + duration);
+      }
+
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain), now + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      last.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.01);
     }
 
-    function createMissBuffer(ctx){
-      const duration = 0.11;
-      const sampleRate = ctx.sampleRate;
-      const length = Math.floor(sampleRate * duration);
-      const buffer = ctx.createBuffer(1, length, sampleRate);
-      const data = buffer.getChannelData(0);
-
-      for(let i=0;i<length;i++){
-        const t = i / sampleRate;
-        const env = Math.exp(-22 * t);
-        const low = Math.sin(2 * Math.PI * 120 * t) * 0.6;
-        const harsh = Math.sin(2 * Math.PI * 200 * t) * 0.22;
-        const noise = (Math.random() * 2 - 1) * 0.12;
-        data[i] = (low + harsh + noise) * env;
-      }
-      return buffer;
-    }
-
-    function playBuffer(buffer, {
-      gainValue = 0.5,
-      filterType = "lowpass",
-      frequency = 2000,
-      q = 0.8,
-      when = 0.0005
-    } = {}){
-      if(!audioCtx || !buffer) return;
-
+    function playNoise({gain = 0.08, duration = 0.03, start = 0, filterType = "bandpass", frequency = 2000, q = 0.8}){
+      if(!audioCtx) return;
       const src = audioCtx.createBufferSource();
-      const gain = audioCtx.createGain();
-      const filter = audioCtx.createBiquadFilter();
+      const g = audioCtx.createGain();
+      const f = audioCtx.createBiquadFilter();
+      const now = audioCtx.currentTime + start;
 
-      filter.type = filterType;
-      filter.frequency.value = frequency;
-      filter.Q.value = q;
-      gain.gain.value = gainValue;
+      src.buffer = createNoiseBuffer(duration);
+      f.type = filterType;
+      f.frequency.value = frequency;
+      f.Q.value = q;
+      g.gain.setValueAtTime(gain, now);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
-      src.buffer = buffer;
-      src.connect(filter);
-      filter.connect(gain);
-      gain.connect(audioCtx.destination);
-      src.start(audioCtx.currentTime + when);
+      src.connect(f);
+      f.connect(g);
+      g.connect(audioCtx.destination);
+      src.start(now);
+      src.stop(now + duration + 0.01);
+    }
+
+    function currentPreset(){
+      return SOUND_PRESETS[state.soundType] || SOUND_PRESETS.simple1;
     }
 
     function playKeySound(){
-      playBuffer(keyBuffer, {
-        gainValue:0.50,
-        filterType:"bandpass",
-        frequency:1600,
-        q:0.9
-      });
+      if(!audioCtx) return;
+      const p = currentPreset();
+
+      if(p.mode === "bass"){
+        playTone({freq:p.osc1, type:"triangle", gain:p.gain, duration:p.decay, endFreq:p.osc1 * 0.88, filter:{type:"lowpass", frequency:520, q:0.5}});
+        playTone({freq:p.osc2, type:"sine", gain:p.gain * 0.52, duration:p.decay * 1.15, endFreq:Math.max(20, p.osc2 * 0.9), filter:{type:"lowpass", frequency:360, q:0.4}});
+        return;
+      }
+
+      if(p.mode === "fireworks"){
+        playTone({freq:p.osc1, type:"sine", gain:p.gain, duration:p.decay, endFreq:28, filter:{type:"lowpass", frequency:240, q:0.9}});
+        playTone({freq:p.osc2, type:"triangle", gain:p.gain * 0.52, duration:p.decay * 1.15, endFreq:22, filter:{type:"lowpass", frequency:170, q:0.8}});
+        playNoise({gain:0.028, duration:0.08, start:0.012, filterType:"bandpass", frequency:1200, q:0.4});
+        return;
+      }
+
+      playTone({freq:p.osc1, type:"square", gain:p.gain * 0.42, duration:p.decay, endFreq:p.osc1 * 0.96, filter:{type:"bandpass", frequency:p.osc1, q:0.7}});
+      playTone({freq:p.osc2, type:"triangle", gain:p.gain * 0.9, duration:p.decay * 1.2, endFreq:Math.max(50, p.osc2 * 0.92), filter:{type:"lowpass", frequency:1400, q:0.5}});
+      playNoise({gain:p.noise, duration:Math.max(0.012, p.decay), filterType:"bandpass", frequency:p.osc1, q:0.9});
     }
 
     function playCorrectSound(){
-      playBuffer(correctBuffer, {
-        gainValue:0.42,
-        filterType:"lowpass",
-        frequency:2600,
-        q:0.7
-      });
+      if(!audioCtx) return;
+      const p = currentPreset();
+
+      if(p.mode === "fireworks"){
+        playTone({freq:160, type:"sine", gain:0.24, duration:0.16, endFreq:78, filter:{type:"lowpass", frequency:300, q:0.8}});
+        playTone({freq:480, type:"triangle", gain:0.10, duration:0.12, start:0.015, endFreq:260, filter:{type:"bandpass", frequency:900, q:0.7}});
+        playNoise({gain:0.03, duration:0.10, start:0.02, filterType:"highpass", frequency:1800, q:0.5});
+        return;
+      }
+
+      if(p.mode === "bass"){
+        playTone({freq:220, type:"triangle", gain:0.20, duration:0.14, endFreq:180, filter:{type:"lowpass", frequency:520, q:0.4}});
+        playTone({freq:330, type:"sine", gain:0.11, duration:0.10, start:0.01, endFreq:300, filter:{type:"lowpass", frequency:900, q:0.4}});
+        return;
+      }
+
+      playTone({freq:p.correct, type:"triangle", gain:0.16, duration:0.11, endFreq:p.correct * 1.25, filter:{type:"lowpass", frequency:2400, q:0.4}});
+      playTone({freq:p.correct * 1.5, type:"sine", gain:0.09, duration:0.10, start:0.014, endFreq:p.correct * 1.72, filter:{type:"lowpass", frequency:2800, q:0.4}});
     }
 
     function playMissSound(){
-      playBuffer(missBuffer, {
-        gainValue:0.44,
-        filterType:"lowpass",
-        frequency:820,
-        q:0.9
-      });
+      if(!audioCtx) return;
+      const p = currentPreset();
+
+      if(p.mode === "fireworks"){
+        playTone({freq:78, type:"sawtooth", gain:0.20, duration:0.16, endFreq:36, filter:{type:"lowpass", frequency:240, q:0.9}});
+        playNoise({gain:0.02, duration:0.05, filterType:"lowpass", frequency:700, q:0.6});
+        return;
+      }
+
+      if(p.mode === "bass"){
+        playTone({freq:84, type:"triangle", gain:0.18, duration:0.11, endFreq:50, filter:{type:"lowpass", frequency:300, q:0.8}});
+        return;
+      }
+
+      playTone({freq:p.miss, type:"sawtooth", gain:0.14, duration:0.08, endFreq:Math.max(40, p.miss * 0.72), filter:{type:"lowpass", frequency:850, q:0.9}});
+      playNoise({gain:0.025, duration:0.035, filterType:"lowpass", frequency:900, q:0.8});
     }
 
     function clearRepeatTimer(){
@@ -919,6 +1209,13 @@
       resetIdleScreen();
     }
 
+    function setSoundType(soundType){
+      state.soundType = soundType;
+      const p = currentPreset();
+      el.soundSelect.value = soundType;
+      el.soundLabel.textContent = `効果音：${p.label}`;
+    }
+
     function resetIdleScreen(){
       clearRepeatTimer();
       state.isFinished = false;
@@ -926,7 +1223,8 @@
       state.canAdvanceInfinite = false;
       state.current = null;
       state.currentIndex = 0;
-      state.typed = "";
+      state.typedInput = "";
+      state.activeVariants = [];
       state.misses = 0;
       state.totalKeys = 0;
       state.correctKeys = 0;
@@ -990,7 +1288,8 @@
       clearRepeatTimer();
       state.queue = buildQueue();
       state.currentIndex = 0;
-      state.typed = "";
+      state.typedInput = "";
+      state.activeVariants = [];
       state.misses = 0;
       state.totalKeys = 0;
       state.correctKeys = 0;
@@ -1066,6 +1365,15 @@
       return (end - state.startTime) / 1000;
     }
 
+    function prepareCurrentWord(word){
+      const typing = buildTypingModel(word.kana);
+      return {
+        ...word,
+        displayRoman:typing.display,
+        variants:typing.variants
+      };
+    }
+
     function nextWord(initial = false){
       clearRepeatTimer();
 
@@ -1075,7 +1383,7 @@
             state.queue = shuffle(WORDS);
           }
           const idx = state.currentIndex % state.queue.length;
-          state.current = state.queue[idx];
+          state.current = prepareCurrentWord(state.queue[idx]);
           state.currentIndex = state.currentIndex || 0;
         }
       }else{
@@ -1083,13 +1391,14 @@
           finishGame();
           return;
         }
-        state.current = state.queue[state.currentIndex];
+        state.current = prepareCurrentWord(state.queue[state.currentIndex]);
       }
 
       state.awaitingEnter = false;
       state.canAdvanceInfinite = false;
-      state.current.roman = kanaToRomajiStrict(state.current.kana).toUpperCase();
-      state.typed = "";
+      state.typedInput = "";
+      state.activeVariants = [...state.current.variants];
+
       el.quote.textContent = state.current.quote;
       el.speaker.textContent = state.current.speaker;
       renderRomaji();
@@ -1105,20 +1414,41 @@
     function repeatCurrentWord(){
       clearRepeatTimer();
       state.awaitingEnter = false;
-      state.typed = "";
+      state.typedInput = "";
+      state.activeVariants = [...state.current.variants];
       renderRomaji();
       state.repeatCount++;
       updateStats();
       setMessage("同じ名言をもう一度。Enter で次の名言へ", "");
     }
 
+    function currentDisplayProgress(){
+      if(!state.current) return 0;
+      if(state.typedInput.length === 0) return 0;
+
+      let max = 0;
+      for(const variant of state.activeVariants){
+        const idx = state.typedInput.length - 1;
+        if(idx >= 0 && idx < variant.progressMap.length){
+          max = Math.max(max, variant.progressMap[idx]);
+        }
+      }
+      return max;
+    }
+
     function renderRomaji(initialText = null){
-      const target = initialText !== null ? initialText : (state.current?.roman || "");
-      const done = escapeHtml(target.slice(0, state.typed.length));
-      const rest = escapeHtml(target.slice(state.typed.length));
+      const target = initialText !== null ? initialText : (state.current?.displayRoman || "");
+      const progress = initialText !== null ? 0 : currentDisplayProgress();
+
+      const done = escapeHtml(target.slice(0, progress));
+      const rest = escapeHtml(target.slice(progress));
+
+      const cursorHtml = progress >= target.length
+        ? ""
+        : `<span class="cursor">|</span>`;
 
       el.romajiView.innerHTML = `
-        <span class="done">${done}</span><span class="cursor">|</span><span class="rest">${rest}</span>
+        <span class="done">${done}</span>${cursorHtml}<span class="rest">${rest}</span>
       `;
     }
 
@@ -1180,9 +1510,9 @@
         state.queue = shuffle(WORDS);
       }
 
-      state.current = state.queue[idx];
-      state.current.roman = kanaToRomajiStrict(state.current.kana).toUpperCase();
-      state.typed = "";
+      state.current = prepareCurrentWord(state.queue[idx]);
+      state.typedInput = "";
+      state.activeVariants = [...state.current.variants];
       el.quote.textContent = state.current.quote;
       el.speaker.textContent = state.current.speaker;
       renderRomaji();
@@ -1209,29 +1539,44 @@
       }
     }
 
+    function exactMatchReached(input){
+      return state.activeVariants.some(v => v.input === input);
+    }
+
+    function nextExpectedKeys(input){
+      const set = new Set();
+      for(const v of state.current.variants){
+        if(v.input.startsWith(input) && v.input.length > input.length){
+          set.add(v.input[input.length]);
+        }
+      }
+      return [...set];
+    }
+
     function handleTypingKey(key){
       if(!state.current) return;
-      const target = state.current.roman;
 
-      if(state.awaitingEnter && state.isInfinite && /^[a-z]$/.test(key)){
+      if(state.awaitingEnter && state.isInfinite && /^[A-Z]$/.test(key)){
         repeatCurrentWord();
       }
 
-      if(!/^[a-z]$/.test(key)) return;
+      if(!/^[A-Z]$/.test(key)) return;
 
       ensureAudio();
 
-      const upperKey = key.toUpperCase();
-      state.totalKeys++;
-      const expected = target[state.typed.length];
+      const nextInput = state.typedInput + key;
+      const nextVariants = state.activeVariants.filter(v => v.input.startsWith(nextInput));
 
-      if(upperKey === expected){
+      state.totalKeys++;
+
+      if(nextVariants.length > 0){
         state.correctKeys++;
-        state.typed += upperKey;
+        state.typedInput = nextInput;
+        state.activeVariants = nextVariants;
         playKeySound();
         renderRomaji();
 
-        if(state.typed === target){
+        if(exactMatchReached(nextInput)){
           onCorrectComplete();
         }else{
           setMessage("入力中", "");
@@ -1239,7 +1584,9 @@
       }else{
         state.misses++;
         playMissSound();
-        setMessage(`ミス：次は "${expected}"`, "miss");
+        const hints = nextExpectedKeys(state.typedInput);
+        const hintText = hints.length ? hints.join(" / ") : "?";
+        setMessage(`ミス：次は "${hintText}"`, "miss");
       }
 
       updateStats();
@@ -1276,18 +1623,25 @@
         return;
       }
 
-      if(key.length === 1 && /^[a-zA-Z]$/.test(key)){
+      if(key.length === 1 && /^[a-zA-Z-]$/.test(key)){
         e.preventDefault();
-        handleTypingKey(key.toLowerCase());
+        handleTypingKey(key.toUpperCase());
       }
     });
 
     el.modeButtons.addEventListener("click",(e)=>{
       const btn = e.target.closest(".mode-btn");
-      if(!btn) return;
+      if(!btn || !btn.dataset.mode) return;
       setMode(btn.dataset.mode);
     });
 
+    el.soundSelect.addEventListener("change",(e)=>{
+      ensureAudio();
+      setSoundType(e.target.value);
+      playKeySound();
+    });
+
+    setSoundType("simple1");
     setMode("10");
   </script>
 </body>
